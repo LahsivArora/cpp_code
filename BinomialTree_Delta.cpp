@@ -73,10 +73,15 @@ int main()
     std::vector<std::vector<double>> optPriceTree = optionPrice(bintree,p,K);
     std::cout << "option price: " << optPriceTree[n-1][0] << std::endl;
 
-    // for delta calculation
-    std::vector<std::vector<double>> bintreeD = generateTree(s*1.0001,u,d,n);
-    std::vector<std::vector<double>> optPriceTreeD = optionPrice(bintreeD,p,K);
-    std::cout << "option Delta: " << (optPriceTreeD[n-1][0]-optPriceTree[n-1][0])/(s*0.0001) << std::endl;
+    // for Stock price delta (relative shift) calculation
+    std::vector<std::vector<double>> bintreeSD = generateTree(s*1.0001,u,d,n);
+    std::vector<std::vector<double>> optPriceTreeSD = optionPrice(bintreeSD,p,K);
+    std::cout << "option Delta: " << (optPriceTreeSD[n-1][0]-optPriceTree[n-1][0])/(s*0.0001) << std::endl;
+
+    // for Risk-free rate delta (absolute shift) calculation
+    double pRD = (exp((r+0.0001) * dT) - d)/(u - d); // prob of up move
+    std::vector<std::vector<double>> optPriceTreeRD = optionPrice(bintree,pRD,K);
+    std::cout << "Risk-free Rate Delta: " << (optPriceTreeRD[n-1][0]-optPriceTree[n-1][0])/(0.0001) << std::endl;
 
     return 0;
 }
