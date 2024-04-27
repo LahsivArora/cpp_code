@@ -20,7 +20,7 @@ return tree;
 };
 
 std::vector<std::vector<double>> optionPrice (const std::vector<std::vector<double>>& priceTree,
-                                 const double& prob, const double& strike) { 
+                                 const double& prob, const double& strike, const double& rate, const double& step) { 
 
 std::vector<std::vector<double>> optPrices;
 int steps = priceTree.size();
@@ -37,7 +37,7 @@ while (z > 0){
 
     for (int j=0; j < z; j++){
         priceA = (fwdPrices[j] < strike)? (strike - fwdPrices[j]): 0.0;
-        priceE = prob*fwdPricesPrev[j+1] + (1.0-prob)*fwdPricesPrev[j] ;
+        priceE = (prob*fwdPricesPrev[j+1] + (1.0-prob)*fwdPricesPrev[j])*exp(-1.0*rate*step) ;
         double optVal = (priceA > priceE)? priceA: priceE; 
         optPricesN.push_back(optVal);
     }
@@ -70,7 +70,7 @@ int main()
     // generate put option price (American)
     double K = 30.0;
     double p = (exp(r * dT) - d)/(u - d); // prob of up move
-    std::vector<std::vector<double>> optPriceTree = optionPrice(bintree,p,K);
+    std::vector<std::vector<double>> optPriceTree = optionPrice(bintree,p,K,r,dT);
     std::cout << "option price: " << optPriceTree[n-1][0] << std::endl;
 
     return 0;
