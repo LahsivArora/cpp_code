@@ -69,7 +69,7 @@ std::vector<double> optionPriceBS (const double& spot, const double& vol, const 
                                  const double& strike, const std::string& optType) { 
 
 std::vector<double> ret;
-double price, delta, vega;
+double price, delta, vega, gamma;
 double d1 = (log(spot/strike) + ( rate + (vol*vol/2.0))*time)/(vol * sqrt(time));
 double d2 = d1 - (vol * sqrt(time));
 
@@ -78,17 +78,20 @@ if (optType == "call")
     price = spot*norm(d1) - strike*norm(d2)*exp(-1.0*rate*time);
     delta = norm(d1);
     vega = spot*sqrt(time)*normdiff(d1);
+    gamma = normdiff(d1)/(spot * vol * sqrt(time));
     }
 else
     {
     price = strike*norm(-1.0*d2)*exp(-1.0*rate*time) - spot*norm(-1.0*d1);
     delta = norm(d1)-1.0;
     vega = spot*sqrt(time)*normdiff(d1);
+    gamma = normdiff(d1)/(spot * vol * sqrt(time));
     }
 
 ret.push_back(price);
 ret.push_back(delta);
 ret.push_back(vega);
+ret.push_back(gamma);
 return ret;
 }
 
@@ -96,10 +99,10 @@ int main()
 {
     // define params for stock
     double s = 56.0; // spot price
-    int n = 375; // no of steps in binomial tree
     double vol = 0.30; // volatility of stock of 25%
     double r = 0.05; // risk free rate of 3%
     double T = 1.5; // maturity in number of years
+    int n = 252.0 * T * 1.0; // no of steps in binomial tree; taken as daily steps
 
     // calculated params
     double dT = T/(n-1) ; // length of each time step
@@ -127,19 +130,22 @@ int main()
 
 
     // generate option delta comparison
-    std::vector<std::vector<double>> bintreeD = generateTree(s*1.0001,u,d,n);
+    double spotbump = 0.05; // bump less than 1% gives almost 0 gamma with binomial tree
+    std::vector<std::vector<double>> bintreeD = generateTree(s*(1.0+spotbump),u,d,n);
     std::vector<std::vector<double>> optPriceTree_callD = optionPriceTree(bintreeD,p,K,"call",r,dT);
     std::vector<std::vector<double>> optPriceTree_putD = optionPriceTree(bintreeD,p,K,"put",r,dT);
-    std::vector<double> optPriceBS_callD = optionPriceBS(s*1.0001,vol,r,T,K,"call");
-    std::vector<double> optPriceBS_putD = optionPriceBS(s*1.0001,vol,r,T,K,"put");
+    double delta1CallTree = (optPriceTree_callD[n-1][0]-optPriceTree_call[n-1][0])/(s*spotbump);
+    double delta1PutTree = (optPriceTree_putD[n-1][0]-optPriceTree_put[n-1][0])/(s*spotbump);
+    std::vector<double> optPriceBS_callD = optionPriceBS(s*(1.0+spotbump),vol,r,T,K,"call");
+    std::vector<double> optPriceBS_putD = optionPriceBS(s*(1.0+spotbump),vol,r,T,K,"put");
 
     std::cout << "==========================================================" << std::endl;
-    std::cout << "Call option delta (binomial): " << (optPriceTree_callD[n-1][0]-optPriceTree_call[n-1][0])/(s*0.0001) << std::endl;
-    std::cout << "Put option delta (binomial) : " << (optPriceTree_putD[n-1][0]-optPriceTree_put[n-1][0])/(s*0.0001) << std::endl;
+    std::cout << "Call option delta (binomial): " << delta1CallTree << std::endl;
+    std::cout << "Put option delta (binomial) : " << delta1PutTree << std::endl;
     std::cout << "Call option delta (BS - analytical): " << optPriceBS_call[1] << std::endl;
     std::cout << "Put option delta (BS - analytical) : " << optPriceBS_put[1] << std::endl;
-    std::cout << "Call option delta (BS - bump&reval): " << (optPriceBS_callD[0]-optPriceBS_call[0])/(s*0.0001) << std::endl;
-    std::cout << "Put option delta (BS - bump&reval) : " << (optPriceBS_putD[0]-optPriceBS_put[0])/(s*0.0001) << std::endl;
+    std::cout << "Call option delta (BS - bump&reval): " << (optPriceBS_callD[0]-optPriceBS_call[0])/(s*spotbump) << std::endl;
+    std::cout << "Put option delta (BS - bump&reval) : " << (optPriceBS_putD[0]-optPriceBS_put[0])/(s*spotbump) << std::endl;
 
 
     // generate option vega comparison
@@ -168,7 +174,23 @@ int main()
     std::cout << "Call option delta (BS - bump&reval): " << (optPriceBS_callV[0]-optPriceBS_call[0])/volbump << std::endl;
     std::cout << "Put option delta (BS - bump&reval) : " << (optPriceBS_putV[0]-optPriceBS_put[0])/volbump << std::endl;
 
+    // generate option gamma comparison: gamma unstable for binomial tree below 5% bump of spot
+    std::cout << "==========================================================" << std::endl;
+    std::vector<std::vector<double>> bintreeG = generateTree(s*(1.0-spotbump),u,d,n);
+    std::vector<std::vector<double>> optPriceTree_callG = optionPriceTree(bintreeG,p,K,"call",r,dT);
+    std::vector<std::vector<double>> optPriceTree_putG = optionPriceTree(bintreeG,p,K,"put",r,dT);
+    double delta2CallTree = (optPriceTree_callG[n-1][0]-optPriceTree_call[n-1][0])/(-1.0*s*spotbump);
+    double delta2PutTree = (optPriceTree_putG[n-1][0]-optPriceTree_put[n-1][0])/(-1.0*s*spotbump);
 
+    std::vector<double> optPriceBS_callG = optionPriceBS(s*(1.0-spotbump),vol,r,T,K,"call");
+    std::vector<double> optPriceBS_putG = optionPriceBS(s*(1.0-spotbump),vol,r,T,K,"put");
+
+    std::cout << "Call option gamma (binomial): " << (delta1CallTree-delta2CallTree)/(s*spotbump) << std::endl;
+    std::cout << "Put option gamma (binomial) : " << (delta1PutTree-delta2PutTree)/(s*spotbump) << std::endl;
+    std::cout << "Call option gamma (BS - bump&reval): " << (optPriceBS_callD[0]+optPriceBS_callG[0]-2*optPriceBS_call[0])/(s*spotbump*s*spotbump) << std::endl;
+    std::cout << "Put option gamma (BS - bump&reval) : " << (optPriceBS_putD[0]+optPriceBS_putG[0]-2*optPriceBS_put[0])/(s*spotbump*s*spotbump) << std::endl;
+    std::cout << "Call option gamma (BS - analytical): " << optPriceBS_call[3] << std::endl;
+    std::cout << "Put option gamma (BS - analytical) : " << optPriceBS_put[3] << std::endl;
 
     std::cout << " ==========================================================" << std::endl;
     return 0;
