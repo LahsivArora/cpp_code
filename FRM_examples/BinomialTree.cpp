@@ -127,5 +127,16 @@ int main()
     std::cout << "option price(optimization): " << optPriceE << std::endl;
     std::cout << "price diff (in percent): " << (optPriceE-optPriceTree[n-1][0])/optPriceTree[n-1][0]*100.0 << std::endl;
 
+/*
+rate: 0.05; rate for 0.5 prob:0.0312268
+************************************************
+option price (traversing tree): 2.65931
+option price(optimization): 2.89732
+price diff (in percent): 8.95004
+************************************************
+option price (traversing tree): 2.95223
+option price(optimization): 2.95223
+price diff (in percent): -1.50425e-014
+*/
     return 0;
 }
