@@ -91,7 +91,7 @@ int main()
     double s = 29.0; // spot price
     int n = 15; // no of steps in binomial tree
     double vol = 0.25; // volatility of stock of 25%
-    double r = 0.03; // risk free rate of 3%
+    double r = 0.05; // risk free rate of 3%
     double T = 1.0; // maturity in number of years
 
     // calculated params
@@ -101,15 +101,31 @@ int main()
     
     // generate tree
     std::vector<std::vector<double>> bintree = generateTree(s,u,d,n);
+    std::vector<std::vector<double>> optPriceTree;
+    double optPriceE;
 
     // generate put option price (American)
-    double K = 22.0;
+    double K = 30.0;
     double p = (exp(r * dT) - d)/(u - d); // prob of up move
-    std::vector<std::vector<double>> optPriceTree = optionPrice(bintree,p,K,r,dT);
-    std::cout << "option price: " << optPriceTree[n-1][0] << std::endl;
+    double r1 = log(0.5*(u-d)+d)/dT;
+    std::cout << "rate: " << r << "; rate for 0.5 prob:" << r1 << std::endl;
+    std::cout << "************************************************" << std::endl;
+    optPriceTree = optionPrice(bintree,p,K,r,dT);
+    std::cout << "option price (traversing tree): " << optPriceTree[n-1][0] << std::endl;
+    optPriceE = optionPriceE(bintree,p,K,r,dT);
+    std::cout << "option price(optimization): " << optPriceE << std::endl;
+    std::cout << "price diff (in percent): " << (optPriceE-optPriceTree[n-1][0])/optPriceTree[n-1][0]*100.0 << std::endl;
 
-    double optPriceE = optionPriceE(bintree,p,K,r,dT);
-    std::cout << "option price: " << optPriceE << std::endl;
+
+    // recalc option prices for prob=0.5 and new rate r1
+    // NOTE: the optimization only works for prob=0.5 
+    // NOTE: for all other cases, we need to traverse tree to get European option price
+    std::cout << "************************************************" << std::endl;
+    optPriceTree = optionPrice(bintree,0.5,K,r1,dT);
+    std::cout << "option price (traversing tree): " << optPriceTree[n-1][0] << std::endl;
+    optPriceE = optionPriceE(bintree,0.5,K,r1,dT);
+    std::cout << "option price(optimization): " << optPriceE << std::endl;
+    std::cout << "price diff (in percent): " << (optPriceE-optPriceTree[n-1][0])/optPriceTree[n-1][0]*100.0 << std::endl;
 
     return 0;
 }
