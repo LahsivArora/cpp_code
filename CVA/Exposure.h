@@ -6,6 +6,7 @@
 #include "RateCurve.h"
 #include "Swap.h"
 #include "SimModel.h"
+#include "Pricer.h"
 
 /* Calculate exposure given:
    1. Time steps (Quarterly first and then monthly)

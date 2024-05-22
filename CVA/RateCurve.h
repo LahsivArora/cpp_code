@@ -5,10 +5,7 @@
 #include <map>
 
 /* Rate Curve Object
-   Step1: using zero rates
-    func1: interpolation 
-    func2: generate fwd rates per schedule
-    func3: generate disc factors per schedule
+   Step1: done
    Step2:
     update functions to work with time displacement for calculating EE
    Step3: using swap rates
