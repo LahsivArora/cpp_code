@@ -17,6 +17,7 @@ std::vector<RateCurve> SimulateRate::getSimulatedCurves(){
     RateCurve sim04({{0.5,0.0245},{1.0,0.035},{2.0,0.035},{5.0,0.0475},{7.0,0.0535},{10.0,0.058}});
     RateCurve sim05({{0.5,0.0265},{1.0,0.035},{2.0,0.04},{5.0,0.0575},{7.0,0.0625},{10.0,0.065}});
 
+    curves.push_back(xCurve);
     curves.push_back(sim01);
     curves.push_back(sim02);
     curves.push_back(sim03);

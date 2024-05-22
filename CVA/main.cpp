@@ -10,7 +10,7 @@
 int main()
 {
     // defining 5Y swap with 100,000 notional receive fixed-pay float
-    // Leg1 pays 3.81% Quarterly and Leg2 receives SOFR+1% Quarterly
+    // Leg1 pays 5.50% Quarterly and Leg2 receives SOFR+15bps Quarterly
     VanillaSwap Swap1(6.0,-1000000.0, {4.0,0.055},{4.0,0.0015});
 
     // Defining rate curve with pillars as 6m, 1Y, 2Y, 5Y, 7Y, 10Y. For now using zero rates
@@ -18,8 +18,7 @@ int main()
 
     // Pricing trade with above swap object and rate curve (discount factors and fwd rates)
     SwapPricer price1(Swap1,SOFR);
-    double expectedPV = price1.getTradeNPV();
-    std::cout << "base tradePV:" << expectedPV << std::endl;
+    double basePV = price1.getTradeNPV();
 
     // simulation parameters
     double rateVol = 0.15; // i.e. 15% annual vol. constant for now.
@@ -28,17 +27,13 @@ int main()
     std::vector<RateCurve> simCurves = simEngine.getSimulatedCurves();
     std::vector<double> simNPVs = simEngine.getSimulatedBaseNPVs(Swap1);
 
-    for (int i=0; i <simCurves.size(); i++){
-        expectedPV += simNPVs[i];
-        std::cout << "sim"+std::to_string(i)+" tradePV:" << simNPVs[i] << std::endl;
-    }
-    std::cout << "expected tradePV:" << expectedPV/6.0 << std::endl;
-
     // Exposure calc. profile matches expectations
-    for (double i=0; i<7.0; i+=0.25){
-        SwapPricer priceLag(Swap1,SOFR,i);
-        double exposure = priceLag.getTradeNPV();
-        std::cout << "base exposure at "<< i << " :" << exposure << std::endl;
+    for (int j=0; j<simCurves.size(); j++){
+        for (double i=0; i<7.0; i+=0.25){
+            SwapPricer priceLag(Swap1,simCurves[j],i);
+            double exposure = priceLag.getTradeNPV();
+            std::cout << "base exposure at "<< i << " :" << exposure << std::endl;
+        }
     }
 /*    // exposure parameters
     double timeSteps = 0.25; // i.e. quarterly
