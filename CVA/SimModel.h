@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 #include "RateCurve.h"
+#include "Swap.h"
 
 /*
  Contain simulation models using monte-carlo
@@ -20,6 +21,7 @@ public:
     // inputs are swap object, discount factors and fwd rates 
     SimulateRate(RateCurve curve, double vol, double simPaths);
     std::vector<RateCurve> getSimulatedCurves();
+    std::vector<double> getSimulatedBaseNPVs(VanillaSwap swap);
 };
 
 #endif

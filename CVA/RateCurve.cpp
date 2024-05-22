@@ -61,20 +61,20 @@ std::vector<double> RateCurve::getDiscFactors(std::vector<double> schedule){
 
 std::vector<double> RateCurve::getFwdRates(std::vector<double> schedule){
     std::vector<double> rates, fwds;
+    double freq = 1.0/schedule[0];
 
     for (auto it = schedule.begin(); it != schedule.end(); ++it) {
         std::vector<double> coord = tenorMatching(*it) ;
         //std::cout << coord[0] << " " << coord[1] << " " << coord[2] << " " << coord[3] << std::endl;
         double interRate = interpolate(coord[0],coord[1],coord[2],coord[3],*it);
-        double df = interRate;
-        rates.push_back(df);
+        rates.push_back(interRate);
     }
 
     for (int i = 0; i < schedule.size(); ++i) {
         if (i == 0)
             fwds.push_back(rates[i]);
         else{
-            double fwd = pow((1.0+rates[i]),schedule[i])/pow((1.0+rates[i-1]),schedule[i-1])-1.0;
+            double fwd = (pow((1.0+rates[i]),schedule[i])/pow((1.0+rates[i-1]),schedule[i-1])-1.0)*freq;
             fwds.push_back(fwd);
         }
     }

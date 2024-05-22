@@ -1,6 +1,6 @@
 #include <vector>
 #include "SimModel.h"
-
+#include "Pricer.h"
 
 SimulateRate::SimulateRate(RateCurve curve, double vol, double simPaths){
     xCurve=curve;
@@ -24,4 +24,17 @@ std::vector<RateCurve> SimulateRate::getSimulatedCurves(){
     curves.push_back(sim05);
 
     return curves;
+}
+
+std::vector<double> SimulateRate::getSimulatedBaseNPVs(VanillaSwap swap1){
+
+    std::vector<RateCurve> curves = getSimulatedCurves();
+    std::vector<double> simNPVs;
+
+    for (int i=0; i <curves.size(); i++){
+        SwapPricer price2(swap1,curves[i]);
+        double simPrice = price2.getTradeNPV();
+        simNPVs.push_back(simPrice);
+    }
+    return simNPVs;
 }

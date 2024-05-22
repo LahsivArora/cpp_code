@@ -17,7 +17,7 @@ double SwapPricer::getLeg1NPV(){
 
     for (int i=0; i < xLeg1disc.size(); i++){
         if (flow1[i] > xLag)
-            npv += notional * rate * periodAdj * xLeg1disc[i];
+            npv += (notional * rate * periodAdj * xLeg1disc[i]);
     }
     return npv;
 }
@@ -33,7 +33,7 @@ double SwapPricer::getLeg2NPV(){
 
     for (int i=0; i < xLeg2disc.size(); i++){
         if (flow2[i] > xLag)
-            npv += notional * (xLeg2fwd[i] + spread) * periodAdj * xLeg2disc[i];
+            npv += (notional * (xLeg2fwd[i] + spread) * periodAdj * xLeg2disc[i]);
     }
 
     return npv;
