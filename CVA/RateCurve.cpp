@@ -1,0 +1,75 @@
+#include <vector>
+#include <cmath>
+#include <iostream>
+#include "RateCurve.h"
+
+RateCurve::RateCurve(std::map<double,double> rates){
+    xRates=rates;
+}
+
+double RateCurve::interpolate(double x1, double y1, double x2, double y2, double x){
+    double val;
+    if (x1 == x2)
+        val = y1;
+    else
+        val = y1 + (y2-y1)*(x-x1)/(x2-x1);
+
+    return val;
+}
+
+std::vector<double> RateCurve::tenorMatching(double tenor){
+    std::vector<double> coord(4);
+
+    bool is_in = xRates.find(tenor) != xRates.end();;
+
+    if (is_in){
+        coord[0] = tenor;
+        coord[1] = xRates[tenor];
+        coord[2] = tenor;
+        coord[3] = xRates[tenor];
+    }
+    else {
+        for (auto it = xRates.begin(); it != xRates.end(); ++it) {
+            if (it->first < tenor){
+                coord[0] = it->first;
+                coord[1] = it->second;
+            }
+
+            if (it->first > tenor && (coord[2]==0 || it->first < coord[2])){
+                coord[2] = it->first;
+                coord[3] = it->second;
+            }
+        }
+    }
+
+    return coord;
+}
+
+std::vector<double> RateCurve::getDiscFactors(std::vector<double> schedule){
+    std::vector<double> dfs;
+
+    for (auto it = schedule.begin(); it != schedule.end(); ++it) {
+        std::vector<double> coord = tenorMatching(*it) ;
+        std::cout << coord[0] << " " << coord[1] << " " << coord[2] << " " << coord[3] << std::endl;
+        double interRate = interpolate(coord[0],coord[1],coord[2],coord[3],*it);
+        double df = 1.0/pow((1+interRate),*it);
+        // for debugging: double df = interRate;
+        dfs.push_back(df);
+    }
+    return dfs;
+}
+
+std::vector<double> RateCurve::getFwdRates(std::vector<double> schedule){
+    std::vector<double> rates, fwds;
+
+    for (auto it = schedule.begin(); it != schedule.end(); ++it) {
+        std::vector<double> coord = tenorMatching(*it) ;
+        std::cout << coord[0] << " " << coord[1] << " " << coord[2] << " " << coord[3] << std::endl;
+        double interRate = interpolate(coord[0],coord[1],coord[2],coord[3],*it);
+        double df = interRate;
+        rates.push_back(df);
+    }
+
+    return fwds;
+}
+
