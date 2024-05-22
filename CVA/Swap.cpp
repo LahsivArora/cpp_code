@@ -25,3 +25,27 @@ std::vector<double> VanillaSwap::getLegFlows(int j){
     }
     return flows;
 }
+
+double VanillaSwap::getMaturity(){
+    return xmaturity;
+}
+
+double VanillaSwap::getNotional(){
+    return xnotional;
+}
+
+double VanillaSwap::getFixedRate(){
+    return xLeg1[1];
+}
+
+double VanillaSwap::getFloatSpread(){
+    return xLeg2[1];
+}
+
+double VanillaSwap::getFixedFreq(){
+    return xLeg1[0];
+}
+
+double VanillaSwap::getFloatFreq(){
+    return xLeg2[0];
+}

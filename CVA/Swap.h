@@ -24,7 +24,12 @@ public:
     // at trade level, input maturity and notional (+ive is receive fixed/leg1 and -ive is pay fixed/leg1)
     VanillaSwap(double maturity, double notional, std::vector<double> Leg1, std::vector<double> Leg2);
     std::vector<double> getLegFlows(int Leg);
-
+    double getMaturity();
+    double getNotional();
+    double getFixedRate();
+    double getFloatSpread();
+    double getFixedFreq();
+    double getFloatFreq();
 };
 
 #endif

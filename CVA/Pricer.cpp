@@ -10,13 +10,26 @@ SwapPricer::SwapPricer(VanillaSwap swap, std::vector<double> leg1disc, std::vect
 }
 
 double SwapPricer::getLeg1NPV(){
-    double npv = 100.0;
+    double npv = 0.0;
+    double multi = 1.0/xSwap.getFixedFreq();
+    double notional = xSwap.getNotional();
+    double rate = xSwap.getFixedRate();
 
+    for (int i=0; i < xLeg1disc.size(); i++){
+        npv += notional * rate * multi * xLeg1disc[i];
+    }
     return npv;
 }
 
 double SwapPricer::getLeg2NPV(){
-    double npv = -90.0;
+    double npv = 0.0;
+    double multi = 1.0/xSwap.getFloatFreq();
+    double notional = -1.0*xSwap.getNotional();
+    double rate = xSwap.getFloatSpread();
+
+    for (int i=0; i < xLeg2disc.size(); i++){
+        npv += notional * (rate + xLeg2fwd[i]) * multi * xLeg2disc[i];
+    }
 
     return npv;
 }

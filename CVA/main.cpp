@@ -12,7 +12,7 @@ int main()
     // Leg1 is fixed rate with annual payments and 5% fixed rate
     // Leg2 is floating rate with semi-annual payment and 1% spread
 
-    VanillaSwap Swap1(5.0,100000.0, {1.0,0.05},{2.0,0.01});
+    VanillaSwap Swap1(6.0,100000.0, {1.0,0.0381},{2.0,0.01});
     std::vector<double> flow1 = Swap1.getLegFlows(1);
     std::vector<double> flow2 = Swap1.getLegFlows(2);
 
@@ -29,7 +29,7 @@ int main()
     double leg2PV = price1.getLeg2NPV();
     double tradePV = price1.getTradeNPV();
 
-    std::cout << "Leg1PV:" << leg1PV << " Leg1PV:" << leg2PV << " tradePV:" << tradePV << std::endl;
+    std::cout << "Leg1PV:" << leg1PV << " Leg2PV:" << leg2PV << " tradePV:" << tradePV << std::endl;
 
     // input fixed PD and LGD   
     return 0;
