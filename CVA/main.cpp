@@ -32,7 +32,7 @@ int main()
         for (double i=0; i<7.0; i+=0.25){
             SwapPricer priceLag(Swap1,simCurves[j],i);
             double exposure = priceLag.getTradeNPV();
-            std::cout << "base exposure at "<< i << " :" << exposure << std::endl;
+            std::cout << "base exposure at "<< i << " :" << (exposure>0?exposure:0) << std::endl;
         }
     }
 /*    // exposure parameters
