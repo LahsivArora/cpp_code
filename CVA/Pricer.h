@@ -3,15 +3,16 @@
 
 #include <vector>
 #include "Swap.h"
+#include "RateCurve.h"
 
 class SwapPricer{
 private:
     VanillaSwap xSwap;
-    std::vector<double> xLeg1disc, xLeg2disc, xLeg2fwd;
+    RateCurve xCurve;
 public:
     // assuming Leg1 is fixed rate and Leg2 is floating rate
     // inputs are swap object, discount factors and fwd rates 
-    SwapPricer(VanillaSwap swap, std::vector<double> leg1disc, std::vector<double> leg2disc, std::vector<double> leg2fwd);
+    SwapPricer(VanillaSwap swap, RateCurve curve);
     double getLeg1NPV();
     double getLeg2NPV();
     double getTradeNPV();

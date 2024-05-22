@@ -1,7 +1,8 @@
 #include <vector>
 #include <cmath>
-//#include <iostream>
 #include "RateCurve.h"
+
+RateCurve::RateCurve(){}
 
 RateCurve::RateCurve(std::map<double,double> rates){
     xRates=rates;

@@ -22,6 +22,8 @@ private:
     double interpolate(double x1, double y1, double x2, double y2, double x);
     std::vector<double> tenorMatching (double tenor);
 public:
+    // default constructor
+    RateCurve();
     // assuming Leg1 is fixed rate (input cashflow freq/year + fixed rate)
     // assuming Leg2 is floating rate (input cashflow freq/year + spread)
     // at trade level, input maturity and notional (+ive is receive fixed/leg1 and -ive is pay fixed/leg1)
