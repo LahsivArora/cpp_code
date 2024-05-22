@@ -17,11 +17,9 @@ int main()
 
     // Pricing trade with above swap object and rate curve (discount factors and fwd rates)
     SwapPricer price1(Swap1,SOFR);
-    double leg1PV = price1.getLeg1NPV();
-    double leg2PV = price1.getLeg2NPV();
-    double tradePV = price1.getTradeNPV();
 
-    std::cout << "Leg1PV:" << leg1PV << " Leg2PV:" << leg2PV << " tradePV:" << tradePV << std::endl;
+    std::cout << "Leg1PV:" << price1.getLeg1NPV() << " Leg2PV:" << price1.getLeg2NPV() << std::endl;
+    std::cout << "tradePV:" << price1.getTradeNPV() << std::endl;
 
     // input fixed PD and LGD   
     return 0;
