@@ -1,6 +1,6 @@
 #include <vector>
 #include <cmath>
-#include <iostream>
+//#include <iostream>
 #include "RateCurve.h"
 
 RateCurve::RateCurve(std::map<double,double> rates){
@@ -50,7 +50,6 @@ std::vector<double> RateCurve::getDiscFactors(std::vector<double> schedule){
 
     for (auto it = schedule.begin(); it != schedule.end(); ++it) {
         std::vector<double> coord = tenorMatching(*it) ;
-        std::cout << coord[0] << " " << coord[1] << " " << coord[2] << " " << coord[3] << std::endl;
         double interRate = interpolate(coord[0],coord[1],coord[2],coord[3],*it);
         double df = 1.0/pow((1+interRate),*it);
         // for debugging: double df = interRate;
@@ -64,10 +63,19 @@ std::vector<double> RateCurve::getFwdRates(std::vector<double> schedule){
 
     for (auto it = schedule.begin(); it != schedule.end(); ++it) {
         std::vector<double> coord = tenorMatching(*it) ;
-        std::cout << coord[0] << " " << coord[1] << " " << coord[2] << " " << coord[3] << std::endl;
+        //std::cout << coord[0] << " " << coord[1] << " " << coord[2] << " " << coord[3] << std::endl;
         double interRate = interpolate(coord[0],coord[1],coord[2],coord[3],*it);
         double df = interRate;
         rates.push_back(df);
+    }
+
+    for (int i = 0; i < schedule.size(); ++i) {
+        if (i == 0)
+            fwds.push_back(rates[i]);
+        else{
+            double fwd = pow((1.0+rates[i]),schedule[i])/pow((1.0+rates[i-1]),schedule[i-1])-1.0;
+            fwds.push_back(fwd);
+        }
     }
 
     return fwds;

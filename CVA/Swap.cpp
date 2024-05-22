@@ -1,6 +1,8 @@
 #include <vector>
 #include "Swap.h"
 
+VanillaSwap::VanillaSwap(){}
+
 VanillaSwap::VanillaSwap(double maturity, double notional, std::vector<double> Leg1, std::vector<double> Leg2){
     xmaturity=maturity;
     xnotional=notional;
