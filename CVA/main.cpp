@@ -9,12 +9,13 @@
 
 int main()
 {
-    // defining 5Y swap with 100,000 notional receive fixed-pay float
-    // Leg1 pays 5.50% Quarterly and Leg2 receives SOFR+15bps Quarterly
-    VanillaSwap Swap1(6.0,-1000000.0, {4.0,0.055},{4.0,0.0015});
+    // defining 6.5Y swap with 1,000,000 notional receive fixed-pay float
+    // Leg1 receives 4.65% Quarterly and Leg2 pays SOFR-25bps Quarterly
+    VanillaSwap Swap1(6.5,1000000.0, {4.0,0.0465},{4.0,-0.0025});
 
     // Defining rate curve with pillars as 6m, 1Y, 2Y, 5Y, 7Y, 10Y. For now using zero rates
-    RateCurve SOFR({{0.5,0.0225},{1.0,0.03},{2.0,0.035},{5.0,0.0525},{7.0,0.0575},{10.0,0.06}});
+    // curve has hump at 2Y point i.e. slowly downward sloping from 2Y to 10Y
+    RateCurve SOFR({{0.5,0.0225},{1.0,0.0375},{2.0,0.05},{5.0,0.049},{7.0,0.0475},{10.0,0.045}});
 
     // Pricing trade with above swap object and rate curve (discount factors and fwd rates)
     SwapPricer price1(Swap1,SOFR);
@@ -27,13 +28,22 @@ int main()
     std::vector<RateCurve> simCurves = simEngine.getSimulatedCurves();
     std::vector<double> simNPVs = simEngine.getSimulatedBaseNPVs(Swap1);
 
-    // Exposure calc. profile matches expectations
-    for (int j=0; j<simCurves.size(); j++){
-        for (double i=0; i<7.0; i+=0.25){
+    std::map<double,double> EEprofile;
+    double maxMaturity = Swap1.getMaturity()+1.0;
+    double n = simCurves.size();
+    // Exposure calc. profile matches expectations. using quarterly calc for exposures
+    for (double i=0.25; i<maxMaturity; i+=0.25){
+        double exposure = 0.0;
+        for (int j=0; j<simCurves.size(); j++){
             SwapPricer priceLag(Swap1,simCurves[j],i);
-            double exposure = priceLag.getTradeNPV();
-            std::cout << "base exposure at "<< i << " :" << (exposure>0?exposure:0) << std::endl;
+            double positiveExposure = (priceLag.getTradeNPV()>0?priceLag.getTradeNPV():0);
+            exposure += positiveExposure;
         }
+        EEprofile.insert(std::pair<double,double>(i,exposure/n));        
+    }
+
+    for (double j=0; j<EEprofile.size()*0.25; j+=0.25){
+            std::cout << "base exposure at "<< j << " :" << EEprofile[j] << std::endl;
     }
 /*    // exposure parameters
     double timeSteps = 0.25; // i.e. quarterly
