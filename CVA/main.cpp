@@ -7,20 +7,33 @@
 #include "SimModel.h"
 #include "Exposure.h"
 #include "CDSCurve.h"
+#include "Portfolio.h"
 
 int main()
 {
-    // Step1: defining 6.5Y swap with 1.5m notional receive fixed-pay float
+    // Step1a: defining 6.5Y swap with 1.5m notional receive fixed-pay float
     // Leg1 receives 4.65% Quarterly and Leg2 pays SOFR-25bps Quarterly
     VanillaSwap Swap1(6.5,1500000.0, {4.0,0.0465},{4.0,-0.0025});
+    VanillaSwap Swap2(3.5,-750000.0, {4.0,0.0465},{4.0,-0.0025});
+    VanillaSwap Swap3(8.5,1000000.0, {4.0,0.0465},{4.0,-0.0025});
+
+    // Step1b: define portfolio with 3 swaps 
+    std::vector<VanillaSwap> trades;
+    trades.push_back(Swap1);
+    trades.push_back(Swap2);
+    trades.push_back(Swap3);
+    Portfolio pfolio(trades); 
 
     // Step2: defining rate curve with pillars as 6m, 1Y, 2Y, 5Y, 7Y, 10Y. For now using zero rates
     // curve has hump at 2Y point i.e. slowly downward sloping from 2Y to 10Y
     RateCurve SOFR({{0.5,0.0225},{1.0,0.0375},{2.0,0.05},{5.0,0.049},{7.0,0.0475},{10.0,0.045}});
 
-    // Step3: pricing trade with Swap and RateCurve objects 
+    // Step3: pricing trade and portfolio (with Swap/s and RateCurve objects) 
     SwapPricer price1(Swap1,SOFR);
-    double basePV = price1.getTradeNPV();
+    double baseTradePV = price1.getTradeNPV();
+    double basePfolioPV = pfolio.getTradesNPV(SOFR);
+    std::cout << "Trade PV:" << baseTradePV << std::endl;
+    std::cout << "Portfolio PV:" << basePfolioPV << std::endl;
 
     // Step4: simulate curves using base RateCurve object + simulation params 
     double rateVol = 0.15; // i.e. 15% annual vol. constant for now.
