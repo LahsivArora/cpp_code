@@ -2,11 +2,8 @@
 #define EXPOSURE_H_
 
 #include <vector>
-#include <string>
 #include "RateCurve.h"
 #include "Swap.h"
-#include "SimModel.h"
-#include "Pricer.h"
 
 /* Calculate exposure given:
    1. Time steps (Quarterly first and then monthly)
@@ -18,5 +15,13 @@
    7. Netting set (first 1 trade, then multiple vanilla swaps, then mix of vanilla and xccy swaps)
 */
 
+class ExposureCalc{
+private:
+    VanillaSwap xSwap;
+    std::vector<RateCurve> xSimCurves;
+public:
+    ExposureCalc(VanillaSwap swap, std::vector<RateCurve> simCurves);
+    std::map<double,double> getEEProfile();
+};
   
 #endif
