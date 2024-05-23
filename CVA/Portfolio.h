@@ -9,6 +9,7 @@ class Portfolio{
 private:
     std::vector<VanillaSwap> xSwaps;
 public:
+    Portfolio();  // default constructor
     Portfolio(std::vector<VanillaSwap> swaps);
     double getMaxMaturity();
     std::vector<VanillaSwap> getTrades();

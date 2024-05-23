@@ -3,6 +3,8 @@
 #include "Portfolio.h"
 #include "Pricer.h"
 
+Portfolio::Portfolio(){}
+
 Portfolio::Portfolio(std::vector<VanillaSwap> swaps){
     xSwaps=swaps;
 }

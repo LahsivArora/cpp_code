@@ -4,6 +4,7 @@
 #include <vector>
 #include "RateCurve.h"
 #include "Swap.h"
+#include "Portfolio.h"
 
 /* Calculate exposure given:
    1. Time steps (Quarterly first and then monthly)
@@ -17,10 +18,10 @@
 
 class ExposureCalc{
 private:
-    VanillaSwap xSwap;
+    Portfolio xPfolio;
     std::vector<RateCurve> xSimCurves;
 public:
-    ExposureCalc(VanillaSwap swap, std::vector<RateCurve> simCurves);
+    ExposureCalc(Portfolio pfolio, std::vector<RateCurve> simCurves);
     std::map<double,double> getEEProfile();
 };
   

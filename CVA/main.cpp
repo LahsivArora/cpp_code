@@ -29,11 +29,9 @@ int main()
     RateCurve SOFR({{0.5,0.0225},{1.0,0.0375},{2.0,0.05},{5.0,0.049},{7.0,0.0475},{10.0,0.045}});
 
     // Step3: pricing trade and portfolio (with Swap/s and RateCurve objects) 
-    SwapPricer price1(Swap1,SOFR);
+    SwapPricer price1(Swap3,SOFR);
     double baseTradePV = price1.getTradeNPV();
     double basePfolioPV = pfolio.getTradesNPV(SOFR);
-    std::cout << "Trade PV:" << baseTradePV << std::endl;
-    std::cout << "Portfolio PV:" << basePfolioPV << std::endl;
 
     // Step4: simulate curves using base RateCurve object + simulation params 
     double rateVol = 0.15; // i.e. 15% annual vol. constant for now.
@@ -44,8 +42,8 @@ int main()
 
     // Step5: generate exposure profile using Swap and Simulated curves
     // assuming Quarterly time steps in exposure calculation; exposure is already discounted to today
-    ExposureCalc swapExProfile(Swap1,simCurves);
-    std::map<double,double> EEprofile = swapExProfile.getEEProfile();
+    ExposureCalc pfolioExProfile(pfolio,simCurves);
+    std::map<double,double> EEprofile = pfolioExProfile.getEEProfile();
 
     // Step6: create CDS curve with marginal default probabilities assuming contant hazard rate    
     double CDSSpread = 300.0; // assuming constant CDS spread of 250bps for counterparty
