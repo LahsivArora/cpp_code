@@ -8,7 +8,8 @@ Old Code:: C++ example code to cover most used functionalities: 1. arrayMultiFun
 
 FRM Examples:: some tasks done while preparing for FRM exams: 1. Operational Loss EC calculation (using Monte Carlo) based on Basel2 regulations; 2. Binomial tree implementation with non-dividend stock; 3. Binomial tree code updated with Delta (stock and risk free rate) calculation
 
-============================================================================================
+========================================================================
+
 Future ToDo:
 
 CVA extension:: 1. extend swap object to support Xccy swap; 2. extend portfolio to have a mix of Vanilla and Xccy swaps; 3. extend Rate curve to input swap rates and bootstap curve to generate zero rates; 4. extend Simulation to use Hull White model for interest rates and Local vol model for FX; 6. extend Exposure to calculate EPE (at 95% confidence level); 7. extend CDS curve to input CDS spread for tenors and bootstrap to get hazard rate; 
