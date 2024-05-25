@@ -8,6 +8,9 @@
 #include "Exposure.h"
 #include "CDSCurve.h"
 #include "Portfolio.h"
+#include "Enums.h"
+#include "RiskCalc.h"
+
 
 int main()
 {
@@ -33,36 +36,52 @@ int main()
     double baseTradePV = price1.getTradeNPV();
     double basePfolioPV = pfolio.getTradesNPV(SOFR);
 
-    // Step4: simulate curves using base RateCurve object + simulation params 
+    // Step4: simulate curves using base RateCurve object + simulation params. using HW model
     double rateVol = 0.15; // i.e. 15% annual vol. constant for now.
     double simPaths = 5; // hardcoding simulation for now
-    SimulateRate simEngine(SOFR, rateVol, simPaths);
+    double a = 0.05; // mean reversion 
+    SimulateRate simEngine(SOFR, rateVol, a, simPaths);
     std::vector<RateCurve> simCurves = simEngine.getSimulatedCurves();
     std::vector<double> simNPVs = simEngine.getSimulatedBaseNPVs(Swap1);
 
     // Step5: generate exposure profile using Swap and Simulated curves
     // assuming Quarterly time steps in exposure calculation; exposure is already discounted to today
     ExposureCalc pfolioExProfile(pfolio,simCurves);
-    std::map<double,double> EEprofile = pfolioExProfile.getEEProfile();
+    std::map<double,double> EPEprofile = pfolioExProfile.getEEProfile(RiskType::CTPY);
+    std::map<double,double> ENEprofile = pfolioExProfile.getEEProfile(RiskType::OWN);
 
     // Step6: create CDS curve with marginal default probabilities assuming contant hazard rate    
-    double CDSSpread = 300.0; // assuming constant CDS spread of 250bps for counterparty
-    double LGD = (1.0-0.6); // loss given default (LGD) assuming recovery rate (RR) is 60%
+    double ctpyCDSSpread = 300.0; // assuming constant CDS spread of 250bps for counterparty
+    double ownCDSSpread = 150.0; // assuming constant CDS spread of 150bps for own
+
+    double ctpyLGD = (1.0-0.6); // loss given default (LGD) assuming recovery rate (RR) is 60%
+    double ownLGD = (1.0-0.8); // loss given default (LGD) assuming recovery rate (RR) is 80%
+
     double timesteps = 0.25; // quarterly steps to match exposure profile
     double maxmaturity = 10.0; // generate marginal PDs upto 10Y
 
-    CDSCurve cds(CDSSpread,LGD,maxmaturity,timesteps);
-    std::map<double,double> marginalPDs = cds.getMarginalPDs();
+    CDSCurve ctpyCDS(ctpyCDSSpread,ctpyLGD,maxmaturity,timesteps);
+    CDSCurve ownCDS(ctpyCDSSpread,ctpyLGD,maxmaturity,timesteps);
+
+    std::map<double,double> ctpyMarginalPDs = ctpyCDS.getMarginalPDs();
+    std::map<double,double> ownMarginalPDs = ownCDS.getMarginalPDs();
 
     // Step7: calculate CVA as sum(EE*marginal PD*LGD)
     double CVA = 0.0;
-    for (double j=0.25; j<=EEprofile.size()*0.25; j+=0.25){
+    for (double j=0.25; j<=EPEprofile.size()*0.25; j+=0.25){
             //std::cout << "base exposure at "<< j << " :" << EEprofile[j] << " and marginal PD:" << marginalPDs[j] << std::endl;
-            CVA += EEprofile[j]*marginalPDs[j]*LGD ;
+            CVA += EPEprofile[j]*ctpyMarginalPDs[j]*ctpyLGD ;
     }
 
-    std::cout << "CVA for given trade and market data (as $ amount):" << CVA << std::endl;
-    std::cout << "CVA for given trade and market data (bps of notional):" << CVA*10000.0/abs(Swap1.getNotional()) << std::endl;
+    // Step7: calculate DVA as sum(EE*marginal PD*LGD)
+    double DVA = 0.0;
+    for (double j=0.25; j<=ENEprofile.size()*0.25; j+=0.25){
+            //std::cout << "base exposure at "<< j << " :" << EEprofile[j] << " and marginal PD:" << marginalPDs[j] << std::endl;
+            DVA += ENEprofile[j]*ownMarginalPDs[j]*ownLGD ;
+    }
+
+    std::cout << "CVA for given portfolio and market data (as $ amount):" << CVA << std::endl;
+    std::cout << "DVA for given portfolio and market data (as $ amount):" << DVA << std::endl;
 
     return 0;
 }

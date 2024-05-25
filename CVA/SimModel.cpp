@@ -2,9 +2,10 @@
 #include "SimModel.h"
 #include "Pricer.h"
 
-SimulateRate::SimulateRate(RateCurve curve, double vol, double simPaths){
+SimulateRate::SimulateRate(RateCurve curve, double vol, double meanRev, double simPaths){
     xCurve=curve;
     xVol=vol;
+    xMeanRev=meanRev;
     xSimPaths=simPaths;
 }
 

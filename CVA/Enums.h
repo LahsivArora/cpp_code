@@ -1,6 +1,8 @@
+#ifndef ENUMS_H_
+#define ENUMS_H_
+
 /* contains all Enums*/
 
-// Enum for Trade type
-// Enum for Leg type
-// Enum for Curve type
-// 
+enum class RiskType { OWN, CTPY };
+  
+#endif

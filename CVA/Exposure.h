@@ -5,6 +5,7 @@
 #include "RateCurve.h"
 #include "Swap.h"
 #include "Portfolio.h"
+#include "Enums.h"
 
 /* Calculate exposure given:
    1. Time steps (Quarterly first and then monthly)
@@ -22,7 +23,7 @@ private:
     std::vector<RateCurve> xSimCurves;
 public:
     ExposureCalc(Portfolio pfolio, std::vector<RateCurve> simCurves);
-    std::map<double,double> getEEProfile();
+    std::map<double,double> getEEProfile(RiskType calc);
 };
   
 #endif
