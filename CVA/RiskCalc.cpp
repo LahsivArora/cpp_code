@@ -9,7 +9,6 @@ RiskCalc::RiskCalc(std::map<double,double> exposure, CDSCurve curve, double LGD)
 }
 
 double RiskCalc::CalcXVA(){
-
     double XVA;
     std::map<double,double> marginalPDs = xCurve.getMarginalPDs();
 
@@ -17,7 +16,11 @@ double RiskCalc::CalcXVA(){
     for (double j=0.25; j<=xExposure.size()*0.25; j+=0.25){
             XVA += xExposure[j]*marginalPDs[j]*xLGD ;
     }
-
     return XVA;
+}
 
+double RiskCalc::CalcXVA(){
+    double RWA = 0.0;
+
+    return RWA;
 }
