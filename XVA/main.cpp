@@ -9,7 +9,7 @@
 #include "CDSCurve.h"
 #include "NettingSet.h"
 #include "Enums.h"
-#include "RiskCalc.h"
+#include "XVACalc.h"
 
 
 int main()
@@ -17,8 +17,8 @@ int main()
     // Step1a: defining portfolio of swaps
     // +ive notional means receive fixed-pay float and 4 means Quarterly payments
     VanillaSwap Swap1(6.5,-2500000.0, {4.0,0.0480},{4.0,-0.0025});
-    VanillaSwap Swap2(4.5,1500000.0, {4.0,0.0500},{4.0,-0.0025});
-    VanillaSwap Swap3(8.5,1000000.0, {4.0,0.0475},{4.0,-0.0025});
+    VanillaSwap Swap2(4.5,1000000.0, {4.0,0.0500},{4.0,-0.0025});
+    VanillaSwap Swap3(8.5,1500000.0, {4.0,0.0475},{4.0,-0.0025});
 
     // Step1b: define portfolio with 3 swaps 
     std::vector<VanillaSwap> trades;
@@ -30,11 +30,13 @@ int main()
     // Step2: defining rate curve with pillars as 6m, 1Y, 2Y, 5Y, 7Y, 10Y. For now using zero rates
     // curve has hump at 2Y point i.e. slowly downward sloping from 2Y to 10Y
     RateCurve SOFR({{0.5,0.0225},{1.0,0.0375},{2.0,0.05},{5.0,0.049},{7.0,0.0475},{10.0,0.045}});
+    RateCurve FundingCurve({{0.5,0.0375},{1.0,0.0525},{2.0,0.065},{5.0,0.064},{7.0,0.0625},{10.0,0.06}});
 
     // Step3: pricing trade and netting set (with Swap/s and RateCurve objects) 
     SwapPricer price1(Swap3,SOFR);
-    double baseTradePV = price1.getTradeNPV();
-    double baseNetSetPV = netSet.getTradesNPV(SOFR);
+    double tradeBasePV = price1.getTradeNPV();
+    double netSetbasePV = netSet.getTradesNPV(SOFR);
+    double netSetFundPV = netSet.getTradesNPV(FundingCurve);
 
     // Step4: simulate curves using base RateCurve object + simulation params. using HW model
     double rateVol = 0.15; // i.e. 15% annual vol. constant for now.
@@ -63,12 +65,14 @@ int main()
     CDSCurve ownCDS(ctpyCDSSpread,ctpyLGD,maxmaturity,timesteps);
 
     // Step7: calculate CVA, DVA and RWA 
-    RiskCalc CVA(EPEprofile,ctpyCDS,ctpyLGD);
-    RiskCalc DVA(ENEprofile,ownCDS,ownLGD);
-    RiskCalc RWA(EPEprofile,ctpyCDS,ctpyLGD); // placeholder for SA-CCR calculation of RWA
+    XVACalc CVA(EPEprofile,ctpyCDS,ctpyLGD);
+    XVACalc DVA(ENEprofile,ownCDS,ownLGD);
 
-    std::cout << "CVA for given netting set and market data (as $ amount):" << CVA.CalcXVA() << std::endl;
-    std::cout << "DVA for given netting set and market data (as $ amount):" << DVA.CalcXVA() << std::endl;
+    std::cout << "For given netting set and market data (all XVA are in $ amount):" << std::endl;
+    std::cout << "FVA (+ive means charge to client):" << netSetbasePV-netSetFundPV << std::endl;
+    std::cout << "CVA (+ive means charge to client):" << CVA.calcXVA() << std::endl;
+    std::cout << "DVA (+ive means benefit to bank):" << DVA.calcXVA() << std::endl;
+    std::cout << "RWA (using SA-CCR):" << CVA.calcRWA() << std::endl; 
 
     return 0;
 }

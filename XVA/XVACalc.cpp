@@ -1,14 +1,14 @@
-#include "RiskCalc.h"
+#include "XVACalc.h"
 #include "CDSCurve.h"
 #include "Exposure.h"
 
-RiskCalc::RiskCalc(std::map<double,double> exposure, CDSCurve curve, double LGD){
+XVACalc::XVACalc(std::map<double,double> exposure, CDSCurve curve, double LGD){
     xExposure=exposure;
     xCurve=curve;
     xLGD=LGD;
 }
 
-double RiskCalc::CalcXVA(){
+double XVACalc::calcXVA(){
     double XVA;
     std::map<double,double> marginalPDs = xCurve.getMarginalPDs();
 
@@ -19,9 +19,17 @@ double RiskCalc::CalcXVA(){
     return XVA;
 }
 
-double RiskCalc::CalcRWA(){
+double XVACalc::calcRWA(){
     // calculation based on SA-CCR (standardized approach for counterparty credit risk)
     double RWA = 0.0;
 
     return RWA;
+}
+
+
+double XVACalc::calcInitialMargin(){
+    // calculation based on SIMM (standardized initial margin model) by ISDA
+    double IM = 0.0;
+
+    return IM;
 }

@@ -1,10 +1,10 @@
-#ifndef RISKCALC_H_
-#define RISKCALC_H_
+#ifndef XVACALC_H_
+#define XVACALC_H_
 
 #include "Exposure.h"
 #include "CDSCurve.h"
 
-class RiskCalc{
+class XVACalc{
 private:
     std::map<double,double> xExposure;
     CDSCurve xCurve;
@@ -12,9 +12,10 @@ private:
 public:
     // assuming Leg1 is fixed rate and Leg2 is floating rate
     // inputs are swap object, discount factors and fwd rates 
-    RiskCalc(std::map<double,double> exposure, CDSCurve curve, double LGD);
-    double CalcXVA();
-    double CalcRWA();
+    XVACalc(std::map<double,double> exposure, CDSCurve curve, double LGD);
+    double calcXVA();
+    double calcRWA();
+    double calcInitialMargin();
 };
 
 #endif
