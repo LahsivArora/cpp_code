@@ -22,7 +22,9 @@ private:
     Portfolio xPfolio;
     std::vector<RateCurve> xSimCurves;
 public:
+    ExposureCalc();
     ExposureCalc(Portfolio pfolio, std::vector<RateCurve> simCurves);
+    std::vector<std::map<double,double>> calc();
     std::map<double,double> getEEProfile(RiskType calc);
 };
   

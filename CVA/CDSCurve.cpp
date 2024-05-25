@@ -2,6 +2,8 @@
 #include "CDSCurve.h"
 #include <cmath>
 
+CDSCurve::CDSCurve(){}
+
 CDSCurve::CDSCurve(double CDSSpread, double LGD, double maxMaturity, double timesteps){
     xSpread=CDSSpread;
     xLGD=LGD;

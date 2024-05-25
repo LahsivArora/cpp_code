@@ -4,14 +4,16 @@
 #include "Pricer.h"
 #include "Exposure.h"
 
+ExposureCalc::ExposureCalc(){}
 
 ExposureCalc::ExposureCalc(Portfolio pfolio, std::vector<RateCurve> simCurves){
     xSimCurves=simCurves;
     xPfolio=pfolio;
 }
 
-std::map<double,double> ExposureCalc::getEEProfile(RiskType calc){
+std::vector<std::map<double,double>> ExposureCalc::calc(){
 
+    std::vector<std::map<double,double>> output;
     std::map<double,double> EPEprofile;
     std::map<double,double> ENEprofile;
     double maxMaturity = xPfolio.getMaxMaturity()+1.0;
@@ -35,8 +37,18 @@ std::map<double,double> ExposureCalc::getEEProfile(RiskType calc){
         EPEprofile.insert(std::pair<double,double>(i,exposurePos/n));        
         ENEprofile.insert(std::pair<double,double>(i,-1.0*exposureNeg/n));        
     }
-    if (calc == RiskType::CTPY)
-        return EPEprofile;
+    output.push_back(EPEprofile);
+    output.push_back(ENEprofile);
+
+    return output;
+}
+
+std::map<double,double> ExposureCalc::getEEProfile(RiskType type){
+
+    std::vector<std::map<double,double>> output = calc();
+    if (type == RiskType::CTPY)
+        return output[0];
     else
-        return ENEprofile;
+        return output[1];
+
 }
