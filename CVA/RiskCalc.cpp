@@ -20,6 +20,7 @@ double RiskCalc::CalcXVA(){
 }
 
 double RiskCalc::CalcRWA(){
+    // calculation based on SA-CCR (standardized approach for counterparty credit risk)
     double RWA = 0.0;
 
     return RWA;

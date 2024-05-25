@@ -62,9 +62,10 @@ int main()
     double ownCDSSpread = 150.0; // assuming constant CDS spread of 150bps for own
     CDSCurve ownCDS(ctpyCDSSpread,ctpyLGD,maxmaturity,timesteps);
 
-    // Step7: calculate CVA and DVA 
+    // Step7: calculate CVA, DVA and RWA 
     RiskCalc CVA(EPEprofile,ctpyCDS,ctpyLGD);
     RiskCalc DVA(ENEprofile,ownCDS,ownLGD);
+    RiskCalc RWA(EPEprofile,ctpyCDS,ctpyLGD); // placeholder for SA-CCR calculation of RWA
 
     std::cout << "CVA for given netting set and market data (as $ amount):" << CVA.CalcXVA() << std::endl;
     std::cout << "DVA for given netting set and market data (as $ amount):" << DVA.CalcXVA() << std::endl;
