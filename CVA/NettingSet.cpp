@@ -1,23 +1,23 @@
 #include <vector>
 #include "Swap.h"
-#include "Portfolio.h"
+#include "NettingSet.h"
 #include "Pricer.h"
 
-Portfolio::Portfolio(){}
+NettingSet::NettingSet(){}
 
-Portfolio::Portfolio(std::vector<VanillaSwap> swaps){
+NettingSet::NettingSet(std::vector<VanillaSwap> swaps){
     xSwaps=swaps;
 }
 
-std::vector<VanillaSwap> Portfolio::getTrades(){
+std::vector<VanillaSwap> NettingSet::getTrades(){
     return xSwaps;
 }
 
-double Portfolio::getNoOfTrades(){
+double NettingSet::getNoOfTrades(){
     return xSwaps.size();
 }
 
-double Portfolio::getMaxMaturity(){
+double NettingSet::getMaxMaturity(){
     double n = getNoOfTrades();
     double maturity = 0.0;
 
@@ -28,7 +28,7 @@ double Portfolio::getMaxMaturity(){
     return maturity;
 }
 
-double Portfolio::getTradesNPV(RateCurve curve){
+double NettingSet::getTradesNPV(RateCurve curve){
     double npvs = 0.0;
 
     for (double i=0; i<getNoOfTrades();i++){

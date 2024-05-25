@@ -19,7 +19,7 @@ double RiskCalc::CalcXVA(){
     return XVA;
 }
 
-double RiskCalc::CalcXVA(){
+double RiskCalc::CalcRWA(){
     double RWA = 0.0;
 
     return RWA;

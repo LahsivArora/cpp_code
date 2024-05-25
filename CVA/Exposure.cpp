@@ -6,9 +6,9 @@
 
 ExposureCalc::ExposureCalc(){}
 
-ExposureCalc::ExposureCalc(Portfolio pfolio, std::vector<RateCurve> simCurves){
+ExposureCalc::ExposureCalc(NettingSet netSet, std::vector<RateCurve> simCurves){
     xSimCurves=simCurves;
-    xPfolio=pfolio;
+    xNetSet=netSet;
 }
 
 std::vector<std::map<double,double>> ExposureCalc::calc(){
@@ -16,10 +16,10 @@ std::vector<std::map<double,double>> ExposureCalc::calc(){
     std::vector<std::map<double,double>> output;
     std::map<double,double> EPEprofile;
     std::map<double,double> ENEprofile;
-    double maxMaturity = xPfolio.getMaxMaturity()+1.0;
+    double maxMaturity = xNetSet.getMaxMaturity()+1.0;
     double n = xSimCurves.size();
-    double trades = xPfolio.getNoOfTrades();
-    std::vector<VanillaSwap> tradeObjs = xPfolio.getTrades();
+    double trades = xNetSet.getNoOfTrades();
+    std::vector<VanillaSwap> tradeObjs = xNetSet.getTrades();
 
     // Exposure calc. profile matches expectations. using quarterly calc for exposures
     for (double i=0.25; i<maxMaturity; i+=0.25){

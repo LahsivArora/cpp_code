@@ -4,7 +4,7 @@
 #include <vector>
 #include "RateCurve.h"
 #include "Swap.h"
-#include "Portfolio.h"
+#include "NettingSet.h"
 #include "Enums.h"
 
 /* Calculate exposure given:
@@ -19,11 +19,11 @@
 
 class ExposureCalc{
 private:
-    Portfolio xPfolio;
+    NettingSet xNetSet;
     std::vector<RateCurve> xSimCurves;
 public:
     ExposureCalc();
-    ExposureCalc(Portfolio pfolio, std::vector<RateCurve> simCurves);
+    ExposureCalc(NettingSet netSet, std::vector<RateCurve> simCurves);
     std::vector<std::map<double,double>> calc();
     std::map<double,double> getEEProfile(RiskType type);
 };

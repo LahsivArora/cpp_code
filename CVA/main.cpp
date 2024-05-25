@@ -7,7 +7,7 @@
 #include "SimModel.h"
 #include "Exposure.h"
 #include "CDSCurve.h"
-#include "Portfolio.h"
+#include "NettingSet.h"
 #include "Enums.h"
 #include "RiskCalc.h"
 
@@ -25,16 +25,16 @@ int main()
     trades.push_back(Swap1);
     trades.push_back(Swap2);
     trades.push_back(Swap3);
-    Portfolio pfolio(trades); 
+    NettingSet netSet(trades); 
 
     // Step2: defining rate curve with pillars as 6m, 1Y, 2Y, 5Y, 7Y, 10Y. For now using zero rates
     // curve has hump at 2Y point i.e. slowly downward sloping from 2Y to 10Y
     RateCurve SOFR({{0.5,0.0225},{1.0,0.0375},{2.0,0.05},{5.0,0.049},{7.0,0.0475},{10.0,0.045}});
 
-    // Step3: pricing trade and portfolio (with Swap/s and RateCurve objects) 
+    // Step3: pricing trade and netting set (with Swap/s and RateCurve objects) 
     SwapPricer price1(Swap3,SOFR);
     double baseTradePV = price1.getTradeNPV();
-    double basePfolioPV = pfolio.getTradesNPV(SOFR);
+    double baseNetSetPV = netSet.getTradesNPV(SOFR);
 
     // Step4: simulate curves using base RateCurve object + simulation params. using HW model
     double rateVol = 0.15; // i.e. 15% annual vol. constant for now.
@@ -46,9 +46,9 @@ int main()
 
     // Step5: generate exposure profile using Swap and Simulated curves
     // assuming Quarterly time steps in exposure calculation; exposure is already discounted to today
-    ExposureCalc pfolioExProfile(pfolio,simCurves);
-    std::map<double,double> EPEprofile = pfolioExProfile.getEEProfile(RiskType::CTPY);
-    std::map<double,double> ENEprofile = pfolioExProfile.getEEProfile(RiskType::OWN);
+    ExposureCalc netSetExProfile(netSet,simCurves);
+    std::map<double,double> EPEprofile = netSetExProfile.getEEProfile(RiskType::CTPY);
+    std::map<double,double> ENEprofile = netSetExProfile.getEEProfile(RiskType::OWN);
 
     // Step6: create CDS curve with marginal default probabilities assuming contant hazard rate    
     double timesteps = 0.25; // quarterly steps to match exposure profile
@@ -66,8 +66,8 @@ int main()
     RiskCalc CVA(EPEprofile,ctpyCDS,ctpyLGD);
     RiskCalc DVA(ENEprofile,ownCDS,ownLGD);
 
-    std::cout << "CVA for given portfolio and market data (as $ amount):" << CVA.CalcXVA() << std::endl;
-    std::cout << "DVA for given portfolio and market data (as $ amount):" << DVA.CalcXVA() << std::endl;
+    std::cout << "CVA for given netting set and market data (as $ amount):" << CVA.CalcXVA() << std::endl;
+    std::cout << "DVA for given netting set and market data (as $ amount):" << DVA.CalcXVA() << std::endl;
 
     return 0;
 }

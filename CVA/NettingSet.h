@@ -1,16 +1,16 @@
-#ifndef PORTFOLIO_H_
-#define PORTFOLIO_H_
+#ifndef NETTINGSET_H_
+#define NETTINGSET_H_
 
 #include <vector>
 #include "Swap.h"
 #include "RateCurve.h"
 
-class Portfolio{
+class NettingSet{
 private:
     std::vector<VanillaSwap> xSwaps;
 public:
-    Portfolio();  // default constructor
-    Portfolio(std::vector<VanillaSwap> swaps);
+    NettingSet();  // default constructor
+    NettingSet(std::vector<VanillaSwap> swaps);
     double getMaxMaturity();
     std::vector<VanillaSwap> getTrades();
     double getNoOfTrades();
