@@ -10,6 +10,7 @@
 #include "NettingSet.h"
 #include "Enums.h"
 #include "XVACalc.h"
+#include "RiskEngine.h"
 
 
 int main()
@@ -37,6 +38,12 @@ int main()
     double tradeBasePV = price1.getTradeNPV();
     double netSetbasePV = netSet.getTradesNPV(SOFR);
     double netSetFundPV = netSet.getTradesNPV(FundingCurve);
+    RiskEngine riskSet(netSet, SOFR);
+    std::map<double,double> irDelta = riskSet.calcIRDelta();
+
+    for (auto it=irDelta.begin(); it != irDelta.end(); it++){
+        std::cout << "Tenor:" << it->first << " irDelta:" << it->second << std::endl;
+    }
 
     // Step4: simulate curves using base RateCurve object + simulation params. using HW model
     double rateVol = 0.15; // i.e. 15% annual vol. constant for now.

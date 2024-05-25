@@ -21,10 +21,9 @@ private:
 public:
     RateCurve();     // default constructor
     RateCurve(std::map<double,double> rates);
+    std::map<double,double> getRates();
     std::vector<double> getDiscFactors(std::vector<double> schedule);
     std::vector<double> getFwdRates(std::vector<double> schedule);
 };
-
-
   
 #endif

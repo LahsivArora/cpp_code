@@ -8,6 +8,11 @@ RateCurve::RateCurve(std::map<double,double> rates){
     xRates=rates;
 }
 
+std::map<double,double> RateCurve::getRates(){
+    return xRates;
+}
+
+
 double RateCurve::interpolate(double x1, double y1, double x2, double y2, double x){
     double val;
     if (x1 == x2)

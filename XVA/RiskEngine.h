@@ -4,6 +4,7 @@
 #include <vector>
 #include "NettingSet.h"
 #include "RateCurve.h"
+#include "Pricer.h"
 
 class RiskEngine{
 private:
