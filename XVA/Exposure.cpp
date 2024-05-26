@@ -1,8 +1,10 @@
 #include <vector>
+#include <cmath>
 #include "RateCurve.h"
 #include "Swap.h"
 #include "Pricer.h"
 #include "Exposure.h"
+#include "RiskEngine.h"
 
 ExposureCalc::ExposureCalc(){}
 
@@ -43,7 +45,7 @@ std::vector<std::map<double,double>> ExposureCalc::calc(){
     return output;
 }
 
-std::map<double,double> ExposureCalc::getEEProfile(RiskType type){
+std::map<double,double> ExposureCalc::calcEEProfile(RiskType type){
 
     std::vector<std::map<double,double>> output = calc();
     if (type == RiskType::CTPY)
@@ -51,4 +53,37 @@ std::map<double,double> ExposureCalc::getEEProfile(RiskType type){
     else
         return output[1];
 
+}
+
+double ExposureCalc::calcEAD(){
+
+    double EAD = 0.0;
+    std::vector<VanillaSwap> trades = xNetSet.getTrades();
+    RateCurve basecurve = xSimCurves[0];
+
+    double netSetPV = xNetSet.getTradesNPV(basecurve);
+    double replacementCost = (netSetPV>0.0?netSetPV:0.0);
+
+    double Dsub1Y = 0.0;
+    double D1Y5Y = 0.0;
+    double Dabove5Y = 0.0; // define buckets by maturity of swaps
+    double PFE = 0.0;
+
+    for (auto it = trades.begin(); it != trades.end(); it++) {
+        RiskEngine trade(*it, basecurve);
+        double D = trade.calcRWADelta() * it->getRiskHorizon() * it->getAdjNotional();
+
+        if (it->getMaturity() <= 1.0)
+            Dsub1Y += D;
+        else if (it->getMaturity() > 1.0 && it->getMaturity() <= 5.0)
+            D1Y5Y += D;
+        else
+            Dabove5Y += D;
+    }
+    PFE = sqrt(pow(Dsub1Y,2) + pow(D1Y5Y,2) + pow(Dabove5Y,2) + 1.4*Dsub1Y*D1Y5Y + 1.4*D1Y5Y*Dabove5Y + 0.6*Dsub1Y*Dabove5Y);
+    double addOn = 0.005 * PFE; // supervisory factor for IRS is 0.5%
+
+    // EAD = alpha * (Replacement Cost + multiplier * AddOn)
+    EAD = 1.4 * (replacementCost + 1.0 * addOn);
+    return EAD;
 }

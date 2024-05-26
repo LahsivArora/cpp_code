@@ -1,4 +1,5 @@
 #include <vector>
+#include <cmath>
 #include "Swap.h"
 
 VanillaSwap::VanillaSwap(){}
@@ -37,6 +38,16 @@ double VanillaSwap::getMaturity(){
 
 double VanillaSwap::getNotional(){
     return xnotional;
+}
+
+double VanillaSwap::getAdjNotional(){
+    return xnotional * (1.0-exp(-0.05*getMaturity()))/0.05;
+}
+
+double VanillaSwap::getRiskHorizon(){
+    // margin period is min(maturity,1Y) for non-CSA/uncollateralized counterparty
+    double marginPeriod = (getMaturity()<1.0?getMaturity():1.0);  
+    return sqrt(marginPeriod);
 }
 
 double VanillaSwap::getFixedRate(){

@@ -29,6 +29,7 @@ public:
     double getMaturity();
     double getNotional();
     double getAdjNotional(); // for RWA calc
+    double getRiskHorizon(); // for RWA calc
     double getFixedRate();
     double getFloatSpread();
     double getFixedFreq();

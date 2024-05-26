@@ -3,16 +3,18 @@
 
 #include "Exposure.h"
 #include "CDSCurve.h"
+#include "Enums.h"
 
 class XVACalc{
 private:
-    std::map<double,double> xExposure;
+    ExposureCalc xExposureObj;
     CDSCurve xCurve;
     double xLGD;
+    RiskType xType;
 public:
     // assuming Leg1 is fixed rate and Leg2 is floating rate
     // inputs are swap object, discount factors and fwd rates 
-    XVACalc(std::map<double,double> exposure, CDSCurve curve, double LGD);
+    XVACalc(ExposureCalc &exposureObj, CDSCurve curve, double LGD, RiskType type);
     double calcXVA();
     double calcRWA();
     double calcInitialMargin();

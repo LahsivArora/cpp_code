@@ -25,7 +25,8 @@ public:
     ExposureCalc();
     ExposureCalc(NettingSet &netSet, std::vector<RateCurve> &simCurves);
     std::vector<std::map<double,double>> calc();
-    std::map<double,double> getEEProfile(RiskType type);
+    std::map<double,double> calcEEProfile(RiskType type); // for CVA/DVA calc
+    double calcEAD(); // for RWA calc
 };
   
 #endif

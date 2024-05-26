@@ -57,8 +57,6 @@ int main()
     // Step5: generate exposure profile using Swap and Simulated curves
     // assuming Quarterly time steps in exposure calculation; exposure is already discounted to today
     ExposureCalc netSetExProfile(netSet,simCurves);
-    std::map<double,double> EPEprofile = netSetExProfile.getEEProfile(RiskType::CTPY);
-    std::map<double,double> ENEprofile = netSetExProfile.getEEProfile(RiskType::OWN);
 
     // Step6: create CDS curve with marginal default probabilities assuming contant hazard rate    
     double timesteps = 0.25; // quarterly steps to match exposure profile
@@ -73,8 +71,8 @@ int main()
     CDSCurve ownCDS(ownCDSSpread,ownLGD,maxmaturity,timesteps);
 
     // Step7: calculate CVA, DVA and RWA 
-    XVACalc CVA(EPEprofile,ctpyCDS,ctpyLGD);
-    XVACalc DVA(ENEprofile,ownCDS,ownLGD);
+    XVACalc CVA(netSetExProfile,ctpyCDS,ctpyLGD,RiskType::CTPY);
+    XVACalc DVA(netSetExProfile,ownCDS,ownLGD,RiskType::OWN);
 
     std::cout << "For given netting set and market data (all XVA are in $ amount):" << std::endl;
     std::cout << "FVA (+ive means charge to client):" << netSetbasePV-netSetFundPV << std::endl;
