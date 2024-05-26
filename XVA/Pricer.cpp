@@ -1,7 +1,7 @@
 #include <vector>
 #include "Pricer.h"
 
-SwapPricer::SwapPricer(VanillaSwap swap, RateCurve curve, double lag){
+SwapPricer::SwapPricer(VanillaSwap &swap, RateCurve &curve, double lag){
     xSwap=swap;
     xCurve=curve;
     xLag=lag;

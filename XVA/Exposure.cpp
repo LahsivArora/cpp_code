@@ -6,7 +6,7 @@
 
 ExposureCalc::ExposureCalc(){}
 
-ExposureCalc::ExposureCalc(NettingSet netSet, std::vector<RateCurve> simCurves){
+ExposureCalc::ExposureCalc(NettingSet &netSet, std::vector<RateCurve> &simCurves){
     xSimCurves=simCurves;
     xNetSet=netSet;
 }

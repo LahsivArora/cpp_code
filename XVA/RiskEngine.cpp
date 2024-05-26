@@ -1,6 +1,6 @@
 #include "RiskEngine.h"
 
-RiskEngine::RiskEngine(NettingSet netSet, RateCurve curve){
+RiskEngine::RiskEngine(NettingSet &netSet, RateCurve &curve){
     xNetSet=netSet;
     xCurve=curve;
 }

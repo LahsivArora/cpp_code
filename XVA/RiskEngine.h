@@ -11,7 +11,7 @@ private:
     NettingSet xNetSet;
     RateCurve xCurve;
 public:
-    RiskEngine(NettingSet netSet, RateCurve curve);
+    RiskEngine(NettingSet &netSet, RateCurve &curve);
     std::map<double,double> calcIRDelta();
 };
 

@@ -23,7 +23,7 @@ private:
     std::vector<RateCurve> xSimCurves;
 public:
     ExposureCalc();
-    ExposureCalc(NettingSet netSet, std::vector<RateCurve> simCurves);
+    ExposureCalc(NettingSet &netSet, std::vector<RateCurve> &simCurves);
     std::vector<std::map<double,double>> calc();
     std::map<double,double> getEEProfile(RiskType type);
 };

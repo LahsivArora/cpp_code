@@ -10,7 +10,7 @@ private:
     std::vector<VanillaSwap> xSwaps;
 public:
     NettingSet();  // default constructor
-    NettingSet(std::vector<VanillaSwap> swaps);
+    NettingSet(std::vector<VanillaSwap> &swaps);
     double getMaxMaturity();
     std::vector<VanillaSwap> getTrades();
     unsigned int getNoOfTrades();
