@@ -42,6 +42,13 @@ int main()
     // RiskEngine riskSet(Swap4, SOFR); // riskengine object can be created with 1 or multiple trades
     std::map<double,double> irDelta = riskSet.calcIRDelta();
 
+/* --------------------------------------
+    std::vector<double> SIMMtemplate = {0.038462,0.083333,0.25,0.5,1.0,2.0,3.0,5.0,10.0};
+    RateCurve SIMMCurve = SOFR.templateTransform(SIMMtemplate);
+    RiskEngine riskCalc(netSet,SIMMCurve);
+    std::map<double,double> irDeltaSIMM = riskCalc.calcIRDelta();
+   --------------------------------------*/
+
     for (auto it=irDelta.begin(); it != irDelta.end(); it++){
         std::cout << "Tenor:" << it->first << " irDelta:" << it->second << std::endl;
     }

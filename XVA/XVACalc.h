@@ -11,10 +11,12 @@ private:
     CDSCurve xCurve;
     double xLGD;
     RiskType xType;
+    NettingSet xNetSet;
+    RateCurve xBaseCurve;
 public:
     // assuming Leg1 is fixed rate and Leg2 is floating rate
     // inputs are swap object, discount factors and fwd rates 
-    XVACalc(ExposureCalc &exposureObj, CDSCurve curve, double LGD, RiskType type);
+    XVACalc(ExposureCalc& exposureObj, CDSCurve curve, double LGD, RiskType type);
     double calcXVA();
     double calcRWA();
     double calcInitialMargin();

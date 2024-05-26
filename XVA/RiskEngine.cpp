@@ -1,11 +1,13 @@
 #include "RiskEngine.h"
 
-RiskEngine::RiskEngine(NettingSet &netSet, RateCurve &curve){
+RiskEngine::RiskEngine(){}
+
+RiskEngine::RiskEngine(NettingSet& netSet, RateCurve& curve){
     xNetSet=netSet;
     xCurve=curve;
 }
 
-RiskEngine::RiskEngine(VanillaSwap &swap, RateCurve &curve){
+RiskEngine::RiskEngine(VanillaSwap& swap, RateCurve& curve){
     xSwap=swap;
     xCurve=curve;
     std::vector<VanillaSwap> dummy;

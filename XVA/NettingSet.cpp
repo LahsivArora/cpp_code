@@ -5,7 +5,7 @@
 
 NettingSet::NettingSet(){}
 
-NettingSet::NettingSet(std::vector<VanillaSwap> &swaps){
+NettingSet::NettingSet(std::vector<VanillaSwap>& swaps){
     xSwaps=swaps;
 }
 

@@ -21,12 +21,14 @@ class ExposureCalc{
 private:
     NettingSet xNetSet;
     std::vector<RateCurve> xSimCurves;
+    std::vector<std::map<double,double>> calc();
 public:
     ExposureCalc();
-    ExposureCalc(NettingSet &netSet, std::vector<RateCurve> &simCurves);
-    std::vector<std::map<double,double>> calc();
+    ExposureCalc(NettingSet& netSet, std::vector<RateCurve>& simCurves);
     std::map<double,double> calcEEProfile(RiskType type); // for CVA/DVA calc
     double calcEAD(); // for RWA calc
+    NettingSet getNettingSet();
+    RateCurve getBaseCurve();
 };
   
 #endif

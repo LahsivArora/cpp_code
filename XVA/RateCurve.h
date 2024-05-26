@@ -18,12 +18,14 @@ private:
     std::map<double,double> xRates;
     double interpolate(double x1, double y1, double x2, double y2, double x);
     std::vector<double> tenorMatching (double tenor);
+    std::vector<double> getZeroRates(std::vector<double> schedule);
 public:
     RateCurve();     // default constructor
     RateCurve(std::map<double,double> rates);
     std::map<double,double> getRates();
     std::vector<double> getDiscFactors(std::vector<double> schedule);
     std::vector<double> getFwdRates(std::vector<double> schedule);
+    RateCurve templateTransform(std::vector<double> schedule);
 };
   
 #endif

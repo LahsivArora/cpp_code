@@ -8,9 +8,17 @@
 
 ExposureCalc::ExposureCalc(){}
 
-ExposureCalc::ExposureCalc(NettingSet &netSet, std::vector<RateCurve> &simCurves){
+ExposureCalc::ExposureCalc(NettingSet& netSet, std::vector<RateCurve>& simCurves){
     xSimCurves=simCurves;
     xNetSet=netSet;
+}
+
+NettingSet ExposureCalc::getNettingSet(){
+    return xNetSet;
+}
+
+RateCurve ExposureCalc::getBaseCurve(){
+    return xSimCurves[0];
 }
 
 std::vector<std::map<double,double>> ExposureCalc::calc(){
@@ -59,7 +67,7 @@ double ExposureCalc::calcEAD(){
 
     double EAD = 0.0;
     std::vector<VanillaSwap> trades = xNetSet.getTrades();
-    RateCurve basecurve = xSimCurves[0];
+    RateCurve basecurve = getBaseCurve();
 
     double netSetPV = xNetSet.getTradesNPV(basecurve);
     double replacementCost = (netSetPV>0.0?netSetPV:0.0);

@@ -13,8 +13,9 @@ private:
     RateCurve xCurve;
     VanillaSwap xSwap;
 public:
-    RiskEngine(NettingSet &netSet, RateCurve &curve);
-    RiskEngine(VanillaSwap &swap, RateCurve &curve);
+    RiskEngine();
+    RiskEngine(NettingSet& netSet, RateCurve& curve);
+    RiskEngine(VanillaSwap& swap, RateCurve& curve);
     std::map<double,double> calcIRDelta();
     double calcRWADelta();
 };

@@ -64,6 +64,17 @@ std::vector<double> RateCurve::getDiscFactors(std::vector<double> schedule){
     return dfs;
 }
 
+std::vector<double> RateCurve::getZeroRates(std::vector<double> schedule){
+    std::vector<double> zrs;
+
+    for (auto it = schedule.begin(); it != schedule.end(); ++it) {
+        std::vector<double> coord = tenorMatching(*it) ;
+        double interRate = interpolate(coord[0],coord[1],coord[2],coord[3],*it);
+        zrs.push_back(interRate);
+    }
+    return zrs;
+}
+
 std::vector<double> RateCurve::getFwdRates(std::vector<double> schedule){
     std::vector<double> rates, fwds;
     double freq = 1.0/schedule[0];
@@ -87,3 +98,16 @@ std::vector<double> RateCurve::getFwdRates(std::vector<double> schedule){
     return fwds;
 }
 
+RateCurve RateCurve::templateTransform(std::vector<double> schedule){
+
+    std::vector<double> interpRates = getZeroRates(schedule);
+    std::map<double,double> templateRates;
+
+    for (unsigned int i = 0; i < schedule.size(); i++){
+        templateRates.insert(std::pair<double,double>(schedule[i],interpRates[i]));
+    }
+
+    RateCurve templateCurve(templateRates);
+    return templateCurve;
+
+}
