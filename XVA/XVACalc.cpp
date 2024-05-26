@@ -9,7 +9,7 @@ XVACalc::XVACalc(std::map<double,double> exposure, CDSCurve curve, double LGD){
 }
 
 double XVACalc::calcXVA(){
-    double XVA;
+    double XVA = 0.0;
     std::map<double,double> marginalPDs = xCurve.getMarginalPDs();
 
     // calc CVA and DVA as sum(EE*marginal PD*LGD)

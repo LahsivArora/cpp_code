@@ -33,7 +33,7 @@ std::vector<double> SimulateRate::getSimulatedBaseNPVs(VanillaSwap swap1){
     std::vector<RateCurve> curves = getSimulatedCurves();
     std::vector<double> simNPVs;
 
-    for (int i=0; i <curves.size(); i++){
+    for (unsigned int i=0; i <curves.size(); i++){
         SwapPricer price2(swap1,curves[i]);
         double simPrice = price2.getTradeNPV();
         simNPVs.push_back(simPrice);

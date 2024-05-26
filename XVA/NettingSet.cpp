@@ -13,15 +13,14 @@ std::vector<VanillaSwap> NettingSet::getTrades(){
     return xSwaps;
 }
 
-double NettingSet::getNoOfTrades(){
+unsigned int NettingSet::getNoOfTrades(){
     return xSwaps.size();
 }
 
 double NettingSet::getMaxMaturity(){
-    double n = getNoOfTrades();
     double maturity = 0.0;
 
-    for (double i=0; i<n; i++){
+    for (unsigned int i=0; i<getNoOfTrades(); i++){
         double currentMat = xSwaps[i].getMaturity();
         maturity = (currentMat>maturity?currentMat:maturity);
     }
@@ -31,7 +30,7 @@ double NettingSet::getMaxMaturity(){
 double NettingSet::getTradesNPV(RateCurve curve){
     double npvs = 0.0;
 
-    for (double i=0; i<getNoOfTrades();i++){
+    for (unsigned int i=0; i<getNoOfTrades();i++){
         SwapPricer price(xSwaps[i],curve);
         npvs += price.getTradeNPV();
     }

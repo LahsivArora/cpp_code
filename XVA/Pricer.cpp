@@ -15,7 +15,7 @@ double SwapPricer::getLeg1NPV(){
     std::vector<double> flow1 = xSwap.getLegFlows(1);
     std::vector<double> xLeg1disc = xCurve.getDiscFactors(flow1);
 
-    for (int i=0; i < xLeg1disc.size(); i++){
+    for (unsigned int i=0; i < xLeg1disc.size(); i++){
         if (flow1[i] > xLag)
             npv += (notional * rate * periodAdj * xLeg1disc[i]);
     }
@@ -31,7 +31,7 @@ double SwapPricer::getLeg2NPV(){
     std::vector<double> xLeg2disc = xCurve.getDiscFactors(flow2);
     std::vector<double> xLeg2fwd = xCurve.getFwdRates(flow2);
 
-    for (int i=0; i < xLeg2disc.size(); i++){
+    for (unsigned int i=0; i < xLeg2disc.size(); i++){
         if (flow2[i] > xLag)
             npv += (notional * (xLeg2fwd[i] + spread) * periodAdj * xLeg2disc[i]);
     }

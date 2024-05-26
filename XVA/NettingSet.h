@@ -13,7 +13,7 @@ public:
     NettingSet(std::vector<VanillaSwap> swaps);
     double getMaxMaturity();
     std::vector<VanillaSwap> getTrades();
-    double getNoOfTrades();
+    unsigned int getNoOfTrades();
     double getTradesNPV(RateCurve curve);
 };
 

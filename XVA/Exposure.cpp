@@ -18,15 +18,15 @@ std::vector<std::map<double,double>> ExposureCalc::calc(){
     std::map<double,double> ENEprofile;
     double maxMaturity = xNetSet.getMaxMaturity()+1.0;
     double n = xSimCurves.size();
-    double trades = xNetSet.getNoOfTrades();
+    unsigned int trades = xNetSet.getNoOfTrades();
     std::vector<VanillaSwap> tradeObjs = xNetSet.getTrades();
 
     // Exposure calc. profile matches expectations. using quarterly calc for exposures
     for (double i=0.25; i<maxMaturity; i+=0.25){
         double exposurePos = 0.0;
         double exposureNeg = 0.0;
-        for (double k=0; k<trades; k++){
-            for (int j=0; j<n; j++){
+        for (unsigned int k=0; k<trades; k++){
+            for (unsigned int j=0; j<n; j++){
                 SwapPricer priceLag(tradeObjs[k],xSimCurves[j],i);
                 double positiveExposure = (priceLag.getTradeNPV()>0?priceLag.getTradeNPV():0);
                 double negativeExposure = (priceLag.getTradeNPV()<0?priceLag.getTradeNPV():0);

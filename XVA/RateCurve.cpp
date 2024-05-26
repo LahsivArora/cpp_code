@@ -75,7 +75,7 @@ std::vector<double> RateCurve::getFwdRates(std::vector<double> schedule){
         rates.push_back(interRate);
     }
 
-    for (int i = 0; i < schedule.size(); ++i) {
+    for (unsigned int i = 0; i < schedule.size(); ++i) {
         if (i == 0)
             fwds.push_back(rates[i]);
         else{

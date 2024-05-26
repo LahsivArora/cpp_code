@@ -17,25 +17,25 @@ int main()
 {
     // Step1a: defining portfolio of swaps
     // +ive notional means receive fixed-pay float and 4 means Quarterly payments
-    VanillaSwap Swap1(6.5,-2500000.0, {4.0,0.0480},{4.0,-0.0025});
+    VanillaSwap Swap1(7,-1500000.0, {4.0,0.0480},{4.0,-0.0025});
     VanillaSwap Swap2(4.5,1000000.0, {4.0,0.0500},{4.0,-0.0025});
     VanillaSwap Swap3(8.5,1500000.0, {4.0,0.0475},{4.0,-0.0025});
+    VanillaSwap Swap4(2.5,-1000000.0, {4.0,0.0480},{4.0,-0.0025});
 
     // Step1b: define portfolio with 3 swaps 
     std::vector<VanillaSwap> trades;
     trades.push_back(Swap1);
     trades.push_back(Swap2);
     trades.push_back(Swap3);
+    trades.push_back(Swap4);
     NettingSet netSet(trades); 
 
     // Step2: defining rate curve with pillars as 6m, 1Y, 2Y, 5Y, 7Y, 10Y. For now using zero rates
     // curve has hump at 2Y point i.e. slowly downward sloping from 2Y to 10Y
     RateCurve SOFR({{0.5,0.0225},{1.0,0.0375},{2.0,0.05},{5.0,0.049},{7.0,0.0475},{10.0,0.045}});
-    RateCurve FundingCurve({{0.5,0.0375},{1.0,0.0525},{2.0,0.065},{5.0,0.064},{7.0,0.0625},{10.0,0.06}});
+    RateCurve FundingCurve({{0.5,0.025},{1.0,0.04},{2.0,0.0525},{5.0,0.0515},{7.0,0.0525},{10.0,0.05}}); //25bp upto 5y; 50bp thereafter
 
-    // Step3: pricing trade and netting set (with Swap/s and RateCurve objects) 
-    SwapPricer price1(Swap3,SOFR);
-    double tradeBasePV = price1.getTradeNPV();
+    // Step3: pricing netting set (with Swaps and RateCurve objects) 
     double netSetbasePV = netSet.getTradesNPV(SOFR);
     double netSetFundPV = netSet.getTradesNPV(FundingCurve);
     RiskEngine riskSet(netSet, SOFR);
@@ -48,7 +48,7 @@ int main()
     // Step4: simulate curves using base RateCurve object + simulation params. using HW model
     double rateVol = 0.15; // i.e. 15% annual vol. constant for now.
     double simPaths = 5; // hardcoding simulation for now
-    double a = 0.05; // mean reversion 
+    double a = 0.05; // speed of mean reversion 
     SimulateRate simEngine(SOFR, rateVol, a, simPaths);
     std::vector<RateCurve> simCurves = simEngine.getSimulatedCurves();
     std::vector<double> simNPVs = simEngine.getSimulatedBaseNPVs(Swap1);
@@ -69,7 +69,7 @@ int main()
 
     double ownLGD = (1.0-0.8); // loss given default (LGD) assuming recovery rate (RR) is 80%
     double ownCDSSpread = 150.0; // assuming constant CDS spread of 150bps for own
-    CDSCurve ownCDS(ctpyCDSSpread,ctpyLGD,maxmaturity,timesteps);
+    CDSCurve ownCDS(ownCDSSpread,ownLGD,maxmaturity,timesteps);
 
     // Step7: calculate CVA, DVA and RWA 
     XVACalc CVA(EPEprofile,ctpyCDS,ctpyLGD);
