@@ -3,7 +3,8 @@
 
 VanillaSwap::VanillaSwap(){}
 
-VanillaSwap::VanillaSwap(double maturity, double notional, std::vector<double> Leg1, std::vector<double> Leg2){
+VanillaSwap::VanillaSwap(TradeType type,double maturity, double notional, std::vector<double> Leg1, std::vector<double> Leg2){
+    xType=type;
     xmaturity=maturity;
     xnotional=notional;
     xLeg1=Leg1;
@@ -24,6 +25,10 @@ std::vector<double> VanillaSwap::getLegFlows(int j){
         flows.push_back((i+1)/freq);
     }
     return flows;
+}
+
+TradeType VanillaSwap::getTradeType(){
+    return xType;
 }
 
 double VanillaSwap::getMaturity(){

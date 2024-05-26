@@ -17,10 +17,10 @@ int main()
 {
     // Step1a: defining portfolio of swaps
     // +ive notional means receive fixed-pay float and 4 means Quarterly payments
-    VanillaSwap Swap1(7,-1500000.0, {4.0,0.0480},{4.0,-0.0025});
-    VanillaSwap Swap2(4.5,1000000.0, {4.0,0.0500},{4.0,-0.0025});
-    VanillaSwap Swap3(8.5,1500000.0, {4.0,0.0475},{4.0,-0.0025});
-    VanillaSwap Swap4(2.5,-1000000.0, {4.0,0.0480},{4.0,-0.0025});
+    VanillaSwap Swap1(TradeType::IrSwap,7,-1500000.0, {4.0,0.0480},{4.0,-0.0025});
+    VanillaSwap Swap2(TradeType::IrSwap,4.5,1000000.0, {4.0,0.0500},{4.0,-0.0025});
+    VanillaSwap Swap3(TradeType::IrSwap,8.5,1500000.0, {4.0,0.0475},{4.0,-0.0025});
+    VanillaSwap Swap4(TradeType::IrSwap,2.5,-1000000.0, {4.0,0.0480},{4.0,-0.0025});
 
     // Step1b: define portfolio with 3 swaps 
     std::vector<VanillaSwap> trades;
@@ -33,12 +33,13 @@ int main()
     // Step2: defining rate curve with pillars as 6m, 1Y, 2Y, 5Y, 7Y, 10Y. For now using zero rates
     // curve has hump at 2Y point i.e. slowly downward sloping from 2Y to 10Y
     RateCurve SOFR({{0.5,0.0225},{1.0,0.0375},{2.0,0.05},{5.0,0.049},{7.0,0.0475},{10.0,0.045}});
-    RateCurve FundingCurve({{0.5,0.025},{1.0,0.04},{2.0,0.0525},{5.0,0.0515},{7.0,0.0525},{10.0,0.05}}); //25bp upto 5y; 50bp thereafter
+    RateCurve FundingCurve({{0.5,0.024},{1.0,0.039},{2.0,0.0515},{5.0,0.0505},{7.0,0.05},{10.0,0.0475}}); //15bp upto 5y; 25bp thereafter
 
     // Step3: pricing netting set (with Swaps and RateCurve objects) 
     double netSetbasePV = netSet.getTradesNPV(SOFR);
     double netSetFundPV = netSet.getTradesNPV(FundingCurve);
     RiskEngine riskSet(netSet, SOFR);
+    // RiskEngine riskSet(Swap4, SOFR); // riskengine object can be created with 1 or multiple trades
     std::map<double,double> irDelta = riskSet.calcIRDelta();
 
     for (auto it=irDelta.begin(); it != irDelta.end(); it++){
@@ -80,6 +81,7 @@ int main()
     std::cout << "CVA (+ive means charge to client):" << CVA.calcXVA() << std::endl;
     std::cout << "DVA (+ive means benefit to bank):" << DVA.calcXVA() << std::endl;
     std::cout << "RWA (using SA-CCR):" << CVA.calcRWA() << std::endl; 
+    std::cout << "Initial Margin (using SIMM):" << CVA.calcInitialMargin() << std::endl; 
 
     return 0;
 }

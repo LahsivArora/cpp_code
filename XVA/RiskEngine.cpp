@@ -5,6 +5,15 @@ RiskEngine::RiskEngine(NettingSet &netSet, RateCurve &curve){
     xCurve=curve;
 }
 
+RiskEngine::RiskEngine(VanillaSwap &swap, RateCurve &curve){
+    xSwap=swap;
+    xCurve=curve;
+    std::vector<VanillaSwap> dummy;
+    dummy.push_back(xSwap);
+    NettingSet netSetDummy(dummy);
+    xNetSet=netSetDummy;
+}
+
 std::map<double,double> RiskEngine::calcIRDelta(){
 
     std::map<double,double> bumpedPVs;
@@ -32,4 +41,14 @@ std::map<double,double> RiskEngine::calcIRDelta(){
     }
 
     return delta;
+}
+
+double RiskEngine::calcRWADelta(){
+    
+    double delta;
+    
+    if (xNetSet.getTrades()[0].getTradeType() == TradeType::IrSwap) 
+        delta = 1.0;
+
+    return delta; 
 }
