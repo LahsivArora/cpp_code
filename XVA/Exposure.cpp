@@ -29,7 +29,7 @@ std::vector<std::map<double,double>> ExposureCalc::calc(){
     double maxMaturity = xNetSet.getMaxMaturity()+1.0;
     double n = xSimCurves.size();
     unsigned int trades = xNetSet.getNoOfTrades();
-    std::vector<VanillaSwap> tradeObjs = xNetSet.getTrades();
+    std::vector<Swap> tradeObjs = xNetSet.getTrades();
 
     // Exposure calc. profile matches expectations. using quarterly calc for exposures
     for (double i=0.25; i<maxMaturity; i+=0.25){
@@ -66,7 +66,7 @@ std::map<double,double> ExposureCalc::calcEEProfile(RiskType type){
 double ExposureCalc::calcEAD(){
 
     double EAD = 0.0;
-    std::vector<VanillaSwap> trades = xNetSet.getTrades();
+    std::vector<Swap> trades = xNetSet.getTrades();
     RateCurve basecurve = getBaseCurve();
 
     double netSetPV = xNetSet.getTradesNPV(basecurve);

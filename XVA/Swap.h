@@ -5,17 +5,17 @@
 #include "Enums.h"
 #include "Leg.h"
 
-class VanillaSwap{
+class Swap{
 private:
     double xmaturity, xnotional, xEndFxFwd;
     Leg xLeg1, xLeg2;
     TradeType xType;
     NotionalExch xExch;
 public:
-    VanillaSwap();     // default constructor
+    Swap();     // default constructor
     // at trade level, input maturity and notional (+ive is receive leg1 and -ive is pay leg2)
     // endFxFwd is the Fx forward for the Xccy swap notional exchange at maturity; default at 1.0 for VanillaSwap
-    VanillaSwap(TradeType type, double maturity, double notional, Leg& Leg1, Leg& Leg2, NotionalExch exch, double endFxFwd = 1.0);
+    Swap(TradeType type, double maturity, double notional, Leg& Leg1, Leg& Leg2, NotionalExch exch, double endFxFwd = 1.0);
     Leg getLeg(int legNum);
     TradeType getTradeType();
     double getMaturity();

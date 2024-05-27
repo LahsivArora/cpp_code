@@ -2,9 +2,9 @@
 #include <cmath>
 #include "Swap.h"
 
-VanillaSwap::VanillaSwap(){}
+Swap::Swap(){}
 
-VanillaSwap::VanillaSwap(TradeType type,double maturity, double notional, Leg& Leg1, Leg& Leg2, NotionalExch exch, double endFxFwd){
+Swap::Swap(TradeType type,double maturity, double notional, Leg& Leg1, Leg& Leg2, NotionalExch exch, double endFxFwd){
     xType=type;
     xmaturity=maturity;
     xnotional=notional;
@@ -14,34 +14,34 @@ VanillaSwap::VanillaSwap(TradeType type,double maturity, double notional, Leg& L
     xEndFxFwd=endFxFwd;
 }
 
-double VanillaSwap::getEndFxFwd(){
+double Swap::getEndFxFwd(){
     return xEndFxFwd;
 }
 
-Leg VanillaSwap::getLeg(int legNum){
+Leg Swap::getLeg(int legNum){
     if (legNum == 1)
         return xLeg1;
     else
         return xLeg2;
 }
 
-TradeType VanillaSwap::getTradeType(){
+TradeType Swap::getTradeType(){
     return xType;
 }
 
-double VanillaSwap::getMaturity(){
+double Swap::getMaturity(){
     return xmaturity;
 }
 
-double VanillaSwap::getNotional(){
+double Swap::getNotional(){
     return xnotional;
 }
 
-double VanillaSwap::getAdjNotional(){
+double Swap::getAdjNotional(){
     return xnotional * (1.0-exp(-0.05*getMaturity()))/0.05;
 }
 
-double VanillaSwap::getRiskHorizon(){
+double Swap::getRiskHorizon(){
     // margin period is min(maturity,1Y) for non-CSA/uncollateralized counterparty
     double marginPeriod = (getMaturity()<1.0?getMaturity():1.0);  
     return sqrt(marginPeriod);

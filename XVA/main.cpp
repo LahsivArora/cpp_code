@@ -17,32 +17,34 @@
 int main()
 {
     // Step1a: defining portfolio of swaps
-    // +ive notional means receive fixed-pay float and 4 means Quarterly payments
-
-//    VanillaSwap(TradeType type, double maturity, double notional, Leg Leg1, Leg Leg2);
-//    Leg(LegType type ,Currency ccy ,double freq, double rate, double notional = 0.0, double maturity = 0.0);
-
+    // +ive notional means receive Leg1/pay Leg2 and 4 means Quarterly payments
     Leg floatLeg(LegType::Float,Currency::USD,4.0,-0.0025);
     Leg fixLeg1(LegType::Fixed,Currency::USD,4.0,0.0480);
-    VanillaSwap Swap1(TradeType::IrSwap,7.0,-1500000.0, fixLeg1, floatLeg, NotionalExch::NO);
+    Swap VanillaSwap1(TradeType::IrSwap,7.0,-1500000.0, fixLeg1, floatLeg, NotionalExch::NO);
     Leg fixLeg2(LegType::Fixed,Currency::USD,4.0,0.0500);
-    VanillaSwap Swap2(TradeType::IrSwap,4.5,1000000.0, fixLeg2, floatLeg, NotionalExch::NO);
+    Swap VanillaSwap2(TradeType::IrSwap,4.5,1000000.0, fixLeg2, floatLeg, NotionalExch::NO);
     Leg fixLeg3(LegType::Fixed,Currency::USD,4.0,0.0475);
-    VanillaSwap Swap3(TradeType::IrSwap,8.5,1500000.0, fixLeg3, floatLeg, NotionalExch::NO);
+    Swap VanillaSwap3(TradeType::IrSwap,8.5,1500000.0, fixLeg3, floatLeg, NotionalExch::NO);
     Leg fixLeg4(LegType::Fixed,Currency::USD,4.0,0.0480);
-    VanillaSwap Swap4(TradeType::IrSwap,2.5,-1000000.0, fixLeg4, floatLeg, NotionalExch::NO);
+    Swap VanillaSwap4(TradeType::IrSwap,2.5,-1000000.0, fixLeg4, floatLeg, NotionalExch::NO);
 
-    // Step1b: define portfolio with 3 swaps 
-    std::vector<VanillaSwap> trades;
-    trades.push_back(Swap1);
-    trades.push_back(Swap2);
-    trades.push_back(Swap3);
-    trades.push_back(Swap4);
+    // Step1b: define portfolio with 4 swaps 
+    std::vector<Swap> trades;
+    trades.push_back(VanillaSwap1);
+    trades.push_back(VanillaSwap2);
+    trades.push_back(VanillaSwap3);
+    trades.push_back(VanillaSwap4);
     NettingSet netSet(trades); 
 
+    // define xccy swap
+    Leg xccyFixLeg(LegType::Fixed,Currency::EUR,4.0,0.0480);
+    Leg xccyFltLeg(LegType::Float,Currency::USD,4.0,-0.0025);
+    Swap XccySwap(TradeType::IrSwap,7.0,-1500000.0, fixLeg1, floatLeg, NotionalExch::YES, 1.2418);
+
     // Step2: defining rate curve with pillars as 6m, 1Y, 2Y, 5Y, 7Y, 10Y. For now using zero rates
-    // curve has hump at 2Y point i.e. slowly downward sloping from 2Y to 10Y
-    RateCurve SOFR({{0.5,0.0225},{1.0,0.0375},{2.0,0.05},{5.0,0.049},{7.0,0.0475},{10.0,0.045}});
+    // USD curve has hump at 2Y point i.e. slowly downward sloping from 2Y to 10Y
+    RateCurve SOFR({{0.5,0.0225},{1.0,0.0375},{2.0,0.05},{5.0,0.049},{7.0,0.0475},{10.0,0.045}}); // for USD
+    RateCurve ESTR({{0.5,0.0325},{1.0,0.0300},{2.0,0.03},{5.0,0.030},{7.0,0.0275},{10.0,0.025}}); // for EUR
     RateCurve FundingCurve({{0.5,0.024},{1.0,0.039},{2.0,0.0515},{5.0,0.0505},{7.0,0.05},{10.0,0.0475}}); //15bp upto 5y; 25bp thereafter
 
     // Step3: pricing netting set (with Swaps and RateCurve objects) 
@@ -69,7 +71,7 @@ int main()
     double a = 0.05; // speed of mean reversion 
     SimulateRate simEngine(SOFR, rateVol, a, simPaths);
     std::vector<RateCurve> simCurves = simEngine.getSimulatedCurves();
-    std::vector<double> simNPVs = simEngine.getSimulatedBaseNPVs(Swap1);
+    std::vector<double> simNPVs = simEngine.getSimulatedBaseNPVs(VanillaSwap1);
 
     // Step5: generate exposure profile using Swap and Simulated curves
     // assuming Quarterly time steps in exposure calculation; exposure is already discounted to today

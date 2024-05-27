@@ -11,11 +11,11 @@ class RiskEngine{
 private:
     NettingSet xNetSet;
     RateCurve xCurve;
-    VanillaSwap xSwap;
+    Swap xSwap;
 public:
     RiskEngine();
     RiskEngine(NettingSet& netSet, RateCurve& curve);
-    RiskEngine(VanillaSwap& swap, RateCurve& curve);
+    RiskEngine(Swap& swap, RateCurve& curve);
     std::map<double,double> calcIRDelta();
     double calcRWADelta();
 };

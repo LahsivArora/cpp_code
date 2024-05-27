@@ -5,11 +5,11 @@
 
 NettingSet::NettingSet(){}
 
-NettingSet::NettingSet(std::vector<VanillaSwap>& swaps){
+NettingSet::NettingSet(std::vector<Swap>& swaps){
     xSwaps=swaps;
 }
 
-std::vector<VanillaSwap> NettingSet::getTrades(){
+std::vector<Swap> NettingSet::getTrades(){
     return xSwaps;
 }
 

@@ -7,12 +7,12 @@
 
 class NettingSet{
 private:
-    std::vector<VanillaSwap> xSwaps;
+    std::vector<Swap> xSwaps;
 public:
     NettingSet();  // default constructor
-    NettingSet(std::vector<VanillaSwap>& swaps);
+    NettingSet(std::vector<Swap>& swaps);
     double getMaxMaturity();
-    std::vector<VanillaSwap> getTrades();
+    std::vector<Swap> getTrades();
     unsigned int getNoOfTrades();
     double getTradesNPV(RateCurve curve);
 };

@@ -7,10 +7,10 @@ RiskEngine::RiskEngine(NettingSet& netSet, RateCurve& curve){
     xCurve=curve;
 }
 
-RiskEngine::RiskEngine(VanillaSwap& swap, RateCurve& curve){
+RiskEngine::RiskEngine(Swap& swap, RateCurve& curve){
     xSwap=swap;
     xCurve=curve;
-    std::vector<VanillaSwap> dummy;
+    std::vector<Swap> dummy;
     dummy.push_back(xSwap);
     NettingSet netSetDummy(dummy);
     xNetSet=netSetDummy;

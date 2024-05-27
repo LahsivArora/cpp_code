@@ -28,7 +28,7 @@ std::vector<RateCurve> SimulateRate::getSimulatedCurves(){
     return curves;
 }
 
-std::vector<double> SimulateRate::getSimulatedBaseNPVs(VanillaSwap swap1){
+std::vector<double> SimulateRate::getSimulatedBaseNPVs(Swap swap1){
 
     std::vector<RateCurve> curves = getSimulatedCurves();
     std::vector<double> simNPVs;

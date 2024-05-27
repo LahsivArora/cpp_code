@@ -7,13 +7,13 @@
 
 class SwapPricer{
 private:
-    VanillaSwap xSwap;
+    Swap xSwap;
     RateCurve xCurve;
     double xLag;
 public:
     // assuming Leg1 is fixed rate and Leg2 is floating rate
     // inputs are swap object, discount factors and fwd rates 
-    SwapPricer(VanillaSwap& swap, RateCurve& curve, double lag = 0.0);
+    SwapPricer(Swap& swap, RateCurve& curve, double lag = 0.0);
     double getLegNPV(int legNum);
     double getTradeNPV();
     double getParRate();
