@@ -24,13 +24,13 @@ int main()
 
     Leg floatLeg(LegType::Float,Currency::USD,4.0,-0.0025);
     Leg fixLeg1(LegType::Fixed,Currency::USD,4.0,0.0480);
-    VanillaSwap Swap1(TradeType::IrSwap,7.0,-1500000.0, fixLeg1, floatLeg);
+    VanillaSwap Swap1(TradeType::IrSwap,7.0,-1500000.0, fixLeg1, floatLeg, NotionalExch::NO);
     Leg fixLeg2(LegType::Fixed,Currency::USD,4.0,0.0500);
-    VanillaSwap Swap2(TradeType::IrSwap,4.5,1000000.0, fixLeg2, floatLeg);
+    VanillaSwap Swap2(TradeType::IrSwap,4.5,1000000.0, fixLeg2, floatLeg, NotionalExch::NO);
     Leg fixLeg3(LegType::Fixed,Currency::USD,4.0,0.0475);
-    VanillaSwap Swap3(TradeType::IrSwap,8.5,1500000.0, fixLeg3, floatLeg);
+    VanillaSwap Swap3(TradeType::IrSwap,8.5,1500000.0, fixLeg3, floatLeg, NotionalExch::NO);
     Leg fixLeg4(LegType::Fixed,Currency::USD,4.0,0.0480);
-    VanillaSwap Swap4(TradeType::IrSwap,2.5,-1000000.0, fixLeg4, floatLeg);
+    VanillaSwap Swap4(TradeType::IrSwap,2.5,-1000000.0, fixLeg4, floatLeg, NotionalExch::NO);
 
     // Step1b: define portfolio with 3 swaps 
     std::vector<VanillaSwap> trades;

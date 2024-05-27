@@ -4,12 +4,18 @@
 
 VanillaSwap::VanillaSwap(){}
 
-VanillaSwap::VanillaSwap(TradeType type,double maturity, double notional, Leg& Leg1, Leg& Leg2){
+VanillaSwap::VanillaSwap(TradeType type,double maturity, double notional, Leg& Leg1, Leg& Leg2, NotionalExch exch, double endFxFwd){
     xType=type;
     xmaturity=maturity;
     xnotional=notional;
     xLeg1=Leg1;
     xLeg2=Leg2;
+    xExch=exch;
+    xEndFxFwd=endFxFwd;
+}
+
+double VanillaSwap::getEndFxFwd(){
+    return xEndFxFwd;
 }
 
 Leg VanillaSwap::getLeg(int legNum){

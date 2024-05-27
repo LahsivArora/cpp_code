@@ -11,4 +11,6 @@ enum class LegType { Fixed, Float };
 
 enum class Currency { USD, EUR };
 
+enum class NotionalExch { YES, NO };
+
 #endif

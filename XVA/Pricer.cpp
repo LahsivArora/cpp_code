@@ -11,31 +11,23 @@ SwapPricer::SwapPricer(VanillaSwap& swap, RateCurve& curve, double lag){
 double SwapPricer::getLegNPV(int legNum){
     double npv = 0.0;
     Leg calcLeg = xSwap.getLeg(legNum);
+    double periodAdj = 1.0/calcLeg.getLegFreq();
+    double notional = (legNum==1?1.0:-1.0)*xSwap.getNotional()*(legNum==1?1.0:xSwap.getEndFxFwd()); // add conversion for xccy
+    double rate = calcLeg.getLegRate();
+    std::vector<double> flow = calcLeg.getLegFlows(xSwap.getMaturity());
+    std::vector<double> xLegdisc = xCurve.getDiscFactors(flow);
 
     if (calcLeg.getLegType() == LegType::Fixed){
-        double periodAdj = 1.0/calcLeg.getFixedFreq();
-        double notional = (legNum==1?1.0:-1.0)*xSwap.getNotional();
-        double rate = calcLeg.getFixedRate();
-        std::vector<double> flow = calcLeg.getLegFlows(xSwap.getMaturity());
-        unsigned int num = flow.size();
-        std::vector<double> xLeg1disc = xCurve.getDiscFactors(flow);
-        for (unsigned int i=0; i < xLeg1disc.size(); i++){
+        for (unsigned int i=0; i < xLegdisc.size(); i++){
             if (flow[i] > xLag)
-                npv += (notional * rate * periodAdj * xLeg1disc[i]);
+                npv += (notional * rate * periodAdj * xLegdisc[i]);
         }
     }
     else {
-        double periodAdj = 1.0/calcLeg.getFloatFreq();
-        double notional = (legNum==1?1.0:-1.0)*xSwap.getNotional();
-        double spread = calcLeg.getFloatSpread();
-        std::vector<double> flow = calcLeg.getLegFlows(xSwap.getMaturity());
-        unsigned int num = flow.size();
-        std::vector<double> xLeg2disc = xCurve.getDiscFactors(flow);
-        std::vector<double> xLeg2fwd = xCurve.getFwdRates(flow);
-
-        for (unsigned int i=0; i < xLeg2disc.size(); i++){
+        std::vector<double> xLegfwd = xCurve.getFwdRates(flow);
+        for (unsigned int i=0; i < xLegdisc.size(); i++){
             if (flow[i] > xLag)
-                npv += (notional * (xLeg2fwd[i] + spread) * periodAdj * xLeg2disc[i]);
+                npv += (notional * (xLegfwd[i] + rate) * periodAdj * xLegdisc[i]);
         }
     }
     return npv;
