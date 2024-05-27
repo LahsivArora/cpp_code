@@ -4,14 +4,18 @@
 
 RateCurve::RateCurve(){}
 
-RateCurve::RateCurve(std::map<double,double> rates){
+RateCurve::RateCurve(std::string name, std::map<double,double> rates){
+    xName=name;
     xRates=rates;
+}
+
+std::string RateCurve::getName(){
+    return xName;
 }
 
 std::map<double,double> RateCurve::getRates(){
     return xRates;
 }
-
 
 double RateCurve::interpolate(double x1, double y1, double x2, double y2, double x){
     double val;
@@ -107,7 +111,7 @@ RateCurve RateCurve::templateTransform(std::vector<double> schedule){
         templateRates.insert(std::pair<double,double>(schedule[i],interpRates[i]));
     }
 
-    RateCurve templateCurve(templateRates);
+    RateCurve templateCurve(getName() , templateRates);
     return templateCurve;
 
 }

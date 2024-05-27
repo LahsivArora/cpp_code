@@ -14,6 +14,10 @@ Swap::Swap(TradeType type,double maturity, double notional, Leg& Leg1, Leg& Leg2
     xEndFxFwd=endFxFwd;
 }
 
+NotionalExch Swap::getNotionalExch(){
+    return xExch;
+}
+
 double Swap::getEndFxFwd(){
     return xEndFxFwd;
 }

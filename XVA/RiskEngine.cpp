@@ -22,15 +22,15 @@ std::map<double,double> RiskEngine::calcIRDelta(){
     std::map<double,double> delta;
     std::map<double,double> xRates = xCurve.getRates();
     double bump = 0.0001; // +1 basis point
-    double basePV = xNetSet.getTradesNPV(xCurve);
+    double basePV = xNetSet.getTradesNPV(xCurve,xCurve,1.0);
 
     // reverse cumulative calculation
 
     for (auto it=xRates.rbegin(); it != xRates.rend(); it++){
         double tenor = it->first;
         xRates[tenor]= it->second + bump;
-        RateCurve bumpedCurve(xRates);
-        double bumpedPV = xNetSet.getTradesNPV(bumpedCurve);
+        RateCurve bumpedCurve(xCurve.getName(),xRates);
+        double bumpedPV = xNetSet.getTradesNPV(bumpedCurve,bumpedCurve,1.0);
         bumpedPVs.insert(std::pair<double,double>(tenor,bumpedPV-basePV));
     }
 

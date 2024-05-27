@@ -18,14 +18,14 @@ int main()
 {
     // Step1a: defining portfolio of swaps
     // +ive notional means receive Leg1/pay Leg2 and 4 means Quarterly payments
-    Leg floatLeg(LegType::Float,Currency::USD,4.0,-0.0025);
-    Leg fixLeg1(LegType::Fixed,Currency::USD,4.0,0.0480);
+    Leg floatLeg(LegType::Float,Currency::USD,4.0,-0.0025,"USD.SOFR");
+    Leg fixLeg1(LegType::Fixed,Currency::USD,4.0,0.0480,"USD.SOFR");
     Swap VanillaSwap1(TradeType::IrSwap,7.0,-1500000.0, fixLeg1, floatLeg, NotionalExch::NO);
-    Leg fixLeg2(LegType::Fixed,Currency::USD,4.0,0.0500);
+    Leg fixLeg2(LegType::Fixed,Currency::USD,4.0,0.0500,"USD.SOFR");
     Swap VanillaSwap2(TradeType::IrSwap,4.5,1000000.0, fixLeg2, floatLeg, NotionalExch::NO);
-    Leg fixLeg3(LegType::Fixed,Currency::USD,4.0,0.0475);
+    Leg fixLeg3(LegType::Fixed,Currency::USD,4.0,0.0475,"USD.SOFR");
     Swap VanillaSwap3(TradeType::IrSwap,8.5,1500000.0, fixLeg3, floatLeg, NotionalExch::NO);
-    Leg fixLeg4(LegType::Fixed,Currency::USD,4.0,0.0480);
+    Leg fixLeg4(LegType::Fixed,Currency::USD,4.0,0.0480,"USD.SOFR");
     Swap VanillaSwap4(TradeType::IrSwap,2.5,-1000000.0, fixLeg4, floatLeg, NotionalExch::NO);
 
     // Step1b: define portfolio with 4 swaps 
@@ -37,19 +37,27 @@ int main()
     NettingSet netSet(trades); 
 
     // define xccy swap
-    Leg xccyFixLeg(LegType::Fixed,Currency::EUR,4.0,0.0480);
-    Leg xccyFltLeg(LegType::Float,Currency::USD,4.0,-0.0025);
-    Swap XccySwap(TradeType::IrSwap,7.0,-1500000.0, fixLeg1, floatLeg, NotionalExch::YES, 1.2418);
+    Leg xccyFixLeg(LegType::Fixed,Currency::EUR,4.0,0.0280,"EUR.XCCY");
+    Leg xccyFltLeg(LegType::Float,Currency::USD,4.0,0.0,"USD.SOFR");
+    Swap XccySwap(TradeType::XccySwap,7.0,-1500000.0, xccyFixLeg, xccyFltLeg, NotionalExch::YES, 1.2418);
 
-    // Step2: defining rate curve with pillars as 6m, 1Y, 2Y, 5Y, 7Y, 10Y. For now using zero rates
+    // Step2a:MarketData: RateCurve 
+    // defining rate curve with pillars as 6m, 1Y, 2Y, 5Y, 7Y, 10Y. For now using zero rates
     // USD curve has hump at 2Y point i.e. slowly downward sloping from 2Y to 10Y
-    RateCurve SOFR({{0.5,0.0225},{1.0,0.0375},{2.0,0.05},{5.0,0.049},{7.0,0.0475},{10.0,0.045}}); // for USD
-    RateCurve ESTR({{0.5,0.0325},{1.0,0.0300},{2.0,0.03},{5.0,0.030},{7.0,0.0275},{10.0,0.025}}); // for EUR
-    RateCurve FundingCurve({{0.5,0.024},{1.0,0.039},{2.0,0.0515},{5.0,0.0505},{7.0,0.05},{10.0,0.0475}}); //15bp upto 5y; 25bp thereafter
+    RateCurve SOFR("USD.SOFR",{{0.5,0.0225},{1.0,0.0375},{2.0,0.05},{5.0,0.049},{7.0,0.0475},{10.0,0.045}}); 
+    // EUR curve with xccy basis
+    RateCurve EURXCCY("EUR.XCCY",{{0.5,0.0325},{1.0,0.0300},{2.0,0.03},{5.0,0.030},{7.0,0.0275},{10.0,0.025}});     
+    // USD funding curve: 15bp upto 5y; 25bp thereafter
+    RateCurve FundingCurve("USD.FUND",{{0.5,0.024},{1.0,0.039},{2.0,0.0515},{5.0,0.0505},{7.0,0.05},{10.0,0.0475}});
+
+    // Step2b:MarketData: FXAsset (containing FxSpot; assuming spot is settling today)
+    double FxSpot = 1.0856;
+    SwapPricer xccyPricer(XccySwap,SOFR,EURXCCY,FxSpot);
+    std::cout << "NPV of XccySwap (in USD):" << xccyPricer.getTradeNPV() << std::endl;
 
     // Step3: pricing netting set (with Swaps and RateCurve objects) 
-    double netSetbasePV = netSet.getTradesNPV(SOFR);
-    double netSetFundPV = netSet.getTradesNPV(FundingCurve);
+    double netSetbasePV = netSet.getTradesNPV(SOFR,SOFR,1.0);
+    double netSetFundPV = netSet.getTradesNPV(FundingCurve,FundingCurve,1.0); // ToDo: needs fix
     RiskEngine riskSet(netSet, SOFR);
     // RiskEngine riskSet(Swap4, SOFR); // riskengine object can be created with 1 or multiple trades
     std::map<double,double> irDelta = riskSet.calcIRDelta();

@@ -2,9 +2,17 @@
 #include "Pricer.h"
 #include "Leg.h"
 
-SwapPricer::SwapPricer(Swap& swap, RateCurve& curve, double lag){
+/*SwapPricer::SwapPricer(Swap& swap, RateCurve& curve1, double lag){
     xSwap=swap;
-    xCurve=curve;
+    xCurve1=curve1;
+    xLag=lag;
+}*/
+
+SwapPricer::SwapPricer(Swap& swap, RateCurve& curve1, RateCurve& curve2, double FxSpot, double lag){
+    xSwap=swap;
+    xCurve1=curve1;
+    xCurve2=curve2;
+    xFxSpot=FxSpot;
     xLag=lag;
 }
 
@@ -15,19 +23,35 @@ double SwapPricer::getLegNPV(int legNum){
     double notional = (legNum==1?1.0:-1.0)*xSwap.getNotional()*(legNum==1?1.0:xSwap.getEndFxFwd()); // add conversion for xccy
     double rate = calcLeg.getLegRate();
     std::vector<double> flow = calcLeg.getLegFlows(xSwap.getMaturity());
-    std::vector<double> xLegdisc = xCurve.getDiscFactors(flow);
+    RateCurve pricingCurve;
+    if (calcLeg.getLegCurveName() == xCurve1.getName())
+        pricingCurve = xCurve1;
+    else if (calcLeg.getLegCurveName() == xCurve2.getName())
+        pricingCurve = xCurve2;
+
+    std::vector<double> xLegdisc = pricingCurve.getDiscFactors(flow);
 
     if (calcLeg.getLegType() == LegType::Fixed){
         for (unsigned int i=0; i < xLegdisc.size(); i++){
-            if (flow[i] > xLag)
+            if (flow[i] > xLag){
                 npv += (notional * rate * periodAdj * xLegdisc[i]);
+                if(i==0 && xSwap.getNotionalExch() == NotionalExch::YES){
+                    npv += (-1.0*notional);}
+                if(i+1==xLegdisc.size() && xSwap.getNotionalExch() == NotionalExch::YES){
+                    npv += (notional * xLegdisc[i]);}
+            }
         }
     }
-    else {
-        std::vector<double> xLegfwd = xCurve.getFwdRates(flow);
+    else if (calcLeg.getLegType() == LegType::Float){
+        std::vector<double> xLegfwd = pricingCurve.getFwdRates(flow);
         for (unsigned int i=0; i < xLegdisc.size(); i++){
-            if (flow[i] > xLag)
+            if (flow[i] > xLag){
                 npv += (notional * (xLegfwd[i] + rate) * periodAdj * xLegdisc[i]);
+                if(i==0 && xSwap.getNotionalExch() == NotionalExch::YES){
+                    npv += (-1.0*notional);}
+                if(i+1==xLegdisc.size() && xSwap.getNotionalExch() == NotionalExch::YES){
+                    npv += (notional * xLegdisc[i]);}
+            }
         }
     }
     return npv;
@@ -35,6 +59,12 @@ double SwapPricer::getLegNPV(int legNum){
 
 
 double SwapPricer::getTradeNPV(){
-    double npv = getLegNPV(1) + getLegNPV(2);
+
+    double npv = 0.0;
+    if (xSwap.getTradeType() == TradeType::IrSwap)
+        npv = getLegNPV(1) + getLegNPV(2);
+    else if (xSwap.getTradeType() == TradeType::XccySwap)
+        npv = getLegNPV(1)*xFxSpot + getLegNPV(2); // converting to Leg2 ccy. USD in this case
+
     return npv;
 }

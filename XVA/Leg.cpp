@@ -2,11 +2,16 @@
 
 Leg::Leg(){}
 
-Leg::Leg(LegType type ,Currency ccy ,double freq, double rate){
+Leg::Leg(LegType type ,Currency ccy ,double freq, double rate, std::string curveName){
     xType=type;
     xLegCcy=ccy;
     xFreq=freq;
     xRate=rate;
+    xCurveName=curveName;
+}
+
+std::string Leg::getLegCurveName(){
+    return xCurveName;
 }
 
 LegType Leg::getLegType(){

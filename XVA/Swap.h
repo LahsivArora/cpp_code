@@ -20,6 +20,7 @@ public:
     TradeType getTradeType();
     double getMaturity();
     double getNotional();
+    NotionalExch getNotionalExch();
     double getAdjNotional(); // for RWA calc
     double getRiskHorizon(); // for RWA calc
     double getEndFxFwd();
