@@ -2,6 +2,7 @@
 #include <vector>
 #include <cmath>
 #include "RateCurve.h"
+#include "Leg.h"
 #include "Swap.h"
 #include "Pricer.h"
 #include "SimModel.h"
@@ -17,10 +18,19 @@ int main()
 {
     // Step1a: defining portfolio of swaps
     // +ive notional means receive fixed-pay float and 4 means Quarterly payments
-    VanillaSwap Swap1(TradeType::IrSwap,7,-1500000.0, {4.0,0.0480},{4.0,-0.0025});
-    VanillaSwap Swap2(TradeType::IrSwap,4.5,1000000.0, {4.0,0.0500},{4.0,-0.0025});
-    VanillaSwap Swap3(TradeType::IrSwap,8.5,1500000.0, {4.0,0.0475},{4.0,-0.0025});
-    VanillaSwap Swap4(TradeType::IrSwap,2.5,-1000000.0, {4.0,0.0480},{4.0,-0.0025});
+
+//    VanillaSwap(TradeType type, double maturity, double notional, Leg Leg1, Leg Leg2);
+//    Leg(LegType type ,Currency ccy ,double freq, double rate, double notional = 0.0, double maturity = 0.0);
+
+    Leg floatLeg(LegType::Float,Currency::USD,4.0,-0.0025);
+    Leg fixLeg1(LegType::Fixed,Currency::USD,4.0,0.0480);
+    VanillaSwap Swap1(TradeType::IrSwap,7.0,-1500000.0, fixLeg1, floatLeg);
+    Leg fixLeg2(LegType::Fixed,Currency::USD,4.0,0.0500);
+    VanillaSwap Swap2(TradeType::IrSwap,4.5,1000000.0, fixLeg2, floatLeg);
+    Leg fixLeg3(LegType::Fixed,Currency::USD,4.0,0.0475);
+    VanillaSwap Swap3(TradeType::IrSwap,8.5,1500000.0, fixLeg3, floatLeg);
+    Leg fixLeg4(LegType::Fixed,Currency::USD,4.0,0.0480);
+    VanillaSwap Swap4(TradeType::IrSwap,2.5,-1000000.0, fixLeg4, floatLeg);
 
     // Step1b: define portfolio with 3 swaps 
     std::vector<VanillaSwap> trades;
