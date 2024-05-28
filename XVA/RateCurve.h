@@ -29,6 +29,7 @@ public:
     std::vector<double> getDiscFactors(std::vector<double> schedule);
     std::vector<double> getFwdRates(std::vector<double> schedule);
     RateCurve templateTransform(std::vector<double> schedule);
+    RateCurve nameTransform(std::string newName);
 };
   
 #endif

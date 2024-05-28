@@ -115,3 +115,8 @@ RateCurve RateCurve::templateTransform(std::vector<double> schedule){
     return templateCurve;
 
 }
+
+RateCurve RateCurve::nameTransform(std::string newName){
+    RateCurve newCurve(newName , xRates);
+    return newCurve;
+}

@@ -57,7 +57,8 @@ int main()
 
     // Step3: pricing netting set (with Swaps and RateCurve objects) 
     double netSetbasePV = netSet.getTradesNPV(SOFR,SOFR,1.0);
-    double netSetFundPV = netSet.getTradesNPV(FundingCurve,FundingCurve,1.0); // ToDo: needs fix
+    RateCurve FVACurve = FundingCurve.nameTransform("USD.SOFR");
+    double netSetFundPV = netSet.getTradesNPV(FVACurve,FVACurve,1.0);
     RiskEngine riskSet(netSet, SOFR);
     // RiskEngine riskSet(Swap4, SOFR); // riskengine object can be created with 1 or multiple trades
     std::map<double,double> irDelta = riskSet.calcIRDelta();
