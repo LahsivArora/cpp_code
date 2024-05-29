@@ -22,7 +22,7 @@ public:
     SwapPricer(NettingSet& netSet, RateCurve& curve1, RateCurve& curve2, double FxSpot, double lag = 0.0);
     double calcLegNPV(int legNum);
     double calcTradeNPV();
-    double calcParRate();
+    double calcFVA(RateCurve& fundCurve);
 };
 
 #endif

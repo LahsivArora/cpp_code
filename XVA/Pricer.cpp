@@ -75,3 +75,9 @@ double SwapPricer::calcTradeNPV(){
     }
         return npv;
 }
+
+double SwapPricer::calcFVA(RateCurve& fundCurve){
+    RateCurve FVACurve = fundCurve.nameTransform("USD.SOFR");
+    SwapPricer fundPV(xNetSet,FVACurve,FVACurve,1.0);
+    return fundPV.calcTradeNPV() - calcTradeNPV();
+}
