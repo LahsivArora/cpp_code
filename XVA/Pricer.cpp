@@ -2,14 +2,18 @@
 #include "Pricer.h"
 #include "Leg.h"
 
-/*SwapPricer::SwapPricer(Swap& swap, RateCurve& curve1, double lag){
-    xSwap=swap;
+SwapPricer::SwapPricer(NettingSet& netSet, RateCurve& curve1, RateCurve& curve2, double FxSpot, double lag){
+    xNetSet=netSet;
     xCurve1=curve1;
+    xCurve2=curve2;
+    xFxSpot=FxSpot;
     xLag=lag;
-}*/
+}
 
 SwapPricer::SwapPricer(Swap& swap, RateCurve& curve1, RateCurve& curve2, double FxSpot, double lag){
     xSwap=swap;
+    xSwaps.push_back(xSwap);
+    xNetSet=NettingSet(xSwaps);
     xCurve1=curve1;
     xCurve2=curve2;
     xFxSpot=FxSpot;
@@ -61,10 +65,13 @@ double SwapPricer::getLegNPV(int legNum){
 double SwapPricer::getTradeNPV(){
 
     double npv = 0.0;
-    if (xSwap.getTradeType() == TradeType::IrSwap)
-        npv = getLegNPV(1) + getLegNPV(2);
-    else if (xSwap.getTradeType() == TradeType::XccySwap)
-        npv = getLegNPV(1)*xFxSpot + getLegNPV(2); // converting to Leg2 ccy. USD in this case
 
-    return npv;
+    for (unsigned int i=0; i < xNetSet.getNoOfTrades(); i++){
+        xSwap = xNetSet.getTrades()[i];
+        if (xSwap.getTradeType() == TradeType::IrSwap)
+            npv += getLegNPV(1) + getLegNPV(2);
+        else if (xSwap.getTradeType() == TradeType::XccySwap)
+            npv += getLegNPV(1)*xFxSpot + getLegNPV(2); // converting to Leg2 ccy. USD in this case
+    }
+        return npv;
 }

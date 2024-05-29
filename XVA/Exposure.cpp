@@ -69,7 +69,8 @@ double ExposureCalc::calcEAD(){
     std::vector<Swap> trades = xNetSet.getTrades();
     RateCurve basecurve = getBaseCurve();
 
-    double netSetPV = xNetSet.getTradesNPV(basecurve, basecurve,1.0);
+    SwapPricer basePV(xNetSet,basecurve, basecurve,1.0);
+    double netSetPV = basePV.getTradeNPV();
     double replacementCost = (netSetPV>0.0?netSetPV:0.0);
 
     double Dsub1Y = 0.0;

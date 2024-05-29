@@ -26,13 +26,3 @@ double NettingSet::getMaxMaturity(){
     }
     return maturity;
 }
-
-double NettingSet::getTradesNPV(RateCurve curve1, RateCurve curve2, double FxSpot){
-    double npvs = 0.0;
-
-    for (unsigned int i=0; i<getNoOfTrades();i++){
-        SwapPricer price(xSwaps[i],curve1,curve2,FxSpot);
-        npvs += price.getTradeNPV();
-    }
-    return npvs;
-}

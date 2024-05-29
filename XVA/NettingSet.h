@@ -14,7 +14,6 @@ public:
     double getMaxMaturity();
     std::vector<Swap> getTrades();
     unsigned int getNoOfTrades();
-    double getTradesNPV(RateCurve curve1, RateCurve curve2, double FxSpot);
 };
 
 #endif

@@ -56,9 +56,11 @@ int main()
     std::cout << "NPV of XccySwap (in USD):" << xccyPricer.getTradeNPV() << std::endl;
 
     // Step3: pricing netting set (with Swaps and RateCurve objects) 
-    double netSetbasePV = netSet.getTradesNPV(SOFR,SOFR,1.0);
+    SwapPricer basePV(netSet,SOFR,SOFR,1.0);
+    double netSetBasePV = basePV.getTradeNPV();
     RateCurve FVACurve = FundingCurve.nameTransform("USD.SOFR");
-    double netSetFundPV = netSet.getTradesNPV(FVACurve,FVACurve,1.0);
+    SwapPricer fundPV(netSet,FVACurve,FVACurve,1.0);
+    double netSetFundPV = fundPV.getTradeNPV();
     RiskEngine riskSet(netSet, SOFR);
     // RiskEngine riskSet(Swap4, SOFR); // riskengine object can be created with 1 or multiple trades
     std::map<double,double> irDelta = riskSet.calcIRDelta();
@@ -103,8 +105,7 @@ int main()
     XVACalc DVA(netSetExProfile,ownCDS,ownLGD,RiskType::OWN);
 
     std::cout << "For given netting set and market data (all XVA are in $ amount):" << std::endl;
-    std::cout << "FVA (+ive means charge to client):" << netSetbasePV << std::endl;
-    std::cout << "FVA (+ive means charge to client):" << netSetFundPV << std::endl;
+    std::cout << "FVA (+ive means charge to client):" << netSetBasePV-netSetFundPV << std::endl;
     std::cout << "CVA (+ive means charge to client):" << CVA.calcXVA() << std::endl;
     std::cout << "DVA (+ive means benefit to bank):" << DVA.calcXVA() << std::endl;
     std::cout << "RWA (using SA-CCR):" << CVA.calcRWA() << std::endl; 
