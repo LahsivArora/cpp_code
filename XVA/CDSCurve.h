@@ -10,7 +10,7 @@ private:
 public:
     CDSCurve();
     CDSCurve(double CDSSpread, double LGD, double maxMaturity, double timesteps);
-    std::map<double,double> getMarginalPDs();
+    std::map<double,double> calcMarginalPDs();
 };
   
 #endif

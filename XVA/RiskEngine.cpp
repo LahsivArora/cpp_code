@@ -23,7 +23,7 @@ std::map<double,double> RiskEngine::calcIRDelta(){
     std::map<double,double> xRates = xCurve.getRates();
     double bump = 0.0001; // +1 basis point
     SwapPricer priceBase(xNetSet,xCurve,xCurve,1.0);
-    double basePV = priceBase.getTradeNPV();
+    double basePV = priceBase.calcTradeNPV();
 
     // reverse cumulative calculation
 
@@ -32,7 +32,7 @@ std::map<double,double> RiskEngine::calcIRDelta(){
         xRates[tenor]= it->second + bump;
         RateCurve bumpedCurve(xCurve.getName(),xRates);
         SwapPricer priceBump(xNetSet,bumpedCurve,bumpedCurve,1.0);
-        double bumpedPV = priceBump.getTradeNPV();
+        double bumpedPV = priceBump.calcTradeNPV();
         bumpedPVs.insert(std::pair<double,double>(tenor,bumpedPV-basePV));
     }
 

@@ -38,8 +38,8 @@ std::vector<std::map<double,double>> ExposureCalc::calc(){
         for (unsigned int k=0; k<trades; k++){
             for (unsigned int j=0; j<n; j++){
                 SwapPricer priceLag(tradeObjs[k],xSimCurves[j],xSimCurves[j],1.0,i);
-                double positiveExposure = (priceLag.getTradeNPV()>0?priceLag.getTradeNPV():0);
-                double negativeExposure = (priceLag.getTradeNPV()<0?priceLag.getTradeNPV():0);
+                double positiveExposure = (priceLag.calcTradeNPV()>0?priceLag.calcTradeNPV():0);
+                double negativeExposure = (priceLag.calcTradeNPV()<0?priceLag.calcTradeNPV():0);
                 exposurePos += positiveExposure;
                 exposureNeg += negativeExposure;
             }
@@ -70,7 +70,7 @@ double ExposureCalc::calcEAD(){
     RateCurve basecurve = getBaseCurve();
 
     SwapPricer basePV(xNetSet,basecurve, basecurve,1.0);
-    double netSetPV = basePV.getTradeNPV();
+    double netSetPV = basePV.calcTradeNPV();
     double replacementCost = (netSetPV>0.0?netSetPV:0.0);
 
     double Dsub1Y = 0.0;

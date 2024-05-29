@@ -20,7 +20,7 @@ SwapPricer::SwapPricer(Swap& swap, RateCurve& curve1, RateCurve& curve2, double 
     xLag=lag;
 }
 
-double SwapPricer::getLegNPV(int legNum){
+double SwapPricer::calcLegNPV(int legNum){
     double npv = 0.0;
     Leg calcLeg = xSwap.getLeg(legNum);
     double periodAdj = 1.0/calcLeg.getLegFreq();
@@ -62,16 +62,16 @@ double SwapPricer::getLegNPV(int legNum){
 }
 
 
-double SwapPricer::getTradeNPV(){
+double SwapPricer::calcTradeNPV(){
 
     double npv = 0.0;
 
     for (unsigned int i=0; i < xNetSet.getNoOfTrades(); i++){
         xSwap = xNetSet.getTrades()[i];
         if (xSwap.getTradeType() == TradeType::IrSwap)
-            npv += getLegNPV(1) + getLegNPV(2);
+            npv += calcLegNPV(1) + calcLegNPV(2);
         else if (xSwap.getTradeType() == TradeType::XccySwap)
-            npv += getLegNPV(1)*xFxSpot + getLegNPV(2); // converting to Leg2 ccy. USD in this case
+            npv += calcLegNPV(1)*xFxSpot + calcLegNPV(2); // converting to Leg2 ccy. USD in this case
     }
         return npv;
 }

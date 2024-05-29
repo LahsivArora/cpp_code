@@ -20,9 +20,9 @@ public:
     //SwapPricer(Swap& swap, RateCurve& curve1, double lag = 0.0);
     SwapPricer(Swap& swap, RateCurve& curve1, RateCurve& curve2, double FxSpot, double lag = 0.0);
     SwapPricer(NettingSet& netSet, RateCurve& curve1, RateCurve& curve2, double FxSpot, double lag = 0.0);
-    double getLegNPV(int legNum);
-    double getTradeNPV();
-    double getParRate();
+    double calcLegNPV(int legNum);
+    double calcTradeNPV();
+    double calcParRate();
 };
 
 #endif

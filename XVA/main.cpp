@@ -53,14 +53,14 @@ int main()
     // Step2b:MarketData: FXAsset (containing FxSpot; assuming spot is settling today)
     double FxSpot = 1.0856;
     SwapPricer xccyPricer(XccySwap,SOFR,EURXCCY,FxSpot);
-    std::cout << "NPV of XccySwap (in USD):" << xccyPricer.getTradeNPV() << std::endl;
+    std::cout << "NPV of XccySwap (in USD):" << xccyPricer.calcTradeNPV() << std::endl;
 
     // Step3: pricing netting set (with Swaps and RateCurve objects) 
     SwapPricer basePV(netSet,SOFR,SOFR,1.0);
-    double netSetBasePV = basePV.getTradeNPV();
+    double netSetBasePV = basePV.calcTradeNPV();
     RateCurve FVACurve = FundingCurve.nameTransform("USD.SOFR");
     SwapPricer fundPV(netSet,FVACurve,FVACurve,1.0);
-    double netSetFundPV = fundPV.getTradeNPV();
+    double netSetFundPV = fundPV.calcTradeNPV();
     RiskEngine riskSet(netSet, SOFR);
     // RiskEngine riskSet(Swap4, SOFR); // riskengine object can be created with 1 or multiple trades
     std::map<double,double> irDelta = riskSet.calcIRDelta();

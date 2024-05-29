@@ -14,7 +14,7 @@ XVACalc::XVACalc(ExposureCalc& exposureObj, CDSCurve curve, double LGD, RiskType
 
 double XVACalc::calcXVA(){
     double XVA = 0.0;
-    std::map<double,double> marginalPDs = xCurve.getMarginalPDs();
+    std::map<double,double> marginalPDs = xCurve.calcMarginalPDs();
     std::map<double,double> xExposure = xExposureObj.calcEEProfile(xType);
 
     // calc CVA and DVA as sum(EE*marginal PD*LGD)

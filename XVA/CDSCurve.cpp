@@ -11,7 +11,7 @@ CDSCurve::CDSCurve(double CDSSpread, double LGD, double maxMaturity, double time
     xSteps=timesteps;
 }
 
-std::map<double,double> CDSCurve::getMarginalPDs(){
+std::map<double,double> CDSCurve::calcMarginalPDs(){
 
     std::map<double,double> pds;
     double lambda = xSpread/10000.0/xLGD ; // hazard rate
