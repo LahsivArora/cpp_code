@@ -9,7 +9,7 @@ string var2[2] = {"x","y"};
 int arrLen1 = sizeof(var1)/sizeof(var1[0]);
 int arrLen2 = sizeof(var2)/sizeof(var2[0]);
 int sum = 0;
-string arr1[arrLen1 * arrLen2];
+string arr1[10];
 
 for (int i=0; i < arrLen1 ; i++)
 {
