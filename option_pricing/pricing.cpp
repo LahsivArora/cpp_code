@@ -4,26 +4,39 @@
 #include "binomial_tree.h"
 #include "pricing.h"
 
-std::vector<double> pricingOpt(double s, double vol, double T, int n, double K, double r){
+
+PricingOpt::PricingOpt(double s, double vol, double T, unsigned int n, double K, double r){
+    xSpot=s;
+    xVol=vol;
+    xTime=T;
+    xSteps=n;
+    xStrike=K;
+    xRate=r;
+}
+
+std::vector<double> PricingOpt::calcPrice(){
     std::vector<double> prices;
 
     // generate tree
-    generateTree tree(s,vol,T,n);
+    generateTree tree(xSpot,xVol,xTime,xSteps);
     std::vector<std::vector<double>> bintree = tree.get();
 
-    // generate option price (European) comparison
-    priceTree priceCall(bintree,K,"call",s,vol,T,n,r);
-    priceTree pricePut(bintree,K,"put",s,vol,T,n,r);
-    std::vector<std::vector<double>> optPriceTree_call = priceCall.get();
-    std::vector<std::vector<double>> optPriceTree_put = pricePut.get();
+//    priceTree (std::vector<std::vector<double>> genTree, double strike, std::string optType,
+//                double spot, double vol, double time, unsigned int nSteps, double rate);
 
-    BlackScholes BS_call(s,vol,r,T,K,"call");
-    BlackScholes BS_put(s,vol,r,T,K,"put");
+    // generate option price (European) comparison
+    priceTree priceCall(bintree,xStrike,OptType::CALL,xSpot,xVol,xTime,xSteps,xRate);
+    priceTree pricePut(bintree,xStrike,OptType::PUT,xSpot,xVol,xTime,xSteps,xRate);
+    std::vector<std::vector<double>> optPriceTree_call = priceCall.calc();
+    std::vector<std::vector<double>> optPriceTree_put = pricePut.calc();
+
+    BlackScholes BS_call(xSpot,xVol,xRate,xTime,xStrike,OptType::CALL);
+    BlackScholes BS_put(xSpot,xVol,xRate,xTime,xStrike,OptType::PUT);
     std::vector<double> optPriceBS_call = BS_call.price();
     std::vector<double> optPriceBS_put = BS_put.price();
 
-    prices.push_back(optPriceTree_call[n-1][0]);
-    prices.push_back(optPriceTree_put[n-1][0]);
+    prices.push_back(optPriceTree_call[xSteps-1][0]);
+    prices.push_back(optPriceTree_put[xSteps-1][0]);
     prices.push_back(optPriceBS_call[0]);
     prices.push_back(optPriceBS_put[0]);
     // Delta (analytical)

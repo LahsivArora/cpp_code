@@ -4,7 +4,7 @@
 #include "binomial_tree.h"
 
 
-generateTree::generateTree(double spot,double vol, double time, int nSteps){
+generateTree::generateTree(double spot,double vol, double time, unsigned int nSteps){
     xspot=spot;
     xvol=vol;
     xtime=time;
@@ -18,10 +18,10 @@ std::vector<std::vector<double>> generateTree::get(){
     double d = exp(-1.0*xvol*sqrt(dT));  // exp down move
 
     std::vector<std::vector<double>> tree;
-    for (int i=1; i <= xnsteps; i++){
+    for (unsigned int i=1; i <= xnsteps; i++){
         std::vector<double> intd;
-        for (int j=0; j < i; j++){
-            double val = xspot*pow(u,j)*pow(d,i-j-1) ;
+        for (unsigned int j=0; j < i; j++){
+            double val = xspot*pow(u,j)*pow(d,i-j-1);
             intd.push_back(val);
         }
         tree.push_back(intd);
@@ -30,9 +30,9 @@ std::vector<std::vector<double>> generateTree::get(){
 }
 
 
-priceTree::priceTree (std::vector<std::vector<double>> genTree, double strike, std::string optType,
-                double spot, double vol, double time, int nSteps, double rate){
-    tree = genTree;
+priceTree::priceTree (std::vector<std::vector<double>> genTree, double strike, OptType optType,
+                double spot, double vol, double time, unsigned int nSteps, double rate){
+    xtree = genTree;
     xstrike = strike;
     xtype = optType;
     xspot = spot;
@@ -42,7 +42,7 @@ priceTree::priceTree (std::vector<std::vector<double>> genTree, double strike, s
     xrate = rate; 
 }
 
-std::vector<std::vector<double>> priceTree::get() { 
+std::vector<std::vector<double>> priceTree::calc() { 
     // calculated params
     double dT = xtime/(xsteps-1) ; // length of each time step
     double u = exp(xvol*sqrt(dT));       // exp up move
@@ -51,26 +51,25 @@ std::vector<std::vector<double>> priceTree::get() {
 
     // function starts
     std::vector<std::vector<double>> optPrices;
-    int steps = tree.size();
-    std::vector<double> dummy(steps, 0.0),fwdPrices, fwdPricesPrev=dummy;
-    int z = xsteps;
+    //unsigned int steps = xtree.size();
+    std::vector<double> dummy(xsteps, 0.0),fwdPrices, fwdPricesPrev=dummy;
+    unsigned int z = xsteps;
 
     // backward induction
     while (z > 0){
         double priceN, priceT;
         std::vector<double> optPricesN;
-        fwdPrices = tree[z-1];
-        int nodes = fwdPrices.size();
+        fwdPrices = xtree[z-1];
         optPricesN.clear();
 
-        for (int j=0; j < z; j++){
-            if (xtype == "call")
+        for (unsigned int j=0; j < z; j++){
+            if (xtype == OptType::CALL)
                 priceT = (fwdPrices[j] > xstrike)? (fwdPrices[j] - xstrike): 0.0;
             else
                 priceT = (fwdPrices[j] < xstrike)? (xstrike - fwdPrices[j]): 0.0;
 
             priceN = (prob*fwdPricesPrev[j+1] + (1.0-prob)*fwdPricesPrev[j])*exp(-1.0*xrate*dT) ;
-            double optVal = (z==steps)? priceT: priceN; 
+            double optVal = (z==xsteps)? priceT: priceN; 
             optPricesN.push_back(optVal);
         }
         optPrices.push_back(optPricesN);
@@ -78,4 +77,4 @@ std::vector<std::vector<double>> priceTree::get() {
         z = z-1;
     }
     return optPrices;
-};
+}

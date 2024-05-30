@@ -3,7 +3,14 @@
 
 #include <vector>
 #include <string>
+#include "Enums.h"
 
-std::vector<double> pricingOpt(double s, double vol, double T, int n, double K, double r);
-
+class PricingOpt{
+private:
+    double xSpot, xVol, xTime, xStrike, xRate;
+    unsigned int xSteps;
+public:
+    PricingOpt(double s, double vol, double T, unsigned int n, double K, double r);
+    std::vector<double> calcPrice();
+};
 #endif

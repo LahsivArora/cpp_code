@@ -14,7 +14,7 @@ double normdiff(double value)
 }
 
 
-BlackScholes::BlackScholes(double spot, double vol, double rate, double time, double strike, std::string optType) {
+BlackScholes::BlackScholes(double spot, double vol, double rate, double time, double strike, OptType optType) {
     xspot = spot;
     xvol = vol;
     xrate = rate;
@@ -30,7 +30,7 @@ std::vector<double> BlackScholes::price()
     double d1 = (log(xspot/xstrike) + ( xrate + (xvol*xvol/2.0))*xtime)/(xvol * sqrt(xtime));
     double d2 = d1 - (xvol * sqrt(xtime));
 
-    if (xtype == "call")
+    if (xtype == OptType::CALL)
         {
         price = xspot*norm(d1) - xstrike*norm(d2)*exp(-1.0*xrate*xtime);
         delta = norm(d1);
