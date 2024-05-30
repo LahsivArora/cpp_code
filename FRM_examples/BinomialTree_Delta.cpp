@@ -17,25 +17,25 @@ for (int i=1; i <= noSteps; i++){
     tree.push_back(intd);
 }
 return tree;
-};
+}
 
 std::vector<std::vector<double>> optionPrice (const std::vector<std::vector<double>>& priceTree,
                                  const double& prob, const double& strike, const double& rate, const double& step) { 
 
 std::vector<std::vector<double>> optPrices;
-int steps = priceTree.size();
+unsigned int steps = priceTree.size();
 std::vector<double> dummy(steps, 0.0),fwdPrices, fwdPricesPrev=dummy;
-int z = steps;
+unsigned int z = steps;
 
 // backward induction
 while (z > 0){
     double priceE, priceA;
     std::vector<double> optPricesN;
     fwdPrices = priceTree[z-1];
-    int nodes = fwdPrices.size();
+    //int nodes = fwdPrices.size();
     optPricesN.clear();
 
-    for (int j=0; j < z; j++){
+    for (unsigned int j=0; j < z; j++){
         priceA = (fwdPrices[j] < strike)? (strike - fwdPrices[j]): 0.0;
         priceE = (prob*fwdPricesPrev[j+1] + (1.0-prob)*fwdPricesPrev[j])*exp(-1.0*rate*step) ;
         double optVal = (priceA > priceE)? priceA: priceE; 
@@ -46,7 +46,7 @@ while (z > 0){
     z = z-1;
 }
 return optPrices;
-};
+}
 
 
 
@@ -54,7 +54,7 @@ int main()
 {
     // define params for stock
     double s = 29.0; // spot price
-    int n = 250; // no of steps in binomial tree
+    unsigned int n = 250; // no of steps in binomial tree
     double vol = 0.25; // volatility of stock of 25%
     double r = 0.03; // risk free rate of 3%
     double T = 1.0; // maturity in number of years
