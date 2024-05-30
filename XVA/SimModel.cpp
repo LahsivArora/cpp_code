@@ -28,14 +28,14 @@ std::vector<RateCurve> SimulateRate::getSimulatedCurves(){
     return curves;
 }
 
-std::vector<double> SimulateRate::getSimulatedBaseNPVs(Swap swap1){
+std::vector<double> SimulateRate::getSimulatedBaseNPVs(Swap& swap1){
 
-    std::vector<RateCurve> curves = getSimulatedCurves();
+    std::vector<RateCurve> curves = this->getSimulatedCurves();
     std::vector<double> simNPVs;
 
-    for (unsigned int i=0; i <curves.size(); i++){
-        SwapPricer price2(swap1,curves[i],curves[i],1.0);
-        double simPrice = price2.calcTradeNPV();
+    for (unsigned int i=0; i < curves.size(); i++){
+        SwapPricer *price2 = new SwapPricer(swap1,curves[i],curves[i],1.0);
+        double simPrice = price2->calcTradeNPV();
         simNPVs.push_back(simPrice);
     }
     return simNPVs;

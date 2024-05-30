@@ -69,15 +69,15 @@ double SwapPricer::calcTradeNPV(){
     for (unsigned int i=0; i < xNetSet.getNoOfTrades(); i++){
         xSwap = xNetSet.getTrades()[i];
         if (xSwap.getTradeType() == TradeType::IrSwap)
-            npv += calcLegNPV(1) + calcLegNPV(2);
+            npv += this->calcLegNPV(1) + this->calcLegNPV(2);
         else if (xSwap.getTradeType() == TradeType::XccySwap)
-            npv += calcLegNPV(1)*xFxSpot + calcLegNPV(2); // converting to Leg2 ccy. USD in this case
+            npv += this->calcLegNPV(1)*xFxSpot + this->calcLegNPV(2); // converting to Leg2 ccy. USD in this case
     }
         return npv;
 }
 
 double SwapPricer::calcFVA(RateCurve& fundCurve){
-    RateCurve FVACurve = fundCurve.nameTransform("USD.SOFR");
-    SwapPricer fundPV(xNetSet,FVACurve,FVACurve,1.0);
-    return fundPV.calcTradeNPV() - calcTradeNPV();
+    fundCurve.nameTransform("USD.SOFR");
+    SwapPricer *fundPV = new SwapPricer(xNetSet,fundCurve,fundCurve,1.0);
+    return fundPV->calcTradeNPV() - this->calcTradeNPV();
 }

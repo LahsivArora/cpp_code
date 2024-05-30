@@ -10,11 +10,11 @@ RateCurve::RateCurve(std::string name, std::map<double,double> rates){
 }
 
 std::string RateCurve::getName(){
-    return xName;
+    return this->xName;
 }
 
 std::map<double,double> RateCurve::getRates(){
-    return xRates;
+    return this->xRates;
 }
 
 double RateCurve::interpolate(double x1, double y1, double x2, double y2, double x){
@@ -30,13 +30,13 @@ double RateCurve::interpolate(double x1, double y1, double x2, double y2, double
 std::vector<double> RateCurve::tenorMatching(double tenor){
     std::vector<double> coord(4);
 
-    bool is_in = xRates.find(tenor) != xRates.end();;
+    bool is_in = (this->xRates.find(tenor) != this->xRates.end());
 
     if (is_in){
         coord[0] = tenor;
-        coord[1] = xRates[tenor];
+        coord[1] = this->xRates[tenor];
         coord[2] = tenor;
-        coord[3] = xRates[tenor];
+        coord[3] = this->xRates[tenor];
     }
     else {
         for (auto it = xRates.begin(); it != xRates.end(); ++it) {
@@ -59,8 +59,8 @@ std::vector<double> RateCurve::getDiscFactors(std::vector<double> schedule){
     std::vector<double> dfs;
 
     for (auto it = schedule.begin(); it != schedule.end(); ++it) {
-        std::vector<double> coord = tenorMatching(*it) ;
-        double interRate = interpolate(coord[0],coord[1],coord[2],coord[3],*it);
+        std::vector<double> coord = this->tenorMatching(*it) ;
+        double interRate = this->interpolate(coord[0],coord[1],coord[2],coord[3],*it);
         double df = 1.0/pow((1+interRate),*it);
         // for debugging: double df = interRate;
         dfs.push_back(df);
@@ -72,8 +72,8 @@ std::vector<double> RateCurve::getZeroRates(std::vector<double> schedule){
     std::vector<double> zrs;
 
     for (auto it = schedule.begin(); it != schedule.end(); ++it) {
-        std::vector<double> coord = tenorMatching(*it) ;
-        double interRate = interpolate(coord[0],coord[1],coord[2],coord[3],*it);
+        std::vector<double> coord = this->tenorMatching(*it) ;
+        double interRate = this->interpolate(coord[0],coord[1],coord[2],coord[3],*it);
         zrs.push_back(interRate);
     }
     return zrs;
@@ -84,8 +84,7 @@ std::vector<double> RateCurve::getFwdRates(std::vector<double> schedule){
     double freq = 1.0/schedule[0];
 
     for (auto it = schedule.begin(); it != schedule.end(); ++it) {
-        std::vector<double> coord = tenorMatching(*it) ;
-        //std::cout << coord[0] << " " << coord[1] << " " << coord[2] << " " << coord[3] << std::endl;
+        std::vector<double> coord = this->tenorMatching(*it) ;
         double interRate = interpolate(coord[0],coord[1],coord[2],coord[3],*it);
         rates.push_back(interRate);
     }
@@ -104,19 +103,19 @@ std::vector<double> RateCurve::getFwdRates(std::vector<double> schedule){
 
 RateCurve RateCurve::templateTransform(std::vector<double> schedule){
 
-    std::vector<double> interpRates = getZeroRates(schedule);
+    std::vector<double> interpRates = this->getZeroRates(schedule);
     std::map<double,double> templateRates;
 
     for (unsigned int i = 0; i < schedule.size(); i++){
         templateRates.insert(std::pair<double,double>(schedule[i],interpRates[i]));
     }
 
-    RateCurve templateCurve(getName() , templateRates);
-    return templateCurve;
+    RateCurve *templateCurve = new RateCurve(getName() , templateRates);
+    return *templateCurve;
 
 }
 
 RateCurve RateCurve::nameTransform(std::string newName){
-    RateCurve newCurve(newName , xRates);
-    return newCurve;
+    this->xName=newName;
+    return *this;
 }

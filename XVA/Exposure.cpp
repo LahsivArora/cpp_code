@@ -14,11 +14,11 @@ ExposureCalc::ExposureCalc(NettingSet& netSet, std::vector<RateCurve>& simCurves
 }
 
 NettingSet ExposureCalc::getNettingSet(){
-    return xNetSet;
+    return this->xNetSet;
 }
 
 RateCurve ExposureCalc::getBaseCurve(){
-    return xSimCurves[0];
+    return this->xSimCurves[0];
 }
 
 std::vector<std::map<double,double>> ExposureCalc::calc(){

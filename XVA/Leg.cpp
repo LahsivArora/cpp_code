@@ -11,26 +11,26 @@ Leg::Leg(LegType type ,Currency ccy ,double freq, double rate, std::string curve
 }
 
 std::string Leg::getLegCurveName(){
-    return xCurveName;
+    return this->xCurveName;
 }
 
 LegType Leg::getLegType(){
-    return xType;
+    return this->xType;
 }
 
 double Leg::getLegRate(){
-    return xRate;
+    return this->xRate;
 }
 
 double Leg::getLegFreq(){
-    return xFreq;
+    return this->xFreq;
 }
 
 std::vector<double> Leg::getLegFlows(double maturity){
     std::vector<double> flows;
-    double n = maturity * xFreq;
+    double n = maturity * this->xFreq;
     for (int i=0; i < n; i++){
-        flows.push_back((i+1)/xFreq);
+        flows.push_back((i+1)/this->xFreq);
     }
     return flows;   
 }
