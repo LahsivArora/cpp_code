@@ -14,12 +14,12 @@
 
 class SimulateRate{
 private:
-    RateCurve xCurve;
+    RateCurve * xCurve;
     double xVol, xSimPaths, xMeanRev;
 public:
-    SimulateRate(RateCurve& curve, double vol, double meanRev, double simPaths);
-    std::vector<RateCurve> getSimulatedCurves();
-    std::vector<double> getSimulatedBaseNPVs(Swap& swap);
+    SimulateRate(RateCurve* curve, double vol, double meanRev, double simPaths);
+    std::vector<RateCurve *> getSimulatedCurves();
+    std::vector<double> getSimulatedBaseNPVs(Swap* swap);
 };
 
 #endif

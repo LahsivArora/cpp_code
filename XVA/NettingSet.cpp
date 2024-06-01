@@ -7,6 +7,7 @@ int NettingSet::counter = 0;
 
 NettingSet::NettingSet(std::vector<Swap *> swaps){
     this->xSwaps=swaps;
+    counter++;
 }
 
 std::vector<Swap *> NettingSet::getTrades(){

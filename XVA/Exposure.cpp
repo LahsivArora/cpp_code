@@ -8,17 +8,17 @@
 
 ExposureCalc::ExposureCalc(){}
 
-ExposureCalc::ExposureCalc(NettingSet& netSet, std::vector<RateCurve>& simCurves){
+ExposureCalc::ExposureCalc(NettingSet* netSet, std::vector<RateCurve *>* simCurves){
     xSimCurves=simCurves;
     xNetSet=netSet;
 }
 
-NettingSet ExposureCalc::getNettingSet(){
+NettingSet* ExposureCalc::getNettingSet(){
     return this->xNetSet;
 }
 
-RateCurve ExposureCalc::getBaseCurve(){
-    return this->xSimCurves[0];
+RateCurve* ExposureCalc::getBaseCurve(){
+    return (*xSimCurves)[0];
 }
 
 std::vector<std::map<double,double>> ExposureCalc::calc(){
@@ -26,10 +26,10 @@ std::vector<std::map<double,double>> ExposureCalc::calc(){
     std::vector<std::map<double,double>> output;
     std::map<double,double> EPEprofile;
     std::map<double,double> ENEprofile;
-    double maxMaturity = xNetSet.getMaxMaturity()+1.0;
-    double n = xSimCurves.size();
-    unsigned int trades = xNetSet.getNoOfTrades();
-    std::vector<Swap *> tradeObjs = xNetSet.getTrades();
+    double maxMaturity = xNetSet->getMaxMaturity()+1.0;
+    double n = xSimCurves->size();
+    unsigned int trades = xNetSet->getNoOfTrades();
+    std::vector<Swap *> tradeObjs = xNetSet->getTrades();
 
     // Exposure calc. profile matches expectations. using quarterly calc for exposures
     for (double i=0.25; i<maxMaturity; i+=0.25){
@@ -37,7 +37,7 @@ std::vector<std::map<double,double>> ExposureCalc::calc(){
         double exposureNeg = 0.0;
         for (unsigned int k=0; k<trades; k++){
             for (unsigned int j=0; j<n; j++){
-                SwapPricer priceLag(tradeObjs[k],xSimCurves[j],xSimCurves[j],1.0,i);
+                SwapPricer priceLag(tradeObjs[k],(*xSimCurves)[j],(*xSimCurves)[j],1.0,i);
                 double positiveExposure = (priceLag.calcTradeNPV()>0?priceLag.calcTradeNPV():0);
                 double negativeExposure = (priceLag.calcTradeNPV()<0?priceLag.calcTradeNPV():0);
                 exposurePos += positiveExposure;
@@ -66,10 +66,10 @@ std::map<double,double> ExposureCalc::calcEEProfile(RiskType type){
 double ExposureCalc::calcEAD(){
 
     double EAD = 0.0;
-    std::vector<Swap *> trades = xNetSet.getTrades();
-    RateCurve basecurve = getBaseCurve();
+    std::vector<Swap *> trades = xNetSet->getTrades();
+    RateCurve* basecurve = getBaseCurve();
 
-    SwapPricer basePV(&xNetSet,basecurve, basecurve,1.0);
+    SwapPricer basePV(xNetSet,basecurve, basecurve,1.0);
     double netSetPV = basePV.calcTradeNPV();
     double replacementCost = (netSetPV>0.0?netSetPV:0.0);
 
@@ -79,17 +79,13 @@ double ExposureCalc::calcEAD(){
     double PFE = 0.0;
 
     for (auto it = trades.begin(); it != trades.end(); it++) {
-        Swap current = *(*it) ;
-        RiskEngine trade(&current, basecurve);
-        double x = trade.calcRWADelta();
-        double y = current.getRiskHorizon();
-        double z = current.getAdjNotional();
+        Swap* current = (*it) ;
+        RiskEngine trade(current, basecurve);
+        double D = trade.calcRWADelta() * current->getRiskHorizon() * current->getAdjNotional();
 
-        double D = x * y  * z;
-
-        if (current.getMaturity() <= 1.0)
+        if (current->getMaturity() <= 1.0)
             Dsub1Y += D;
-        else if (current.getMaturity() > 1.0 && current.getMaturity() <= 5.0)
+        else if (current->getMaturity() > 1.0 && current->getMaturity() <= 5.0)
             D1Y5Y += D;
         else
             Dabove5Y += D;

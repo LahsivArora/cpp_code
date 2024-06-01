@@ -2,7 +2,7 @@
 #include "Pricer.h"
 #include "Leg.h"
 
-SwapPricer::SwapPricer(NettingSet* netSet, RateCurve& curve1, RateCurve& curve2, double FxSpot, double lag){
+SwapPricer::SwapPricer(NettingSet* netSet, RateCurve* curve1, RateCurve* curve2, double FxSpot, double lag){
     xNetSet=netSet;
     xCurve1=curve1;
     xCurve2=curve2;
@@ -10,7 +10,7 @@ SwapPricer::SwapPricer(NettingSet* netSet, RateCurve& curve1, RateCurve& curve2,
     xLag=lag;
 }
 
-SwapPricer::SwapPricer(Swap* swap, RateCurve& curve1, RateCurve& curve2, double FxSpot, double lag){
+SwapPricer::SwapPricer(Swap* swap, RateCurve* curve1, RateCurve* curve2, double FxSpot, double lag){
     xSwap=swap;
     xSwaps.push_back(xSwap);
     xNetSet=new NettingSet(xSwaps);
@@ -27,13 +27,13 @@ double SwapPricer::calcLegNPV(int legNum){
     double notional = (legNum==1?1.0:-1.0)*xSwap->getNotional()*(legNum==1?1.0:xSwap->getEndFxFwd()); // add conversion for xccy
     double rate = calcLeg.getLegRate();
     std::vector<double> flow = calcLeg.getLegFlows(xSwap->getMaturity());
-    RateCurve pricingCurve;
-    if (calcLeg.getLegCurveName() == xCurve1.getName())
+    RateCurve *pricingCurve = new RateCurve;
+    if (calcLeg.getLegCurveName() == xCurve1->getName())
         pricingCurve = xCurve1;
-    else if (calcLeg.getLegCurveName() == xCurve2.getName())
+    else if (calcLeg.getLegCurveName() == xCurve2->getName())
         pricingCurve = xCurve2;
 
-    std::vector<double> xLegdisc = pricingCurve.getDiscFactors(flow);
+    std::vector<double> xLegdisc = pricingCurve->getDiscFactors(flow);
 
     if (calcLeg.getLegType() == LegType::Fixed){
         for (unsigned int i=0; i < xLegdisc.size(); i++){
@@ -47,7 +47,7 @@ double SwapPricer::calcLegNPV(int legNum){
         }
     }
     else if (calcLeg.getLegType() == LegType::Float){
-        std::vector<double> xLegfwd = pricingCurve.getFwdRates(flow);
+        std::vector<double> xLegfwd = pricingCurve->getFwdRates(flow);
         for (unsigned int i=0; i < xLegdisc.size(); i++){
             if (flow[i] > xLag){
                 npv += (notional * (xLegfwd[i] + rate) * periodAdj * xLegdisc[i]);
@@ -77,6 +77,7 @@ double SwapPricer::calcTradeNPV(){
 }
 
 double SwapPricer::calcFVA(RateCurve& fundCurve){
-    RateCurve FVACurve = fundCurve.nameTransform("USD.SOFR");
+    RateCurve *FVACurve = new RateCurve;
+    *FVACurve = fundCurve.nameTransform("USD.SOFR");
     SwapPricer fundPV(xNetSet,FVACurve,FVACurve,1.0);
     return fundPV.calcTradeNPV() - calcTradeNPV();}

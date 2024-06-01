@@ -52,13 +52,13 @@ int main()
 
     // Step2b:MarketData: FXAsset (containing FxSpot; assuming spot is settling today)
     double FxSpot = 1.0856;
-    SwapPricer *xccyPricer = new SwapPricer(XccySwap,*SOFR,*EURXCCY,FxSpot);
+    SwapPricer *xccyPricer = new SwapPricer(XccySwap, SOFR, EURXCCY,FxSpot);
     std::cout << "NPV of XccySwap (in USD):" << xccyPricer->calcTradeNPV() << std::endl;
 
     // Step3: pricing netting set (with Swaps and RateCurve objects) 
-    SwapPricer *basePV = new SwapPricer(netSet,*SOFR,*SOFR,1.0);
+    SwapPricer *basePV = new SwapPricer(netSet, SOFR, SOFR,1.0);
     double netSetFVA = basePV->calcFVA(*FundingCurve);
-    RiskEngine *riskSet = new RiskEngine(netSet, *SOFR);
+    RiskEngine *riskSet = new RiskEngine(netSet, SOFR);
     // RiskEngine riskSet(Swap4, SOFR); // riskengine object can be created with 1 or multiple trades
     std::map<double,double> *irDelta = new std::map<double,double>;
     *irDelta = riskSet->calcIRDelta();
@@ -70,14 +70,14 @@ int main()
     double rateVol = 0.15; // i.e. 15% annual vol. constant for now.
     double simPaths = 5; // hardcoding simulation for now
     double a = 0.05; // speed of mean reversion 
-    SimulateRate *simEngine = new SimulateRate(*SOFR, rateVol, a, simPaths);
-    std::vector<RateCurve> *simCurves = new std::vector<RateCurve>;
+    SimulateRate *simEngine = new SimulateRate(SOFR, rateVol, a, simPaths);
+    std::vector<RateCurve *> *simCurves = new std::vector<RateCurve *>;
     *simCurves = simEngine->getSimulatedCurves();
-    std::vector<double> simNPVs = simEngine->getSimulatedBaseNPVs(*VanillaSwap1);
+    std::vector<double> simNPVs = simEngine->getSimulatedBaseNPVs(VanillaSwap1);
 
     // Step5: generate exposure profile using Swap and Simulated curves
     // assuming Quarterly time steps in exposure calculation; exposure is already discounted to today
-    ExposureCalc *netSetExProfile = new ExposureCalc(*netSet,*simCurves);
+    ExposureCalc *netSetExProfile = new ExposureCalc(netSet,simCurves);
 
     // Step6: create CDS curve with marginal default probabilities assuming contant hazard rate    
     double timesteps = 0.25; // quarterly steps to match exposure profile

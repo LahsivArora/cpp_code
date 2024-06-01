@@ -11,8 +11,8 @@ private:
     CDSCurve xCurve;
     double xLGD;
     RiskType xType;
-    NettingSet xNetSet;
-    RateCurve xBaseCurve;
+    NettingSet* xNetSet;
+    RateCurve* xBaseCurve;
 public:
     XVACalc(ExposureCalc& exposureObj, CDSCurve curve, double LGD, RiskType type);
     double calcXVA();
