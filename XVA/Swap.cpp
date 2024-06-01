@@ -2,8 +2,6 @@
 #include <cmath>
 #include "Swap.h"
 
-Swap::Swap(){}
-
 Swap::Swap(TradeType type,double maturity, double notional, Leg& Leg1, Leg& Leg2, NotionalExch exch, double endFxFwd){
     xType=type;
     xmaturity=maturity;

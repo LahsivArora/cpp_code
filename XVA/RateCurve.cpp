@@ -2,8 +2,6 @@
 #include <cmath>
 #include "RateCurve.h"
 
-RateCurve::RateCurve(){}
-
 RateCurve::RateCurve(std::string name, std::map<double,double> rates){
     xName=name;
     xRates=rates;
@@ -116,6 +114,6 @@ RateCurve RateCurve::templateTransform(std::vector<double> schedule){
 }
 
 RateCurve RateCurve::nameTransform(std::string newName){
-    this->xName=newName;
-    return *this;
+    RateCurve *newCurve = new RateCurve(newName, this->xRates);
+    return *newCurve;
 }

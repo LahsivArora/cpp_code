@@ -3,8 +3,6 @@
 #include "NettingSet.h"
 #include "Pricer.h"
 
-NettingSet::NettingSet(){}
-
 NettingSet::NettingSet(std::vector<Swap>& swaps){
     this->xSwaps=swaps;
 }

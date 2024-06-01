@@ -22,8 +22,7 @@ private:
     std::vector<double> tenorMatching (double tenor);
     std::vector<double> getZeroRates(std::vector<double> schedule);
 public:
-    RateCurve();     // default constructor
-    RateCurve(std::string name, std::map<double,double> rates);
+    RateCurve(std::string name = "", std::map<double,double> rates = *(new std::map<double,double>));
     std::map<double,double> getRates();
     std::string getName();
     std::vector<double> getDiscFactors(std::vector<double> schedule);

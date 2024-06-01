@@ -1,7 +1,5 @@
 #include "Leg.h"
 
-Leg::Leg(){}
-
 Leg::Leg(LegType type ,Currency ccy ,double freq, double rate, std::string curveName){
     xType=type;
     xLegCcy=ccy;

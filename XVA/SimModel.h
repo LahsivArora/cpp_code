@@ -17,8 +17,6 @@ private:
     RateCurve xCurve;
     double xVol, xSimPaths, xMeanRev;
 public:
-    // assuming Leg1 is fixed rate and Leg2 is floating rate
-    // inputs are swap object, discount factors and fwd rates 
     SimulateRate(RateCurve& curve, double vol, double meanRev, double simPaths);
     std::vector<RateCurve> getSimulatedCurves();
     std::vector<double> getSimulatedBaseNPVs(Swap& swap);

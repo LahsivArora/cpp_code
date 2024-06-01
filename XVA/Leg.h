@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 #include "Enums.h"
+#include <iostream>
 
 class Leg{
 private:
@@ -13,8 +14,7 @@ private:
     std::string xCurveName;
 public:
     // for Leg, choose fixed or float leg type and enter cashflow freq/year and fixed rate/float spread
-    Leg();
-    Leg(LegType type ,Currency ccy ,double freq, double rate, std::string curveName = "");
+    Leg(LegType type = LegType::Fixed, Currency ccy = Currency::USD, double freq = 0.0, double rate = 0.0, std::string curveName = "");
     std::vector<double> getLegFlows(double maturity);
     LegType getLegType();
     double getLegRate();

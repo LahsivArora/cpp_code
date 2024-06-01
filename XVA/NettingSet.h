@@ -9,8 +9,7 @@ class NettingSet{
 private:
     std::vector<Swap> xSwaps;
 public:
-    NettingSet();  // default constructor
-    NettingSet(std::vector<Swap>& swaps);
+    NettingSet(std::vector<Swap>& swaps = *(new std::vector<Swap>));
     double getMaxMaturity();
     std::vector<Swap> getTrades();
     unsigned int getNoOfTrades();
