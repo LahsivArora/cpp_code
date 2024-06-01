@@ -29,11 +29,11 @@ int main()
     Swap *VanillaSwap4 = new Swap(TradeType::IrSwap,2.5,-1000000.0, *fixLeg4, *floatLeg, NotionalExch::NO);
 
     // Step1b: define portfolio with 4 swaps 
-    std::vector<Swap> *trades = new std::vector<Swap>;
-    trades->push_back(*VanillaSwap1);
-    trades->push_back(*VanillaSwap2);
-    trades->push_back(*VanillaSwap3);
-    trades->push_back(*VanillaSwap4);
+    std::vector<Swap *> *trades = new std::vector<Swap *>;
+    trades->push_back(VanillaSwap1);
+    trades->push_back(VanillaSwap2);
+    trades->push_back(VanillaSwap3);
+    trades->push_back(VanillaSwap4);
     NettingSet *netSet = new NettingSet(*trades); 
 
     // define xccy swap
@@ -52,13 +52,13 @@ int main()
 
     // Step2b:MarketData: FXAsset (containing FxSpot; assuming spot is settling today)
     double FxSpot = 1.0856;
-    SwapPricer *xccyPricer = new SwapPricer(*XccySwap,*SOFR,*EURXCCY,FxSpot);
+    SwapPricer *xccyPricer = new SwapPricer(XccySwap,*SOFR,*EURXCCY,FxSpot);
     std::cout << "NPV of XccySwap (in USD):" << xccyPricer->calcTradeNPV() << std::endl;
 
     // Step3: pricing netting set (with Swaps and RateCurve objects) 
-    SwapPricer *basePV = new SwapPricer(*netSet,*SOFR,*SOFR,1.0);
+    SwapPricer *basePV = new SwapPricer(netSet,*SOFR,*SOFR,1.0);
     double netSetFVA = basePV->calcFVA(*FundingCurve);
-    RiskEngine *riskSet = new RiskEngine(*netSet, *SOFR);
+    RiskEngine *riskSet = new RiskEngine(netSet, *SOFR);
     // RiskEngine riskSet(Swap4, SOFR); // riskengine object can be created with 1 or multiple trades
     std::map<double,double> *irDelta = new std::map<double,double>;
     *irDelta = riskSet->calcIRDelta();
@@ -101,6 +101,10 @@ int main()
     std::cout << "DVA (+ive means benefit to bank):" << DVA->calcXVA() << std::endl;
     std::cout << "RWA (using SA-CCR):" << CVA->calcRWA() << std::endl; 
     std::cout << "Initial Margin (using SIMM):" << CVA->calcInitialMargin() << std::endl; 
+
+    std::cout << "number of swap objects:" << XccySwap->counter << std::endl; 
+    std::cout << "number of netting set objects:" << netSet->counter << std::endl; 
+    std::cout << "number of rate curve objects:" << SOFR->counter << std::endl; 
 
     return 0;
 }

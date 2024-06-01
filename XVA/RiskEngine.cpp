@@ -1,17 +1,15 @@
 #include "RiskEngine.h"
 
-RiskEngine::RiskEngine(NettingSet& netSet, RateCurve& curve){
+RiskEngine::RiskEngine(NettingSet* netSet, RateCurve& curve){
     xNetSet=netSet;
     xCurve=curve;
 }
 
-RiskEngine::RiskEngine(Swap& swap, RateCurve& curve){
-    xSwap=swap;
+RiskEngine::RiskEngine(Swap* swap, RateCurve& curve){
     xCurve=curve;
-    std::vector<Swap> dummy;
-    dummy.push_back(xSwap);
-    NettingSet netSetDummy(dummy);
-    xNetSet=netSetDummy;
+    xSwap=swap;
+    xSwaps.push_back(xSwap);
+    xNetSet= new NettingSet(xSwaps);
 }
 
 std::map<double,double> RiskEngine::calcIRDelta(){
@@ -48,8 +46,8 @@ std::map<double,double> RiskEngine::calcIRDelta(){
 double RiskEngine::calcRWADelta(){
     
     double delta;
-    
-    if (this->xNetSet.getTrades()[0].getTradeType() == TradeType::IrSwap) 
+    Swap current = *((*xNetSet).getTrades()[0]);
+    if ( current.getTradeType() == TradeType::IrSwap) 
         delta = 1.0;
 
     return delta; 

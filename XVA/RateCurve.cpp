@@ -2,6 +2,8 @@
 #include <cmath>
 #include "RateCurve.h"
 
+int RateCurve::counter = 0;
+
 RateCurve::RateCurve(std::string name, std::map<double,double> rates){
     xName=name;
     xRates=rates;

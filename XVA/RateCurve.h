@@ -22,6 +22,7 @@ private:
     std::vector<double> tenorMatching (double tenor);
     std::vector<double> getZeroRates(std::vector<double> schedule);
 public:
+    static int counter;
     RateCurve(std::string name = "", std::map<double,double> rates = *(new std::map<double,double>));
     std::map<double,double> getRates();
     std::string getName();
