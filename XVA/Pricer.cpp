@@ -16,8 +16,9 @@ SwapPricer::SwapPricer(NettingSet* netSet, RateCurve* curve1, RateCurve* curve2,
 
 SwapPricer::SwapPricer(Swap* swap, RateCurve* curve1, RateCurve* curve2, double FxSpot, double lag){
     xSwap=swap;
-    xSwaps.push_back(xSwap);
-    xNetSet=new NettingSet(xSwaps);
+    xSwaps= new std::vector<Swap *>;
+    xSwaps->push_back(xSwap);
+    xNetSet= new NettingSet(*xSwaps);
     xCurve1=curve1;
     xCurve2=curve2;
     xFxSpot=FxSpot;
@@ -32,7 +33,7 @@ double SwapPricer::calcLegNPV(int legNum){
     double notional = (legNum==1?1.0:-1.0)*xSwap->getNotional()*(legNum==1?1.0:xSwap->getEndFxFwd()); // add conversion for xccy
     double rate = calcLeg.getLegRate();
     std::vector<double> flow = calcLeg.getLegFlows(xSwap->getMaturity());
-    RateCurve* pricingCurve = new RateCurve; 
+    RateCurve* pricingCurve; 
     if (calcLeg.getLegCurveName() == xCurve1->getName())
         pricingCurve = xCurve1;
     else if (calcLeg.getLegCurveName() == xCurve2->getName())

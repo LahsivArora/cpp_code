@@ -9,7 +9,7 @@
 class SwapPricer{
 private:
     NettingSet * xNetSet;
-    std::vector<Swap *> xSwaps;
+    std::vector<Swap *>* xSwaps;
     Swap * xSwap;
     RateCurve *xCurve1, *xCurve2;
     double xFxSpot;

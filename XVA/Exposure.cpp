@@ -82,7 +82,7 @@ double ExposureCalc::calcEAD(){
     double PFE = 0.0;
 
     for (auto it = trades.begin(); it != trades.end(); it++) {
-        Swap* current = (*it) ;
+        Swap* current = *it ;
         RiskEngine trade(current, basecurve);
         double D = trade.calcRWADelta() * current->getRiskHorizon() * current->getAdjNotional();
 

@@ -10,7 +10,7 @@
 class RiskEngine{
 private:
     NettingSet * xNetSet;
-    std::vector<Swap *> xSwaps;
+    std::vector<Swap *>* xSwaps;
     RateCurve * xCurve;
     Swap * xSwap;
 public:

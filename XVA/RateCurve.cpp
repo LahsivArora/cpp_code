@@ -102,7 +102,7 @@ std::vector<double> RateCurve::getFwdRates(std::vector<double> schedule){
     return fwds;
 }
 
-RateCurve RateCurve::templateTransform(std::vector<double> schedule){
+RateCurve* RateCurve::templateTransform(std::vector<double> schedule){
 
     std::vector<double> interpRates = this->getZeroRates(schedule);
     std::map<double,double> templateRates;
@@ -112,7 +112,7 @@ RateCurve RateCurve::templateTransform(std::vector<double> schedule){
     }
 
     RateCurve *templateCurve = new RateCurve(getName() , templateRates);
-    return *templateCurve;
+    return templateCurve;
 
 }
 

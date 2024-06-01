@@ -11,8 +11,9 @@ RiskEngine::RiskEngine(NettingSet* netSet, RateCurve* curve){
 RiskEngine::RiskEngine(Swap* swap, RateCurve* curve){
     xCurve=curve;
     xSwap=swap;
-    xSwaps.push_back(xSwap);
-    xNetSet= new NettingSet(xSwaps);
+    xSwaps = new std::vector<Swap *>;
+    xSwaps->push_back(xSwap);
+    xNetSet= new NettingSet(*xSwaps);
     ++counter;
 }
 
@@ -34,6 +35,8 @@ std::map<double,double> RiskEngine::calcIRDelta(){
         SwapPricer *priceBump = new SwapPricer(this->xNetSet, bumpedCurve, bumpedCurve,1.0);
         double bumpedPV = priceBump->calcTradeNPV();
         bumpedPVs.insert(std::pair<double,double>(tenor,bumpedPV-basePV));
+        delete bumpedCurve;
+        delete priceBump;
     }
 
     auto it1st = bumpedPVs.rbegin();
