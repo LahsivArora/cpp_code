@@ -2,12 +2,15 @@
 #include "Pricer.h"
 #include "Leg.h"
 
+int SwapPricer::counter = 0;
+
 SwapPricer::SwapPricer(NettingSet* netSet, RateCurve* curve1, RateCurve* curve2, double FxSpot, double lag){
     xNetSet=netSet;
     xCurve1=curve1;
     xCurve2=curve2;
     xFxSpot=FxSpot;
     xLag=lag;
+    ++counter;
 }
 
 SwapPricer::SwapPricer(Swap* swap, RateCurve* curve1, RateCurve* curve2, double FxSpot, double lag){
@@ -18,6 +21,7 @@ SwapPricer::SwapPricer(Swap* swap, RateCurve* curve1, RateCurve* curve2, double 
     xCurve2=curve2;
     xFxSpot=FxSpot;
     xLag=lag;
+    ++counter;
 }
 
 double SwapPricer::calcLegNPV(int legNum){

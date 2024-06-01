@@ -14,6 +14,7 @@ private:
     RateCurve * xCurve;
     Swap * xSwap;
 public:
+    static int counter;
     RiskEngine(NettingSet* netSet = new NettingSet, RateCurve* curve = new RateCurve);
     RiskEngine(Swap* swap = new Swap, RateCurve* curve = new RateCurve);
     std::map<double,double> calcIRDelta();

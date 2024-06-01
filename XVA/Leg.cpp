@@ -1,11 +1,14 @@
 #include "Leg.h"
 
+int Leg::counter = 0;
+
 Leg::Leg(LegType type ,Currency ccy ,double freq, double rate, std::string curveName){
     xType=type;
     xLegCcy=ccy;
     xFreq=freq;
     xRate=rate;
     xCurveName=curveName;
+    ++counter;
 }
 
 std::string Leg::getLegCurveName(){

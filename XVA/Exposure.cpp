@@ -6,11 +6,12 @@
 #include "Exposure.h"
 #include "RiskEngine.h"
 
-ExposureCalc::ExposureCalc(){}
+int ExposureCalc::counter = 0;
 
 ExposureCalc::ExposureCalc(NettingSet* netSet, std::vector<RateCurve *>* simCurves){
     xSimCurves=simCurves;
     xNetSet=netSet;
+    ++counter;
 }
 
 NettingSet* ExposureCalc::getNettingSet(){

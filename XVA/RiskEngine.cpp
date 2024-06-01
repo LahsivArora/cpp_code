@@ -1,8 +1,11 @@
 #include "RiskEngine.h"
 
+int RiskEngine::counter = 0;
+
 RiskEngine::RiskEngine(NettingSet* netSet, RateCurve* curve){
     xNetSet=netSet;
     xCurve=curve;
+    ++counter;
 }
 
 RiskEngine::RiskEngine(Swap* swap, RateCurve* curve){
@@ -10,6 +13,7 @@ RiskEngine::RiskEngine(Swap* swap, RateCurve* curve){
     xSwap=swap;
     xSwaps.push_back(xSwap);
     xNetSet= new NettingSet(xSwaps);
+    ++counter;
 }
 
 std::map<double,double> RiskEngine::calcIRDelta(){

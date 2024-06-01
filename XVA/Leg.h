@@ -13,6 +13,7 @@ private:
     double xFreq, xRate;
     std::string xCurveName;
 public:
+    static int counter;
     // for Leg, choose fixed or float leg type and enter cashflow freq/year and fixed rate/float spread
     Leg(LegType type = LegType::Fixed, Currency ccy = Currency::USD, double freq = 0.0, double rate = 0.0, std::string curveName = "");
     std::vector<double> getLegFlows(double maturity);

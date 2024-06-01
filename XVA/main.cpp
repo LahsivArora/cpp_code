@@ -102,9 +102,16 @@ int main()
     std::cout << "RWA (using SA-CCR):" << CVA->calcRWA() << std::endl; 
     std::cout << "Initial Margin (using SIMM):" << CVA->calcInitialMargin() << std::endl; 
 
-    std::cout << "number of swap objects:" << XccySwap->counter << std::endl; 
-    std::cout << "number of netting set objects:" << netSet->counter << std::endl; 
-    std::cout << "number of rate curve objects:" << SOFR->counter << std::endl; 
+    std::cout << "number of Leg objects:" << XccySwap->counter << std::endl; 
+    std::cout << "number of Swap objects:" << XccySwap->counter << std::endl; 
+    std::cout << "number of NettingSet objects:" << netSet->counter << std::endl; 
+    std::cout << "number of RateCurve objects:" << SOFR->counter << std::endl; 
+    std::cout << "number of CDSCurve objects:" << ownCDS->counter << std::endl; 
+    std::cout << "number of SwapPricer objects:" << xccyPricer->counter << std::endl;
+    std::cout << "number of RiskEngine objects:" << riskSet->counter << std::endl;
+    std::cout << "number of SimModel objects:" << simEngine->counter << std::endl;
+    std::cout << "number of Exposure objects:" << netSetExProfile->counter << std::endl;
+    std::cout << "number of XVACalc objects:" << CVA->counter << std::endl;
 
     return 0;
 }

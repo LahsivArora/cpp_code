@@ -2,13 +2,14 @@
 #include "CDSCurve.h"
 #include <cmath>
 
-CDSCurve::CDSCurve(){}
+int CDSCurve::counter=0;
 
 CDSCurve::CDSCurve(double CDSSpread, double LGD, double maxMaturity, double timesteps){
     xSpread=CDSSpread;
     xLGD=LGD;
     xMaturity=maxMaturity;
     xSteps=timesteps;
+    ++counter;
 }
 
 std::map<double,double> CDSCurve::calcMarginalPDs(){

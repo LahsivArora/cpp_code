@@ -8,8 +8,8 @@ class CDSCurve{
 private:
     double xSpread, xLGD, xMaturity, xSteps;
 public:
-    CDSCurve();
-    CDSCurve(double CDSSpread, double LGD, double maxMaturity, double timesteps);
+    static int counter;
+    CDSCurve(double CDSSpread = 0.0, double LGD = 0.0, double maxMaturity = 0.0, double timesteps = 0.0);
     std::map<double,double> calcMarginalPDs();
 };
   

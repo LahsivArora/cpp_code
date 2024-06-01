@@ -3,6 +3,8 @@
 #include "Exposure.h"
 #include "RiskEngine.h"
 
+int XVACalc::counter = 0;
+
 XVACalc::XVACalc(ExposureCalc& exposureObj, CDSCurve curve, double LGD, RiskType type){
     xExposureObj=exposureObj;
     xCurve=curve;
@@ -10,6 +12,7 @@ XVACalc::XVACalc(ExposureCalc& exposureObj, CDSCurve curve, double LGD, RiskType
     xType=type;
     xNetSet=xExposureObj.getNettingSet();
     xBaseCurve=xExposureObj.getBaseCurve();
+    ++counter;
 }
 
 double XVACalc::calcXVA(){

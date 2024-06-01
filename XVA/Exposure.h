@@ -23,8 +23,8 @@ private:
     std::vector<RateCurve *> * xSimCurves;
     std::vector<std::map<double,double>> calc();
 public:
-    ExposureCalc();
-    ExposureCalc(NettingSet* netSet, std::vector<RateCurve *>* simCurves);
+    static int counter;
+    ExposureCalc(NettingSet* netSet = new NettingSet, std::vector<RateCurve *>* simCurves = new std::vector<RateCurve *>);
     std::map<double,double> calcEEProfile(RiskType type); // for CVA/DVA calc
     double calcEAD(); // for RWA calc
     NettingSet* getNettingSet();

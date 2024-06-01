@@ -15,6 +15,7 @@ private:
     double xFxSpot;
     double xLag;
 public:
+    static int counter;
     // inputs are Swap object or Netting Set and market data (i.e. rate curves + FxSpot) and optional Lag (for exposure calc) 
     SwapPricer(Swap* swap = new Swap, RateCurve* curve1 = new RateCurve, RateCurve* curve2 = new RateCurve, 
                double FxSpot = 0.0, double lag = 0.0);

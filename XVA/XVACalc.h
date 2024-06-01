@@ -14,6 +14,7 @@ private:
     NettingSet* xNetSet;
     RateCurve* xBaseCurve;
 public:
+    static int counter;
     XVACalc(ExposureCalc& exposureObj, CDSCurve curve, double LGD, RiskType type);
     double calcXVA();
     double calcRWA();

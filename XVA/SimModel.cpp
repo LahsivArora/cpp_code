@@ -2,11 +2,14 @@
 #include "SimModel.h"
 #include "Pricer.h"
 
+int SimulateRate::counter = 0;
+
 SimulateRate::SimulateRate(RateCurve* curve, double vol, double meanRev, double simPaths){
     xCurve=curve;
     xVol=vol;
     xMeanRev=meanRev;
     xSimPaths=simPaths;
+    ++counter;
 }
 
 std::vector<RateCurve *> SimulateRate::getSimulatedCurves(){
