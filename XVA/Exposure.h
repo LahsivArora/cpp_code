@@ -29,6 +29,7 @@ public:
     double calcEAD(); // for RWA calc
     NettingSet* getNettingSet();
     RateCurve* getBaseCurve();
+    ~ExposureCalc(){--counter;}
 };
   
 #endif

@@ -19,6 +19,7 @@ public:
     RiskEngine(Swap* swap = new Swap, RateCurve* curve = new RateCurve);
     std::map<double,double> calcIRDelta();
     double calcRWADelta();
+    ~RiskEngine(){--counter;}
 };
 
 #endif

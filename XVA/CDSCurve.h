@@ -11,6 +11,7 @@ public:
     static int counter;
     CDSCurve(double CDSSpread = 0.0, double LGD = 0.0, double maxMaturity = 0.0, double timesteps = 0.0);
     std::map<double,double> calcMarginalPDs();
+    ~CDSCurve(){--counter;}
 };
   
 #endif

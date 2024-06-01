@@ -25,6 +25,7 @@ public:
     double getAdjNotional(); // for RWA calc
     double getRiskHorizon(); // for RWA calc
     double getEndFxFwd();
+    ~Swap(){--counter;}
 };
 
 #endif

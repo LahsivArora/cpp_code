@@ -24,6 +24,7 @@ public:
     double calcLegNPV(int legNum);
     double calcTradeNPV();
     double calcFVA(RateCurve& fundCurve);
+    ~SwapPricer(){--counter;}
 };
 
 #endif

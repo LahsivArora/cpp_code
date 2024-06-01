@@ -21,6 +21,7 @@ public:
     double getLegRate();
     double getLegFreq();
     std::string getLegCurveName();
+    ~Leg(){--counter;}
 };
 
 #endif

@@ -19,7 +19,7 @@ NettingSet* ExposureCalc::getNettingSet(){
 }
 
 RateCurve* ExposureCalc::getBaseCurve(){
-    return (*xSimCurves)[0];
+    return *(xSimCurves->begin());
 }
 
 std::vector<std::map<double,double>> ExposureCalc::calc(){
@@ -37,10 +37,11 @@ std::vector<std::map<double,double>> ExposureCalc::calc(){
         double exposurePos = 0.0;
         double exposureNeg = 0.0;
         for (unsigned int k=0; k<trades; k++){
-            for (unsigned int j=0; j<n; j++){
-                SwapPricer priceLag(tradeObjs[k],(*xSimCurves)[j],(*xSimCurves)[j],1.0,i);
-                double positiveExposure = (priceLag.calcTradeNPV()>0?priceLag.calcTradeNPV():0);
-                double negativeExposure = (priceLag.calcTradeNPV()<0?priceLag.calcTradeNPV():0);
+            for (auto it = xSimCurves->begin(); it != xSimCurves->end(); it++){
+                SwapPricer *priceLag = new SwapPricer(tradeObjs[k], *it ,*it,1.0,i);
+                double positiveExposure = (priceLag->calcTradeNPV()>0?priceLag->calcTradeNPV():0);
+                double negativeExposure = (priceLag->calcTradeNPV()<0?priceLag->calcTradeNPV():0);
+                delete priceLag;
                 exposurePos += positiveExposure;
                 exposureNeg += negativeExposure;
             }
@@ -70,9 +71,10 @@ double ExposureCalc::calcEAD(){
     std::vector<Swap *> trades = xNetSet->getTrades();
     RateCurve* basecurve = getBaseCurve();
 
-    SwapPricer basePV(xNetSet,basecurve, basecurve,1.0);
-    double netSetPV = basePV.calcTradeNPV();
+    SwapPricer *basePV = new SwapPricer(xNetSet,basecurve, basecurve,1.0);
+    double netSetPV = basePV->calcTradeNPV();
     double replacementCost = (netSetPV>0.0?netSetPV:0.0);
+    delete basePV;
 
     double Dsub1Y = 0.0;
     double D1Y5Y = 0.0;

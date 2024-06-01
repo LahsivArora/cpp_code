@@ -30,6 +30,7 @@ public:
     std::vector<double> getFwdRates(std::vector<double> schedule);
     RateCurve templateTransform(std::vector<double> schedule);
     RateCurve nameTransform(std::string newName);
+    ~RateCurve(){--counter;}
 };
   
 #endif

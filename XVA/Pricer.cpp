@@ -1,6 +1,7 @@
 #include <vector>
 #include "Pricer.h"
 #include "Leg.h"
+#include <memory>
 
 int SwapPricer::counter = 0;
 
@@ -31,13 +32,14 @@ double SwapPricer::calcLegNPV(int legNum){
     double notional = (legNum==1?1.0:-1.0)*xSwap->getNotional()*(legNum==1?1.0:xSwap->getEndFxFwd()); // add conversion for xccy
     double rate = calcLeg.getLegRate();
     std::vector<double> flow = calcLeg.getLegFlows(xSwap->getMaturity());
-    RateCurve *pricingCurve = new RateCurve;
+    RateCurve* pricingCurve = new RateCurve; 
     if (calcLeg.getLegCurveName() == xCurve1->getName())
         pricingCurve = xCurve1;
     else if (calcLeg.getLegCurveName() == xCurve2->getName())
         pricingCurve = xCurve2;
 
     std::vector<double> xLegdisc = pricingCurve->getDiscFactors(flow);
+    std::vector<double> xLegfwd = pricingCurve->getFwdRates(flow);
 
     if (calcLeg.getLegType() == LegType::Fixed){
         for (unsigned int i=0; i < xLegdisc.size(); i++){
@@ -51,7 +53,6 @@ double SwapPricer::calcLegNPV(int legNum){
         }
     }
     else if (calcLeg.getLegType() == LegType::Float){
-        std::vector<double> xLegfwd = pricingCurve->getFwdRates(flow);
         for (unsigned int i=0; i < xLegdisc.size(); i++){
             if (flow[i] > xLag){
                 npv += (notional * (xLegfwd[i] + rate) * periodAdj * xLegdisc[i]);
@@ -77,7 +78,7 @@ double SwapPricer::calcTradeNPV(){
         else if (xSwap->getTradeType() == TradeType::XccySwap)
             npv += this->calcLegNPV(1)*xFxSpot + this->calcLegNPV(2); // converting to Leg2 ccy. USD in this case
     }
-        return npv;
+    return npv;
 }
 
 double SwapPricer::calcFVA(RateCurve& fundCurve){

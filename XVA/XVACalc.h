@@ -19,6 +19,7 @@ public:
     double calcXVA();
     double calcRWA();
     double calcInitialMargin();
+    ~XVACalc(){--counter;}
 };
 
 #endif

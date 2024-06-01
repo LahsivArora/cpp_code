@@ -14,6 +14,7 @@ public:
     double getMaxMaturity();
     std::vector<Swap *> getTrades();
     unsigned int getNoOfTrades();
+    ~NettingSet(){--counter;}
 };
 
 #endif
