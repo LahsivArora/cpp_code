@@ -1,26 +1,25 @@
 #include <vector>
 #include "Pricer.h"
-#include "Leg.h"
 
 int SwapPricer::counter = 0;
 
-SwapPricer::SwapPricer(NettingSet* netSet, RateCurve* curve1, RateCurve* curve2, double FxSpot, double lag){
+SwapPricer::SwapPricer(NettingSet* netSet, MarketData* mktData, double lag){
     xNetSet=netSet;
-    xCurve1=curve1;
-    xCurve2=curve2;
-    xFxSpot=FxSpot;
+    xMktData=mktData;
+    xCurves=xMktData->getRateCurves();
+    xFxSpot=xMktData->getFxSpots()->front();
     xLag=lag;
     ++counter;
 }
 
-SwapPricer::SwapPricer(Swap* swap, RateCurve* curve1, RateCurve* curve2, double FxSpot, double lag){
+SwapPricer::SwapPricer(Swap* swap, MarketData* mktData, double lag){
     xSwap=swap;
     xSwaps= new std::vector<Swap *>;
     xSwaps->push_back(xSwap);
     xNetSet= new NettingSet(xSwaps);
-    xCurve1=curve1;
-    xCurve2=curve2;
-    xFxSpot=FxSpot;
+    xMktData=mktData;
+    xCurves=xMktData->getRateCurves();
+    xFxSpot=xMktData->getFxSpots()->front();
     xLag=lag;
     ++counter;
 }
@@ -33,16 +32,15 @@ double SwapPricer::calcLegNPV(int legNum){
     double rate = calcLeg->getLegRate();
     std::vector<double> flow = calcLeg->getLegFlows(xSwap->getMaturity());
     RateCurve* pricingCurve; 
-    if (calcLeg->getLegCurveName() == xCurve1->getName())
-        pricingCurve = xCurve1;
-    else if (calcLeg->getLegCurveName() == xCurve2->getName())
-        pricingCurve = xCurve2;
-    else {
-        if (calcLeg->getLegCurveName().size() == 0)
-            throw std::string("Leg curveName: is empty");
-        else                    
-            throw std::string("Leg curveName:"+calcLeg->getLegCurveName()+" doesnt match curves in marketdata");
+
+    if (calcLeg->getLegCurveName().size() == 0)
+        throw std::string("Leg curveName: is empty");
+    for (auto it=xCurves->begin(); it != xCurves-> end(); it++){
+        if (calcLeg->getLegCurveName() == (*it)->getName())
+            pricingCurve = *it;
         }
+    if (pricingCurve->getName().size() == 0)
+        throw std::string("Leg curveName:"+calcLeg->getLegCurveName()+" doesnt match curves in marketdata");
 
     std::vector<double> xLegdisc = pricingCurve->getDiscFactors(flow);
     std::vector<double> xLegfwd = pricingCurve->getFwdRates(flow);
@@ -85,7 +83,7 @@ double SwapPricer::calcTradeNPV(){
         if (xSwap->getTradeType() == TradeType::IrSwap)
             npv += this->calcLegNPV(1) + this->calcLegNPV(2);
         else if (xSwap->getTradeType() == TradeType::XccySwap)
-            npv += this->calcLegNPV(1)*xFxSpot + this->calcLegNPV(2); // converting to Leg2 ccy. USD in this case
+            npv += this->calcLegNPV(1)*(*xFxSpot) + this->calcLegNPV(2); // converting to Leg2 ccy. USD in this case
         else
             throw std::string("TradeType is not supported");
     }
@@ -95,6 +93,8 @@ double SwapPricer::calcTradeNPV(){
 double SwapPricer::calcFVA(RateCurve& fundCurve){
     RateCurve *FVACurve = new RateCurve;
     *FVACurve = fundCurve.nameTransform("USD.SOFR");
-    SwapPricer fundPV(xNetSet,FVACurve,FVACurve,1.0);
+    MarketData* replaceMktData = new MarketData;
+    replaceMktData = xMktData->createBumpedMarktData(FVACurve);
+    SwapPricer fundPV(xNetSet,replaceMktData);
     return fundPV.calcTradeNPV() - calcTradeNPV();
 }

@@ -19,6 +19,7 @@ public:
     std::vector<CDSCurve*>* getCDSCurves();
     std::vector<double*>* getFxSpots();
     ~MarketData(){--counter;}
+    MarketData* createBumpedMarktData(RateCurve* bumpedCurve);
 };
   
 #endif

@@ -2,9 +2,6 @@
 #define RISKENGINE_H_
 
 #include <vector>
-#include "NettingSet.h"
-#include "Swap.h"
-#include "RateCurve.h"
 #include "Pricer.h"
 
 class RiskEngine{
@@ -12,11 +9,13 @@ private:
     NettingSet * xNetSet;
     std::vector<Swap *>* xSwaps;
     RateCurve * xCurve;
+    MarketData * xMktData;
     Swap * xSwap;
+    std::string xBumpCurve;
 public:
     static int counter;
-    RiskEngine(NettingSet* netSet = new NettingSet, RateCurve* curve = new RateCurve);
-    RiskEngine(Swap* swap = new Swap, RateCurve* curve = new RateCurve);
+    RiskEngine(NettingSet* netSet = new NettingSet, MarketData* curve = new MarketData, std::string bumpCurve = "");
+    RiskEngine(Swap* swap = new Swap, MarketData* curve = new MarketData, std::string bumpCurve = "");
     std::map<double,double> calcIRDelta();
     double calcRWADelta();
     ~RiskEngine(){--counter;}

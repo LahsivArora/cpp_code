@@ -34,14 +34,19 @@ double XVACalc::calcRWA(){
     return RWA;
 }
 
-double XVACalc::calcInitialMargin(){
+double XVACalc::calcInitialMargin(MarketData* mktData){
     // calculation based on SIMM (standardized initial margin model) by ISDA
     double IM = 0.0;
     std::vector<double> SIMMtemplate = {0.038462,0.083333,0.25,0.5,1.0,2.0,3.0,5.0,10.0};
-    RateCurve* SIMMCurve; //= new RateCurve;
+    RateCurve* SIMMCurve = new RateCurve;
     SIMMCurve = xBaseCurve->templateTransform(SIMMtemplate);
-    RiskEngine riskCalc(xNetSet, SIMMCurve);
-    std::map<double,double> irDelta = riskCalc.calcIRDelta();
 
+    MarketData* transformMktData = new MarketData;
+    transformMktData = mktData->createBumpedMarktData(SIMMCurve);
+
+    RiskEngine riskCalc(xNetSet, transformMktData);
+    //std::map<double,double> irDelta = riskCalc.calcIRDelta(); // causing error: check later
+
+    delete transformMktData;
     return IM;
 }

@@ -2,8 +2,7 @@
 #define EXPOSURE_H_
 
 #include <vector>
-#include "RateCurve.h"
-#include "Swap.h"
+#include "MarketData.h"
 #include "NettingSet.h"
 #include "Enums.h"
 
@@ -21,10 +20,12 @@ class ExposureCalc{
 private:
     NettingSet * xNetSet;
     std::vector<RateCurve *> * xSimCurves;
+    MarketData * xMktData;
     std::vector<std::map<double,double>> calc();
 public:
     static int counter;
-    ExposureCalc(NettingSet* netSet = new NettingSet, std::vector<RateCurve *>* simCurves = new std::vector<RateCurve *>);
+    ExposureCalc(NettingSet* netSet = new NettingSet, std::vector<RateCurve *>* simCurves = new std::vector<RateCurve *>,
+                 MarketData* mktData = new MarketData);
     std::map<double,double> calcEEProfile(RiskType type); // for CVA/DVA calc
     double calcEAD(); // for RWA calc
     NettingSet* getNettingSet();

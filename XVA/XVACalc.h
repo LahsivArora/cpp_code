@@ -2,7 +2,7 @@
 #define XVACALC_H_
 
 #include "Exposure.h"
-#include "CDSCurve.h"
+#include "MarketData.h"
 #include "Enums.h"
 
 class XVACalc{
@@ -18,7 +18,7 @@ public:
     XVACalc(ExposureCalc* exposureObj, CDSCurve curve, double LGD, RiskType type);
     double calcXVA();
     double calcRWA();
-    double calcInitialMargin();
+    double calcInitialMargin(MarketData* mktData);
     ~XVACalc(){delete xNetSet;--counter;}
 };
 

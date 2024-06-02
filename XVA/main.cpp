@@ -26,14 +26,13 @@ try
     CDSCurve *ownCDS = *it3;
 
     // Step2c:MarketData: FXAsset (containing FxSpot; assuming spot is settling today)
-    double FxSpot = *(mktData->getFxSpots()->front());
-    SwapPricer *xccyPricer = new SwapPricer(XccySwap, SOFR, EURXCCY,FxSpot);
+    SwapPricer *xccyPricer = new SwapPricer(XccySwap, mktData);
     std::cout << "NPV of XccySwap (in USD):" << xccyPricer->calcTradeNPV() << std::endl;
 
     // Step3: pricing netting set (with Swaps and RateCurve objects) 
-    SwapPricer *basePV = new SwapPricer(netSet, SOFR, SOFR,1.0);
+    SwapPricer *basePV = new SwapPricer(netSet, mktData);
     double netSetFVA = basePV->calcFVA(*FundingCurve);
-    RiskEngine *riskSet = new RiskEngine(VanillaSwap, SOFR);
+    RiskEngine *riskSet = new RiskEngine(VanillaSwap, mktData, "USD.SOFR");
     // RiskEngine riskSet(Swap4, SOFR); // riskengine object can be created with 1 or multiple trades
     std::map<double,double> *irDelta = new std::map<double,double>;
     *irDelta = riskSet->calcIRDelta();
@@ -51,7 +50,7 @@ try
 
     // Step5: generate exposure profile using Swap and Simulated curves
     // assuming Quarterly time steps in exposure calculation; exposure is already discounted to today
-    ExposureCalc *netSetExProfile = new ExposureCalc(netSet,simCurves);
+    ExposureCalc *netSetExProfile = new ExposureCalc(netSet,simCurves,mktData);
 
     // Step7: calculate CVA, DVA and RWA 
     double ctpyLGD = (1.0-0.6); // loss given default (LGD) assuming recovery rate (RR) is 60%
@@ -64,7 +63,7 @@ try
     std::cout << "CVA (+ive means charge to client):" << CVA->calcXVA() << std::endl;
     std::cout << "DVA (+ive means benefit to bank):" << DVA->calcXVA() << std::endl;
     std::cout << "RWA (using SA-CCR):" << CVA->calcRWA() << std::endl; 
-    std::cout << "Initial Margin (using SIMM):" << CVA->calcInitialMargin() << std::endl; 
+    std::cout << "Initial Margin (using SIMM):" << CVA->calcInitialMargin(mktData) << std::endl; 
     printCount(0, new Leg , new Swap, netSet, SOFR, ownCDS, xccyPricer, simEngine, riskSet, netSetExProfile, CVA);
 
 }   catch (std::string &err)

@@ -8,9 +8,10 @@
 
 int ExposureCalc::counter = 0;
 
-ExposureCalc::ExposureCalc(NettingSet* netSet, std::vector<RateCurve *>* simCurves){
+ExposureCalc::ExposureCalc(NettingSet* netSet, std::vector<RateCurve *>* simCurves, MarketData* mktData){
     xSimCurves=simCurves;
     xNetSet=netSet;
+    xMktData=mktData;
     ++counter;
 }
 
@@ -19,7 +20,7 @@ NettingSet* ExposureCalc::getNettingSet(){
 }
 
 RateCurve* ExposureCalc::getBaseCurve(){
-    return *(xSimCurves->begin());
+    return xSimCurves->front();
 }
 
 std::vector<std::map<double,double>> ExposureCalc::calc(){
@@ -37,9 +38,12 @@ std::vector<std::map<double,double>> ExposureCalc::calc(){
         double exposureNeg = 0.0;
         for (auto it1 = tradeObjs->begin(); it1 != tradeObjs->end(); it1++){
             for (auto it2 = xSimCurves->begin(); it2 != xSimCurves->end(); it2++){
-                SwapPricer *priceLag = new SwapPricer(*it1,*it2,*it2,1.0,i);
+                MarketData* bumpedMktData = new MarketData;
+                bumpedMktData = xMktData->createBumpedMarktData(*it2);
+                SwapPricer *priceLag = new SwapPricer(*it1,bumpedMktData,i);
                 double positiveExposure = (priceLag->calcTradeNPV()>0?priceLag->calcTradeNPV():0);
                 double negativeExposure = (priceLag->calcTradeNPV()<0?priceLag->calcTradeNPV():0);
+                delete bumpedMktData;
                 delete priceLag;
                 exposurePos += positiveExposure;
                 exposureNeg += negativeExposure;
@@ -69,9 +73,7 @@ double ExposureCalc::calcEAD(){
 
     double EAD = 0.0;
     std::vector<Swap *>* trades = xNetSet->getTrades();
-    RateCurve* basecurve = getBaseCurve();
-
-    SwapPricer *basePV = new SwapPricer(xNetSet,basecurve, basecurve,1.0);
+    SwapPricer *basePV = new SwapPricer(xNetSet, xMktData);
     double netSetPV = basePV->calcTradeNPV();
     double replacementCost = (netSetPV>0.0?netSetPV:0.0);
     delete basePV;
@@ -83,7 +85,7 @@ double ExposureCalc::calcEAD(){
 
     for (auto it = trades->begin(); it != trades->end(); it++) {
         Swap* current = *it ;
-        RiskEngine trade(current, basecurve);
+        RiskEngine trade(current, xMktData);
         double D = trade.calcRWADelta() * current->getRiskHorizon() * current->getAdjNotional();
 
         if (current->getMaturity() <= 1.0)

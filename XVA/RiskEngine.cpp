@@ -2,18 +2,28 @@
 
 int RiskEngine::counter = 0;
 
-RiskEngine::RiskEngine(NettingSet* netSet, RateCurve* curve){
+RiskEngine::RiskEngine(NettingSet* netSet, MarketData* mktData, std::string bumpCurve){
     xNetSet=netSet;
-    xCurve=curve;
+    xMktData=mktData;
+    xBumpCurve=bumpCurve;
+    for (auto it = xMktData->getRateCurves()->begin(); it != xMktData->getRateCurves()->end(); it++){
+        if ((*it)->getName() == xBumpCurve )
+            xCurve = *it;
+    }
     ++counter;
 }
 
-RiskEngine::RiskEngine(Swap* swap, RateCurve* curve){
-    xCurve=curve;
+RiskEngine::RiskEngine(Swap* swap, MarketData* mktData, std::string bumpCurve){
+    xMktData=mktData;
     xSwap=swap;
     xSwaps = new std::vector<Swap *>;
     xSwaps->push_back(xSwap);
     xNetSet= new NettingSet(xSwaps);
+    xBumpCurve=bumpCurve;
+    for (auto it = xMktData->getRateCurves()->begin(); it != xMktData->getRateCurves()->end(); it++){
+        if ((*it)->getName() == xBumpCurve )
+            xCurve = *it;
+    }
     ++counter;
 }
 
@@ -23,7 +33,7 @@ std::map<double,double> RiskEngine::calcIRDelta(){
     std::map<double,double> delta;
     std::map<double,double> xRates = xCurve->getRates();
     double bump = 0.0001; // +1 basis point
-    SwapPricer *priceBase = new SwapPricer(this->xNetSet,this->xCurve,this->xCurve,1.0);
+    SwapPricer *priceBase = new SwapPricer(xNetSet,xMktData);
     double basePV = priceBase->calcTradeNPV();
 
     // reverse cumulative calculation
@@ -32,9 +42,12 @@ std::map<double,double> RiskEngine::calcIRDelta(){
         double tenor = it->first;
         xRates[tenor]= it->second + bump;
         RateCurve *bumpedCurve = new RateCurve(xCurve->getName(),xRates);
-        SwapPricer *priceBump = new SwapPricer(this->xNetSet, bumpedCurve, bumpedCurve,1.0);
+        MarketData* bumpedMktData = new MarketData;
+        bumpedMktData = xMktData->createBumpedMarktData(bumpedCurve);
+        SwapPricer *priceBump = new SwapPricer(xNetSet, bumpedMktData);
         double bumpedPV = priceBump->calcTradeNPV();
         bumpedPVs.insert(std::pair<double,double>(tenor,bumpedPV-basePV));
+        delete bumpedMktData;
         delete bumpedCurve;
         delete priceBump;
     }

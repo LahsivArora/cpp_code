@@ -3,7 +3,7 @@
 
 #include <vector>
 #include <string>
-#include "RateCurve.h"
+#include "MarketData.h"
 #include "Swap.h"
 
 /*
@@ -20,7 +20,7 @@ public:
     static int counter;
     SimulateRate(RateCurve* curve, double vol, double meanRev, double simPaths);
     std::vector<RateCurve *> getSimulatedCurves();
-    std::vector<double> getSimulatedBaseNPVs(Swap* swap);
+    std::vector<double> getSimulatedBaseNPVs(Swap* swap, MarketData* mktData);
     ~SimulateRate(){--counter;}
 };
 
