@@ -29,16 +29,15 @@ std::vector<std::map<double,double>> ExposureCalc::calc(){
     std::map<double,double> ENEprofile;
     double maxMaturity = xNetSet->getMaxMaturity()+1.0;
     double n = xSimCurves->size();
-    unsigned int trades = xNetSet->getNoOfTrades();
-    std::vector<Swap *> tradeObjs = xNetSet->getTrades();
+    std::vector<Swap *>* tradeObjs = xNetSet->getTrades();
 
     // Exposure calc. profile matches expectations. using quarterly calc for exposures
     for (double i=0.25; i<maxMaturity; i+=0.25){
         double exposurePos = 0.0;
         double exposureNeg = 0.0;
-        for (unsigned int k=0; k<trades; k++){
-            for (auto it = xSimCurves->begin(); it != xSimCurves->end(); it++){
-                SwapPricer *priceLag = new SwapPricer(tradeObjs[k], *it ,*it,1.0,i);
+        for (auto it1 = tradeObjs->begin(); it1 != tradeObjs->end(); it1++){
+            for (auto it2 = xSimCurves->begin(); it2 != xSimCurves->end(); it2++){
+                SwapPricer *priceLag = new SwapPricer(*it1,*it2,*it2,1.0,i);
                 double positiveExposure = (priceLag->calcTradeNPV()>0?priceLag->calcTradeNPV():0);
                 double negativeExposure = (priceLag->calcTradeNPV()<0?priceLag->calcTradeNPV():0);
                 delete priceLag;
@@ -69,7 +68,7 @@ std::map<double,double> ExposureCalc::calcEEProfile(RiskType type){
 double ExposureCalc::calcEAD(){
 
     double EAD = 0.0;
-    std::vector<Swap *> trades = xNetSet->getTrades();
+    std::vector<Swap *>* trades = xNetSet->getTrades();
     RateCurve* basecurve = getBaseCurve();
 
     SwapPricer *basePV = new SwapPricer(xNetSet,basecurve, basecurve,1.0);
@@ -82,7 +81,7 @@ double ExposureCalc::calcEAD(){
     double Dabove5Y = 0.0; // define buckets by maturity of swaps
     double PFE = 0.0;
 
-    for (auto it = trades.begin(); it != trades.end(); it++) {
+    for (auto it = trades->begin(); it != trades->end(); it++) {
         Swap* current = *it ;
         RiskEngine trade(current, basecurve);
         double D = trade.calcRWADelta() * current->getRiskHorizon() * current->getAdjNotional();

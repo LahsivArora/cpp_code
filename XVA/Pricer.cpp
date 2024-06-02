@@ -1,7 +1,6 @@
 #include <vector>
 #include "Pricer.h"
 #include "Leg.h"
-#include <memory>
 
 int SwapPricer::counter = 0;
 
@@ -18,7 +17,7 @@ SwapPricer::SwapPricer(Swap* swap, RateCurve* curve1, RateCurve* curve2, double 
     xSwap=swap;
     xSwaps= new std::vector<Swap *>;
     xSwaps->push_back(xSwap);
-    xNetSet= new NettingSet(*xSwaps);
+    xNetSet= new NettingSet(xSwaps);
     xCurve1=curve1;
     xCurve2=curve2;
     xFxSpot=FxSpot;
@@ -28,27 +27,27 @@ SwapPricer::SwapPricer(Swap* swap, RateCurve* curve1, RateCurve* curve2, double 
 
 double SwapPricer::calcLegNPV(int legNum){
     double npv = 0.0;
-    Leg calcLeg = xSwap->getLeg(legNum);
-    double periodAdj = 1.0/calcLeg.getLegFreq();
+    Leg* calcLeg = xSwap->getLeg(legNum);
+    double periodAdj = 1.0/calcLeg->getLegFreq();
     double notional = (legNum==1?1.0:-1.0)*xSwap->getNotional()*(legNum==1?1.0:xSwap->getEndFxFwd()); // add conversion for xccy
-    double rate = calcLeg.getLegRate();
-    std::vector<double> flow = calcLeg.getLegFlows(xSwap->getMaturity());
+    double rate = calcLeg->getLegRate();
+    std::vector<double> flow = calcLeg->getLegFlows(xSwap->getMaturity());
     RateCurve* pricingCurve; 
-    if (calcLeg.getLegCurveName() == xCurve1->getName())
+    if (calcLeg->getLegCurveName() == xCurve1->getName())
         pricingCurve = xCurve1;
-    else if (calcLeg.getLegCurveName() == xCurve2->getName())
+    else if (calcLeg->getLegCurveName() == xCurve2->getName())
         pricingCurve = xCurve2;
     else {
-        if (calcLeg.getLegCurveName().size() == 0)
+        if (calcLeg->getLegCurveName().size() == 0)
             throw std::string("Leg curveName: is empty");
         else                    
-            throw std::string("Leg curveName:"+calcLeg.getLegCurveName()+" doesnt match curves in marketdata");
+            throw std::string("Leg curveName:"+calcLeg->getLegCurveName()+" doesnt match curves in marketdata");
         }
 
     std::vector<double> xLegdisc = pricingCurve->getDiscFactors(flow);
     std::vector<double> xLegfwd = pricingCurve->getFwdRates(flow);
 
-    if (calcLeg.getLegType() == LegType::Fixed){
+    if (calcLeg->getLegType() == LegType::Fixed){
         for (unsigned int i=0; i < xLegdisc.size(); i++){
             if (flow[i] > xLag){
                 npv += (notional * rate * periodAdj * xLegdisc[i]);
@@ -59,7 +58,7 @@ double SwapPricer::calcLegNPV(int legNum){
             }
         }
     }
-    else if (calcLeg.getLegType() == LegType::Float){
+    else if (calcLeg->getLegType() == LegType::Float){
         for (unsigned int i=0; i < xLegdisc.size(); i++){
             if (flow[i] > xLag){
                 npv += (notional * (xLegfwd[i] + rate) * periodAdj * xLegdisc[i]);
@@ -81,8 +80,8 @@ double SwapPricer::calcTradeNPV(){
 
     double npv = 0.0;
 
-    for (unsigned int i=0; i < xNetSet->getNoOfTrades(); i++){
-        xSwap = xNetSet->getTrades()[i];
+    for (auto it = (xNetSet->getTrades())->begin(); it != (xNetSet->getTrades())->end(); it++){
+        xSwap = *it;
         if (xSwap->getTradeType() == TradeType::IrSwap)
             npv += this->calcLegNPV(1) + this->calcLegNPV(2);
         else if (xSwap->getTradeType() == TradeType::XccySwap)

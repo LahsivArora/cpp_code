@@ -4,7 +4,7 @@
 
 int Swap::counter = 0;
 
-Swap::Swap(TradeType type,double maturity, double notional, Leg& Leg1, Leg& Leg2, NotionalExch exch, double endFxFwd) {
+Swap::Swap(TradeType type,double maturity, double notional, Leg* Leg1, Leg* Leg2, NotionalExch exch, double endFxFwd) {
     xType=type;
     xmaturity=maturity;
     xnotional=notional;
@@ -23,11 +23,11 @@ double Swap::getEndFxFwd(){
     return this->xEndFxFwd;
 }
 
-Leg Swap::getLeg(int legNum){
+Leg* Swap::getLeg(int legNum){
     if (legNum == 1)
-        return this->xLeg1;
+        return xLeg1;
     else
-        return this->xLeg2;
+        return xLeg2;
 }
 
 TradeType Swap::getTradeType(){

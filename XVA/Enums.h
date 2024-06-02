@@ -7,7 +7,7 @@ enum class RiskType { OWN, CTPY };
 
 enum class TradeType { IrSwap, XccySwap, FxFwd };
 
-enum class LegType { Fixed, Float };
+enum class LegType { Fixed, Float, MtMFloat };
 
 enum class Currency { USD, EUR };
 

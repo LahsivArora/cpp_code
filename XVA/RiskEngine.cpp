@@ -13,7 +13,7 @@ RiskEngine::RiskEngine(Swap* swap, RateCurve* curve){
     xSwap=swap;
     xSwaps = new std::vector<Swap *>;
     xSwaps->push_back(xSwap);
-    xNetSet= new NettingSet(*xSwaps);
+    xNetSet= new NettingSet(xSwaps);
     ++counter;
 }
 
@@ -53,8 +53,8 @@ std::map<double,double> RiskEngine::calcIRDelta(){
 double RiskEngine::calcRWADelta(){
     
     double delta;
-    Swap current = *((*xNetSet).getTrades()[0]);
-    if ( current.getTradeType() == TradeType::IrSwap) 
+    Swap* current = (xNetSet->getTrades())->front();
+    if ( current->getTradeType() == TradeType::IrSwap) 
         delta = 1.0;
     else
         throw std::string("code only handles RWA for VanillaSwap; code to be enhanced");
