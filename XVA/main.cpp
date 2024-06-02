@@ -13,8 +13,25 @@
 #include "XVACalc.h"
 #include "RiskEngine.h"
 
+void printCount(Leg* xLeg, Swap* xSwap, NettingSet* xNetSet, RateCurve* xCurve,CDSCurve* xCDS, 
+                SwapPricer* xPricer, SimulateRate* xEngine, RiskEngine* xSet,ExposureCalc* xExp, XVACalc* xXVA){
+    std::cout << "number of Leg objects:" << xLeg->counter << std::endl; 
+    std::cout << "number of Swap objects:" << xSwap->counter << std::endl; 
+    std::cout << "number of NettingSet objects:" << xNetSet->counter << std::endl; 
+    std::cout << "number of RateCurve objects:" << xCurve->counter << std::endl; 
+    std::cout << "number of CDSCurve objects:" << xCDS->counter << std::endl; 
+    std::cout << "number of SwapPricer objects:" << xPricer->counter << std::endl;
+    std::cout << "number of RiskEngine objects:" << xSet->counter << std::endl;
+    std::cout << "number of SimModel objects:" << xEngine->counter << std::endl;
+    std::cout << "number of Exposure objects:" << xExp->counter << std::endl;
+    std::cout << "number of XVACalc objects:" << xXVA->counter << std::endl;
+}
+
 
 int main()
+{
+
+try
 {
     // Step1a: defining portfolio of swaps
     // +ive notional means receive Leg1/pay Leg2 and 4 means Quarterly payments
@@ -92,8 +109,8 @@ int main()
     CDSCurve *ownCDS = new CDSCurve(ownCDSSpread,ownLGD,maxmaturity,timesteps);
 
     // Step7: calculate CVA, DVA and RWA 
-    XVACalc *CVA = new XVACalc(*netSetExProfile,*ctpyCDS,ctpyLGD,RiskType::CTPY);
-    XVACalc *DVA = new XVACalc(*netSetExProfile,*ownCDS,ownLGD,RiskType::OWN);
+    XVACalc *CVA = new XVACalc(netSetExProfile,*ctpyCDS,ctpyLGD,RiskType::CTPY);
+    XVACalc *DVA = new XVACalc(netSetExProfile,*ownCDS,ownLGD,RiskType::OWN);
 
     std::cout << "For given netting set and market data (all XVA are in $ amount):" << std::endl;
     std::cout << "FVA (+ive means charge to client):" << -1.0*netSetFVA << std::endl;
@@ -101,17 +118,10 @@ int main()
     std::cout << "DVA (+ive means benefit to bank):" << DVA->calcXVA() << std::endl;
     std::cout << "RWA (using SA-CCR):" << CVA->calcRWA() << std::endl; 
     std::cout << "Initial Margin (using SIMM):" << CVA->calcInitialMargin() << std::endl; 
+    printCount(fixLeg1, XccySwap, netSet, SOFR, ownCDS, xccyPricer, simEngine, riskSet, netSetExProfile, CVA);
 
-    std::cout << "number of Leg objects:" << XccySwap->counter << std::endl; 
-    std::cout << "number of Swap objects:" << XccySwap->counter << std::endl; 
-    std::cout << "number of NettingSet objects:" << netSet->counter << std::endl; 
-    std::cout << "number of RateCurve objects:" << SOFR->counter << std::endl; 
-    std::cout << "number of CDSCurve objects:" << ownCDS->counter << std::endl; 
-    std::cout << "number of SwapPricer objects:" << xccyPricer->counter << std::endl;
-    std::cout << "number of RiskEngine objects:" << riskSet->counter << std::endl;
-    std::cout << "number of SimModel objects:" << simEngine->counter << std::endl;
-    std::cout << "number of Exposure objects:" << netSetExProfile->counter << std::endl;
-    std::cout << "number of XVACalc objects:" << CVA->counter << std::endl;
+} catch (std::string &err)
+    {std::cout << err << std::endl;}
 
     return 0;
 }

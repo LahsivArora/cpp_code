@@ -8,6 +8,8 @@ RateCurve::RateCurve(std::string name, std::map<double,double> rates){
     xName=name;
     xRates=rates;
     counter++;
+    if (xRates.size()>0 && xName.size()==0 )
+        throw std::string("curve name cannot be empty");
 }
 
 std::string RateCurve::getName(){

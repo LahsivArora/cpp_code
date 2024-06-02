@@ -7,7 +7,7 @@
 
 class XVACalc{
 private:
-    ExposureCalc xExposureObj;
+    ExposureCalc* xExposureObj;
     CDSCurve xCurve;
     double xLGD;
     RiskType xType;
@@ -15,11 +15,11 @@ private:
     RateCurve* xBaseCurve;
 public:
     static int counter;
-    XVACalc(ExposureCalc& exposureObj, CDSCurve curve, double LGD, RiskType type);
+    XVACalc(ExposureCalc* exposureObj, CDSCurve curve, double LGD, RiskType type);
     double calcXVA();
     double calcRWA();
     double calcInitialMargin();
-    ~XVACalc(){--counter;}
+    ~XVACalc(){delete xNetSet;--counter;}
 };
 
 #endif

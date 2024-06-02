@@ -60,9 +60,10 @@ std::map<double,double> ExposureCalc::calcEEProfile(RiskType type){
     std::vector<std::map<double,double>> output = calc();
     if (type == RiskType::CTPY)
         return output[0];
-    else
+    else if (type == RiskType::OWN)
         return output[1];
-
+    else 
+        throw std::string("Risk type is not supported");
 }
 
 double ExposureCalc::calcEAD(){

@@ -9,6 +9,8 @@ Leg::Leg(LegType type ,Currency ccy ,double freq, double rate, std::string curve
     xRate=rate;
     xCurveName=curveName;
     ++counter;
+    if (xFreq == 0.0)
+        throw std::string("Leg frequency cannot be 0");
 }
 
 std::string Leg::getLegCurveName(){

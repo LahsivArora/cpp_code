@@ -38,6 +38,12 @@ double SwapPricer::calcLegNPV(int legNum){
         pricingCurve = xCurve1;
     else if (calcLeg.getLegCurveName() == xCurve2->getName())
         pricingCurve = xCurve2;
+    else {
+        if (calcLeg.getLegCurveName().size() == 0)
+            throw std::string("Leg curveName: is empty");
+        else                    
+            throw std::string("Leg curveName:"+calcLeg.getLegCurveName()+" doesnt match curves in marketdata");
+        }
 
     std::vector<double> xLegdisc = pricingCurve->getDiscFactors(flow);
     std::vector<double> xLegfwd = pricingCurve->getFwdRates(flow);
@@ -64,6 +70,9 @@ double SwapPricer::calcLegNPV(int legNum){
             }
         }
     }
+    else
+        throw std::string("Leg type is not supported");
+
     return npv;
 }
 
@@ -78,6 +87,8 @@ double SwapPricer::calcTradeNPV(){
             npv += this->calcLegNPV(1) + this->calcLegNPV(2);
         else if (xSwap->getTradeType() == TradeType::XccySwap)
             npv += this->calcLegNPV(1)*xFxSpot + this->calcLegNPV(2); // converting to Leg2 ccy. USD in this case
+        else
+            throw std::string("TradeType is not supported");
     }
     return npv;
 }
@@ -86,4 +97,5 @@ double SwapPricer::calcFVA(RateCurve& fundCurve){
     RateCurve *FVACurve = new RateCurve;
     *FVACurve = fundCurve.nameTransform("USD.SOFR");
     SwapPricer fundPV(xNetSet,FVACurve,FVACurve,1.0);
-    return fundPV.calcTradeNPV() - calcTradeNPV();}
+    return fundPV.calcTradeNPV() - calcTradeNPV();
+}

@@ -56,6 +56,8 @@ double RiskEngine::calcRWADelta(){
     Swap current = *((*xNetSet).getTrades()[0]);
     if ( current.getTradeType() == TradeType::IrSwap) 
         delta = 1.0;
+    else
+        throw std::string("code only handles RWA for VanillaSwap; code to be enhanced");
 
     return delta; 
 }
