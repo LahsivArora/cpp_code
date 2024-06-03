@@ -14,7 +14,7 @@ private:
     std::string xBumpCurve;
 public:
     static int counter;
-    RiskEngine(NettingSet* netSet = new NettingSet, MarketData* curve = new MarketData, std::string bumpCurve = "");
+    RiskEngine(NettingSet* netSet, MarketData* curve = new MarketData, std::string bumpCurve = "");
     RiskEngine(Swap* swap = new Swap, MarketData* curve = new MarketData, std::string bumpCurve = "");
     std::map<double,double> calcIRDelta();
     double calcRWADelta();

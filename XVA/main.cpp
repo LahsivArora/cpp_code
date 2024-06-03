@@ -12,21 +12,26 @@ try
     // Step2: setup MarketData with RateCurves, CDSCurves and FXSpot 
     MarketData* mktData = build_MarketData();
     RateCurve *FundingCurve = mktData->getRateCurve("USD.FUND");
+    double FxSpot = *(*mktData->getFxSpots())[0];
 
     // Step3a: pricing 1 Swap with MarketData object 
     SwapPricer *xccyPricer = new SwapPricer(XccySwap, mktData);
-    std::cout << "NPV of XccySwap (in USD):" << xccyPricer->calcTradeNPV() << std::endl;
 
     // Step3b: pricing netting set (collection of Swaps) with MarketData object 
     SwapPricer *basePV = new SwapPricer(netSet, mktData);
     double netSetFVA = basePV->calcFVA(*FundingCurve);
 
     // example for IrDelta calc per curve 
-    RiskEngine *riskSet = new RiskEngine(netSet, mktData, "USD.SOFR");
-    std::map<double,double> *irDelta = new std::map<double,double>;
-    *irDelta = riskSet->calcIRDelta();
-    for (auto it=irDelta->begin(); it != irDelta->end(); it++){
-        std::cout << "Tenor:" << it->first << " irDelta:" << it->second << std::endl;
+    for (auto it1=mktData->getRateCurves()->begin(); it1 != mktData->getRateCurves()->end(); ++it1){
+        RiskEngine *riskSet = new RiskEngine(XccySwap, mktData, (*it1)->getName());
+        std::string ccy = ((*it1)->getName()).substr(0,3);
+        std::map<double,double> *irDelta = new std::map<double,double>;
+        *irDelta = riskSet->calcIRDelta();
+        std::cout << "IrDelta (in USD) for CurveName : " << (*it1)->getName() << std::endl;
+        for (auto it2=irDelta->begin(); it2 != irDelta->end(); it2++){
+            std::cout << "Tenor:" << it2->first << " irDelta:" << it2->second * (ccy=="EUR"?FxSpot:1.0) << std::endl;
+        }
+    std::cout << "--------------------------------------------------------"<< std::endl;
     }
 
     // Step4: simulate curves using base RateCurve object + simulation params. using HW model
@@ -47,13 +52,16 @@ try
     XVACalc *CVA = new XVACalc(netSetExProfile,mktData->getCDSCurve("CTPY"),ctpyLGD,RiskType::CTPY);
     XVACalc *DVA = new XVACalc(netSetExProfile,mktData->getCDSCurve("OWN"),ownLGD,RiskType::OWN);
 
+    // Step7: print out the results
+    std::cout << "NPV of XccySwap (in USD):" << xccyPricer->calcTradeNPV() << std::endl;
     std::cout << "For given netting set and market data (all XVA are in $ amount):" << std::endl;
     std::cout << "FVA (+ive means charge to client):" << -1.0*netSetFVA << std::endl;
     std::cout << "CVA (+ive means charge to client):" << CVA->calcXVA() << std::endl;
     std::cout << "DVA (+ive means benefit to bank):" << DVA->calcXVA() << std::endl;
     std::cout << "RWA (using SA-CCR):" << CVA->calcRWA() << std::endl; 
     std::cout << "Initial Margin (using SIMM):" << CVA->calcInitialMargin(mktData) << std::endl; 
-    printCount(1, new Leg , new Swap, netSet, new RateCurve, new CDSCurve, xccyPricer, simEngine, riskSet, netSetExProfile, CVA);
+    std::cout << "--------------------------------------------------------"<< std::endl;
+    printCount(0, new Leg , new Swap, netSet, new RateCurve, new CDSCurve, xccyPricer, simEngine, new RiskEngine, netSetExProfile, CVA);
 
 }   catch (std::string &err)
         {std::cout << err << std::endl;}

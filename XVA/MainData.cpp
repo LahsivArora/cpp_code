@@ -14,6 +14,7 @@ void printCount(bool print, Leg* xLeg, Swap* xSwap, NettingSet* xNetSet, RateCur
         std::cout << "number of SimModel objects:" << xEngine->counter << std::endl;
         std::cout << "number of Exposure objects:" << xExp->counter << std::endl;
         std::cout << "number of XVACalc objects:" << xXVA->counter << std::endl;
+        std::cout << "--------------------------------------------------------"<< std::endl;
     }
 }
 
@@ -86,9 +87,9 @@ std::pair<NettingSet*,std::vector<Swap*>*> build_trades(){
     NettingSet *netSet = new NettingSet(trades); 
     
     // define xccy swap
-    Leg *xccyFixLeg = new Leg(LegType::Fixed,Currency::EUR,4.0,0.0280,"EUR.XCCY");
-    Leg *xccyFltLeg = new Leg(LegType::Float,Currency::USD,4.0,0.0,"USD.SOFR");
-    Swap *XccySwap = new Swap(TradeType::XccySwap,7.0,-1500000.0, xccyFixLeg, xccyFltLeg, NotionalExch::YES, 1.2418);
+    Leg *xccyFixLeg = new Leg(LegType::Fixed,Currency::EUR,4.0,0.0300,"EUR.XCCY");
+    Leg *xccyFltLeg = new Leg(LegType::Float,Currency::USD,4.0,0.0030,"USD.SOFR");
+    Swap *XccySwap = new Swap(TradeType::XccySwap,8.5,-2000000.0, xccyFixLeg, xccyFltLeg, NotionalExch::YES, 1.2418);
 
     std::vector<Swap *> *tradesRet = new std::vector<Swap *>;
     tradesRet->push_back(VanillaSwap1);
