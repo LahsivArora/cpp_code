@@ -19,7 +19,7 @@ public:
     double calcXVA();
     double calcRWA();
     double calcInitialMargin(MarketData* mktData);
-    ~XVACalc(){delete xNetSet;--counter;}
+    ~XVACalc(){--counter;}
 };
 
 #endif

@@ -61,10 +61,12 @@ try
     std::cout << "RWA (using SA-CCR):" << CVA->calcRWA() << std::endl; 
     std::cout << "Initial Margin (using SIMM):" << CVA->calcInitialMargin(mktData) << std::endl; 
     std::cout << "--------------------------------------------------------"<< std::endl;
-    printCount(0, new Leg , new Swap, netSet, new RateCurve, new CDSCurve, xccyPricer, simEngine, new RiskEngine, netSetExProfile, CVA);
+    printCount(1, new Leg , new Swap, netSet, new RateCurve, new CDSCurve, xccyPricer, simEngine, new RiskEngine, netSetExProfile, CVA, mktData);
 
 }   catch (std::string &err)
-        {std::cout << err << std::endl;}
+        {std::cout << "user defined exception caught:" << err << std::endl;}
+    catch (std::exception &ex)
+        {std::cout << "system defined exception caught:" << ex.what() << std::endl;}
     catch (...)
         {std::cout << "undefined exception caught" << std::endl;}
     return 0;

@@ -13,8 +13,8 @@
 
 #include "MainData.h"
 
-void printCount(bool print, Leg* xLeg, Swap* xSwap, NettingSet* xNetSet, RateCurve* xCurve,CDSCurve* xCDS, 
-                SwapPricer* xPricer, SimulateRate* xEngine, RiskEngine* xSet,ExposureCalc* xExp, XVACalc* xXVA);
+void printCount(bool print, Leg* xLeg, Swap* xSwap, NettingSet* xNetSet, RateCurve* xCurve,CDSCurve* xCDS, SwapPricer* xPricer,  
+                SimulateRate* xEngine, RiskEngine* xSet,ExposureCalc* xExp, XVACalc* xXVA,MarketData* xMktData);
 std::vector<RateCurve*>* build_RateCurves();
 std::vector<CDSCurve*>* build_CDSCurves();
 MarketData* build_MarketData();

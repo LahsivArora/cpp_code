@@ -42,7 +42,7 @@ double XVACalc::calcInitialMargin(MarketData* mktData){
     SIMMCurve = xBaseCurve->templateTransform(SIMMtemplate);
 
     MarketData* transformMktData = new MarketData;
-    transformMktData = mktData->createBumpedMarktData(SIMMCurve);
+    transformMktData = mktData->replaceRateCurve(SIMMCurve);
 
     RiskEngine riskCalc(xNetSet, transformMktData, xBaseCurve->getName());
     std::map<double,double> irDelta = riskCalc.calcIRDelta();

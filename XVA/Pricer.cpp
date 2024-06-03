@@ -91,7 +91,7 @@ double SwapPricer::calcFVA(RateCurve& fundCurve){
     RateCurve *FVACurve = new RateCurve;
     *FVACurve = fundCurve.nameTransform("USD.SOFR");
     MarketData* replaceMktData = new MarketData;
-    replaceMktData = xMktData->createBumpedMarktData(FVACurve);
+    replaceMktData = xMktData->replaceRateCurve(FVACurve);
     SwapPricer fundPV(xNetSet,replaceMktData);
     return fundPV.calcTradeNPV() - calcTradeNPV();
 }

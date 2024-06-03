@@ -39,16 +39,15 @@ std::vector<double*>* MarketData::getFxSpots(){
     return xFxSpots;
 }
 
-MarketData* MarketData::createBumpedMarktData(RateCurve* bumpedCurve){
-    //MarketData* bumpedMktData = new MarketData;
-    std::vector<RateCurve*>* bumpedCurves = new std::vector<RateCurve*>;
+MarketData* MarketData::replaceRateCurve(RateCurve* changedCurve){
+    std::vector<RateCurve*>* changedCurves = new std::vector<RateCurve*>;
 
     for (auto it=getRateCurves()->begin(); it != getRateCurves()->end(); it++){
-        if ((*it)->getName() == bumpedCurve->getName())
-            bumpedCurves->push_back(bumpedCurve);
+        if ((*it)->getName() == changedCurve->getName())
+            changedCurves->push_back(changedCurve);
         else
-            bumpedCurves->push_back(*it);
+            changedCurves->push_back(*it);
     }
-    MarketData* bumpedMktData = new MarketData(bumpedCurves,this->getCDSCurves(),this->getFxSpots());
-    return bumpedMktData;
+    MarketData* changedMktData = new MarketData(changedCurves,this->getCDSCurves(),this->getFxSpots());
+    return changedMktData;
 }

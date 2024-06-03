@@ -1,7 +1,7 @@
 #include "MainData.h"
 
 void printCount(bool print, Leg* xLeg, Swap* xSwap, NettingSet* xNetSet, RateCurve* xCurve,CDSCurve* xCDS, 
-                SwapPricer* xPricer, SimulateRate* xEngine, RiskEngine* xSet,ExposureCalc* xExp, XVACalc* xXVA){
+                SwapPricer* xPricer, SimulateRate* xEngine, RiskEngine* xSet,ExposureCalc* xExp, XVACalc* xXVA,MarketData* xMktData){
     
     if (print){
         std::cout << "number of Leg objects:" << xLeg->counter << std::endl; 
@@ -14,6 +14,7 @@ void printCount(bool print, Leg* xLeg, Swap* xSwap, NettingSet* xNetSet, RateCur
         std::cout << "number of SimModel objects:" << xEngine->counter << std::endl;
         std::cout << "number of Exposure objects:" << xExp->counter << std::endl;
         std::cout << "number of XVACalc objects:" << xXVA->counter << std::endl;
+        std::cout << "number of MarketData objects:" << xMktData->counter << std::endl;
         std::cout << "--------------------------------------------------------"<< std::endl;
     }
 }

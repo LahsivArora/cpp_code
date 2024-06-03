@@ -38,12 +38,12 @@ std::vector<std::map<double,double>> ExposureCalc::calc(){
         double exposureNeg = 0.0;
         for (auto it1 = tradeObjs->begin(); it1 != tradeObjs->end(); it1++){
             for (auto it2 = xSimCurves->begin(); it2 != xSimCurves->end(); it2++){
-                MarketData* bumpedMktData = new MarketData;
-                bumpedMktData = xMktData->createBumpedMarktData(*it2);
-                SwapPricer *priceLag = new SwapPricer(*it1,bumpedMktData,i);
+                MarketData* simMktData = new MarketData;
+                simMktData = xMktData->replaceRateCurve(*it2);
+                SwapPricer *priceLag = new SwapPricer(*it1,simMktData,i);
                 double positiveExposure = (priceLag->calcTradeNPV()>0?priceLag->calcTradeNPV():0);
                 double negativeExposure = (priceLag->calcTradeNPV()<0?priceLag->calcTradeNPV():0);
-                delete bumpedMktData;
+                delete simMktData;
                 delete priceLag;
                 exposurePos += positiveExposure;
                 exposureNeg += negativeExposure;

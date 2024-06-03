@@ -43,7 +43,7 @@ std::map<double,double> RiskEngine::calcIRDelta(){
         xRates[tenor]= it->second + bump;
         RateCurve *bumpedCurve = new RateCurve(xCurve->getName(),xRates);
         MarketData* bumpedMktData = new MarketData;
-        bumpedMktData = xMktData->createBumpedMarktData(bumpedCurve);
+        bumpedMktData = xMktData->replaceRateCurve(bumpedCurve);
         SwapPricer *priceBump = new SwapPricer(xNetSet, bumpedMktData);
         double bumpedPV = priceBump->calcTradeNPV();
         bumpedPVs.insert(std::pair<double,double>(tenor,bumpedPV-basePV));
