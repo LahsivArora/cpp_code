@@ -11,8 +11,7 @@ try
 
     // Step2: setup MarketData with RateCurves, CDSCurves and FXSpot 
     MarketData* mktData = build_MarketData();
-    std::vector<RateCurve*>* rateCurves = mktData->getRateCurves();
-    RateCurve *FundingCurve = rateCurves->back();
+    RateCurve *FundingCurve = mktData->getRateCurve("USD.FUND");
 
     // Step3a: pricing 1 Swap with MarketData object 
     SwapPricer *xccyPricer = new SwapPricer(XccySwap, mktData);
