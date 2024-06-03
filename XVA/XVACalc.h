@@ -8,14 +8,14 @@
 class XVACalc{
 private:
     ExposureCalc* xExposureObj;
-    CDSCurve xCurve;
+    CDSCurve* xCurve;
     double xLGD;
     RiskType xType;
     NettingSet* xNetSet;
     RateCurve* xBaseCurve;
 public:
     static int counter;
-    XVACalc(ExposureCalc* exposureObj, CDSCurve curve, double LGD, RiskType type);
+    XVACalc(ExposureCalc* exposureObj, CDSCurve* curve, double LGD, RiskType type);
     double calcXVA();
     double calcRWA();
     double calcInitialMargin(MarketData* mktData);

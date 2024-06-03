@@ -16,7 +16,9 @@ public:
     MarketData(std::vector<RateCurve*>* rateCurves = new std::vector<RateCurve*>, 
                std::vector<CDSCurve*>* CDSCurves = new std::vector<CDSCurve*>, std::vector<double*>* fxSpots = new std::vector<double*>);
     std::vector<RateCurve*>* getRateCurves();
+    RateCurve* getRateCurve(std::string name);
     std::vector<CDSCurve*>* getCDSCurves();
+    CDSCurve* getCDSCurve(std::string name);
     std::vector<double*>* getFxSpots();
     ~MarketData(){--counter;}
     MarketData* createBumpedMarktData(RateCurve* bumpedCurve);

@@ -7,33 +7,23 @@ try
 {
     // Step1: setup Trades
     NettingSet *netSet = build_trades().first;
-    auto it1 = build_trades().second->begin();
-    Swap* VanillaSwap = *it1; ++it1; 
-    Swap* XccySwap = *it1;
+    Swap* XccySwap = build_trades().second->back();
 
+    // Step2: setup MarketData with RateCurves, CDSCurves and FXSpot 
     MarketData* mktData = build_MarketData();
-    // Step2a:MarketData: RateCurve 
     std::vector<RateCurve*>* rateCurves = mktData->getRateCurves();
-    auto it2 = rateCurves->begin();
-    RateCurve *SOFR = *it2; ++it2; 
-    RateCurve *EURXCCY = *it2; ++it2;
-    RateCurve *FundingCurve = *it2;
+    RateCurve *FundingCurve = rateCurves->back();
 
-    // Step2b:MarketData: CDSCurve 
-    std::vector<CDSCurve*>* cdsCurves = mktData->getCDSCurves();
-    auto it3 = cdsCurves->begin();
-    CDSCurve *ctpyCDS = *it3; ++it3;
-    CDSCurve *ownCDS = *it3;
-
-    // Step2c:MarketData: FXAsset (containing FxSpot; assuming spot is settling today)
+    // Step3a: pricing 1 Swap with MarketData object 
     SwapPricer *xccyPricer = new SwapPricer(XccySwap, mktData);
     std::cout << "NPV of XccySwap (in USD):" << xccyPricer->calcTradeNPV() << std::endl;
 
-    // Step3: pricing netting set (with Swaps and RateCurve objects) 
+    // Step3b: pricing netting set (collection of Swaps) with MarketData object 
     SwapPricer *basePV = new SwapPricer(netSet, mktData);
     double netSetFVA = basePV->calcFVA(*FundingCurve);
-    RiskEngine *riskSet = new RiskEngine(VanillaSwap, mktData, "USD.SOFR");
-    // RiskEngine riskSet(Swap4, SOFR); // riskengine object can be created with 1 or multiple trades
+
+    // example for IrDelta calc per curve 
+    RiskEngine *riskSet = new RiskEngine(netSet, mktData, "USD.SOFR");
     std::map<double,double> *irDelta = new std::map<double,double>;
     *irDelta = riskSet->calcIRDelta();
     for (auto it=irDelta->begin(); it != irDelta->end(); it++){
@@ -44,7 +34,7 @@ try
     double rateVol = 0.15; // i.e. 15% annual vol. constant for now.
     double simPaths = 5; // hardcoding simulation for now
     double a = 0.05; // speed of mean reversion 
-    SimulateRate *simEngine = new SimulateRate(SOFR, rateVol, a, simPaths);
+    SimulateRate *simEngine = new SimulateRate(mktData, rateVol, a, simPaths);
     std::vector<RateCurve *> *simCurves = new std::vector<RateCurve *>;
     *simCurves = simEngine->getSimulatedCurves();
 
@@ -52,11 +42,11 @@ try
     // assuming Quarterly time steps in exposure calculation; exposure is already discounted to today
     ExposureCalc *netSetExProfile = new ExposureCalc(netSet,simCurves,mktData);
 
-    // Step7: calculate CVA, DVA and RWA 
+    // Step6: calculate CVA, DVA and RWA 
     double ctpyLGD = (1.0-0.6); // loss given default (LGD) assuming recovery rate (RR) is 60%
     double ownLGD = (1.0-0.8); // loss given default (LGD) assuming recovery rate (RR) is 80%
-    XVACalc *CVA = new XVACalc(netSetExProfile,*ctpyCDS,ctpyLGD,RiskType::CTPY);
-    XVACalc *DVA = new XVACalc(netSetExProfile,*ownCDS,ownLGD,RiskType::OWN);
+    XVACalc *CVA = new XVACalc(netSetExProfile,mktData->getCDSCurve("CTPY"),ctpyLGD,RiskType::CTPY);
+    XVACalc *DVA = new XVACalc(netSetExProfile,mktData->getCDSCurve("OWN"),ownLGD,RiskType::OWN);
 
     std::cout << "For given netting set and market data (all XVA are in $ amount):" << std::endl;
     std::cout << "FVA (+ive means charge to client):" << -1.0*netSetFVA << std::endl;
@@ -64,7 +54,7 @@ try
     std::cout << "DVA (+ive means benefit to bank):" << DVA->calcXVA() << std::endl;
     std::cout << "RWA (using SA-CCR):" << CVA->calcRWA() << std::endl; 
     std::cout << "Initial Margin (using SIMM):" << CVA->calcInitialMargin(mktData) << std::endl; 
-    printCount(0, new Leg , new Swap, netSet, SOFR, ownCDS, xccyPricer, simEngine, riskSet, netSetExProfile, CVA);
+    printCount(1, new Leg , new Swap, netSet, new RateCurve, new CDSCurve, xccyPricer, simEngine, riskSet, netSetExProfile, CVA);
 
 }   catch (std::string &err)
         {std::cout << err << std::endl;}

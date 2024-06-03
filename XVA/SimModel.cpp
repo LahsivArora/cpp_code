@@ -4,8 +4,9 @@
 
 int SimulateRate::counter = 0;
 
-SimulateRate::SimulateRate(RateCurve* curve, double vol, double meanRev, double simPaths){
-    xCurve=curve;
+SimulateRate::SimulateRate(MarketData* mktData, double vol, double meanRev, double simPaths){
+    xMktData=mktData;
+    xCurve=xMktData->getRateCurve("USD.SOFR");
     xVol=vol;
     xMeanRev=meanRev;
     xSimPaths=simPaths;

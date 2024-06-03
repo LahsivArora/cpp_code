@@ -6,11 +6,13 @@
 
 class CDSCurve{
 private:
+    std::string xName;
     double xSpread, xLGD, xMaturity, xSteps;
 public:
     static int counter;
-    CDSCurve(double CDSSpread = 0.0, double LGD = 0.0, double maxMaturity = 0.0, double timesteps = 0.0);
+    CDSCurve(std::string name = "", double CDSSpread = 0.0, double LGD = 0.0, double maxMaturity = 0.0, double timesteps = 0.0);
     std::map<double,double> calcMarginalPDs();
+    std::string getName();
     ~CDSCurve(){--counter;}
 };
   

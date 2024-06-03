@@ -41,11 +41,11 @@ std::vector<CDSCurve*>* build_CDSCurves(){
 
     double ctpyCDSSpread = 300.0; // assuming constant CDS spread of 250bps for counterparty
     double ctpyLGD = (1.0-0.6); // loss given default (LGD) assuming recovery rate (RR) is 60%
-    CDSCurve *ctpyCDS = new CDSCurve(ctpyCDSSpread,ctpyLGD,maxmaturity,timesteps);
+    CDSCurve *ctpyCDS = new CDSCurve("CTPY",ctpyCDSSpread,ctpyLGD,maxmaturity,timesteps);
 
     double ownLGD = (1.0-0.8); // loss given default (LGD) assuming recovery rate (RR) is 80%
     double ownCDSSpread = 150.0; // assuming constant CDS spread of 150bps for own
-    CDSCurve *ownCDS = new CDSCurve(ownCDSSpread,ownLGD,maxmaturity,timesteps);
+    CDSCurve *ownCDS = new CDSCurve("OWN",ownCDSSpread,ownLGD,maxmaturity,timesteps);
     
     std::vector<CDSCurve*>* curves = new std::vector<CDSCurve*>;
     curves->push_back(ctpyCDS);

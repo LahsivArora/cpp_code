@@ -13,8 +13,26 @@ std::vector<RateCurve*>* MarketData::getRateCurves(){
     return xRateCurves;
 }
 
+RateCurve* MarketData::getRateCurve(std::string name){
+    RateCurve* getCurve = new RateCurve;
+    for (auto it=xRateCurves->begin(); it != xRateCurves-> end(); it++){
+        if (name == (*it)->getName())
+            getCurve = *it;
+    }
+    return getCurve;
+}
+
 std::vector<CDSCurve*>* MarketData::getCDSCurves(){
     return xCDSCurves;
+}
+
+CDSCurve* MarketData::getCDSCurve(std::string name){
+    CDSCurve* getCurve = new CDSCurve;
+    for (auto it=xCDSCurves->begin(); it != xCDSCurves-> end(); it++){
+        if (name == (*it)->getName())
+            getCurve = *it;
+    }
+    return getCurve;
 }
 
 std::vector<double*>* MarketData::getFxSpots(){

@@ -4,12 +4,17 @@
 
 int CDSCurve::counter=0;
 
-CDSCurve::CDSCurve(double CDSSpread, double LGD, double maxMaturity, double timesteps){
+CDSCurve::CDSCurve(std::string name, double CDSSpread, double LGD, double maxMaturity, double timesteps){
+    xName=name;
     xSpread=CDSSpread;
     xLGD=LGD;
     xMaturity=maxMaturity;
     xSteps=timesteps;
     ++counter;
+}
+
+std::string CDSCurve::getName(){
+    return xName;
 }
 
 std::map<double,double> CDSCurve::calcMarginalPDs(){

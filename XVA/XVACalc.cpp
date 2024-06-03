@@ -5,7 +5,7 @@
 
 int XVACalc::counter = 0;
 
-XVACalc::XVACalc(ExposureCalc* exposureObj, CDSCurve curve, double LGD, RiskType type){
+XVACalc::XVACalc(ExposureCalc* exposureObj, CDSCurve* curve, double LGD, RiskType type){
     xExposureObj=exposureObj;
     xCurve=curve;
     xLGD=LGD;
@@ -17,7 +17,7 @@ XVACalc::XVACalc(ExposureCalc* exposureObj, CDSCurve curve, double LGD, RiskType
 
 double XVACalc::calcXVA(){
     double XVA = 0.0;
-    std::map<double,double> marginalPDs = xCurve.calcMarginalPDs();
+    std::map<double,double> marginalPDs = xCurve->calcMarginalPDs();
     std::map<double,double> xExposure = xExposureObj->calcEEProfile(xType);
 
     // calc CVA and DVA as sum(EE*marginal PD*LGD)
@@ -44,8 +44,8 @@ double XVACalc::calcInitialMargin(MarketData* mktData){
     MarketData* transformMktData = new MarketData;
     transformMktData = mktData->createBumpedMarktData(SIMMCurve);
 
-    RiskEngine riskCalc(xNetSet, transformMktData);
-    //std::map<double,double> irDelta = riskCalc.calcIRDelta(); // causing error: check later
+    RiskEngine riskCalc(xNetSet, transformMktData, xBaseCurve->getName());
+    std::map<double,double> irDelta = riskCalc.calcIRDelta(); // causing error: check later
 
     delete transformMktData;
     return IM;

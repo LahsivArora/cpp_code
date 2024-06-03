@@ -35,10 +35,7 @@ double SwapPricer::calcLegNPV(int legNum){
 
     if (calcLeg->getLegCurveName().size() == 0)
         throw std::string("Leg curveName: is empty");
-    for (auto it=xCurves->begin(); it != xCurves-> end(); it++){
-        if (calcLeg->getLegCurveName() == (*it)->getName())
-            pricingCurve = *it;
-        }
+    pricingCurve = xMktData->getRateCurve(calcLeg->getLegCurveName());
     if (pricingCurve->getName().size() == 0)
         throw std::string("Leg curveName:"+calcLeg->getLegCurveName()+" doesnt match curves in marketdata");
 
