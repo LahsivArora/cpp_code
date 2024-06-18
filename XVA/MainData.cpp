@@ -1,5 +1,20 @@
 #include "MainData.h"
 
+void printDelta(MarketData* mktData,NettingSet* netSet,double FxSpot){
+    // example for IrDelta calc per curve 
+    for (auto it1=mktData->getRateCurves()->begin(); it1 != mktData->getRateCurves()->end(); ++it1){
+        RiskEngine *riskSet = new RiskEngine(netSet, mktData, (*it1)->getName());
+        std::string ccy = ((*it1)->getName()).substr(0,3);
+        std::map<double,double> *irDelta = new std::map<double,double>;
+        *irDelta = riskSet->calcIRDelta();
+        std::cout << "IrDelta (in USD) for CurveName : " << (*it1)->getName() << std::endl;
+        for (auto it2=irDelta->begin(); it2 != irDelta->end(); it2++){
+            std::cout << "Tenor:" << it2->first << " irDelta:" << it2->second * (ccy=="EUR"?FxSpot:1.0) << std::endl;
+        }
+    std::cout << "--------------------------------------------------------"<< std::endl;
+    }
+}
+
 void printCount(bool print, Leg* xLeg, Swap* xSwap, NettingSet* xNetSet, RateCurve* xCurve,CDSCurve* xCDS, 
                 SwapPricer* xPricer, SimulateRate* xEngine, RiskEngine* xSet,ExposureCalc* xExp, XVACalc* xXVA,MarketData* xMktData){
     
@@ -71,27 +86,28 @@ std::pair<NettingSet*,std::vector<Swap*>*> build_trades(){
     // +ive notional means receive Leg1/pay Leg2 and 4 means Quarterly payments
     Leg *floatLeg = new Leg(LegType::Float,Currency::USD,4.0,-0.0025,"USD.SOFR");
     Leg *fixLeg1 = new Leg(LegType::Fixed,Currency::USD,4.0,0.0480,"USD.SOFR");
-    Swap *VanillaSwap1 = new Swap(TradeType::IrSwap,7.0,-1500000.0, fixLeg1, floatLeg, NotionalExch::NO);
+    Swap *VanillaSwap1 = new Swap(1,TradeType::IrSwap,7.0,-1500000.0, fixLeg1, floatLeg, NotionalExch::NO);
     Leg *fixLeg2 = new Leg(LegType::Fixed,Currency::USD,4.0,0.0500,"USD.SOFR");
-    Swap *VanillaSwap2 = new Swap(TradeType::IrSwap,4.5,1000000.0, fixLeg2, floatLeg, NotionalExch::NO);
+    Swap *VanillaSwap2 = new Swap(2,TradeType::IrSwap,4.5,1000000.0, fixLeg2, floatLeg, NotionalExch::NO);
     Leg *fixLeg3 = new Leg(LegType::Fixed,Currency::USD,4.0,0.0475,"USD.SOFR");
-    Swap *VanillaSwap3 = new Swap(TradeType::IrSwap,8.5,1500000.0, fixLeg3, floatLeg, NotionalExch::NO);
+    Swap *VanillaSwap3 = new Swap(3,TradeType::IrSwap,8.5,2500000.0, fixLeg3, floatLeg, NotionalExch::NO);
     Leg *fixLeg4 = new Leg(LegType::Fixed,Currency::USD,4.0,0.0480,"USD.SOFR");
-    Swap *VanillaSwap4 = new Swap(TradeType::IrSwap,2.5,-1000000.0, fixLeg4, floatLeg, NotionalExch::NO);
+    Swap *VanillaSwap4 = new Swap(4,TradeType::IrSwap,2.5,-1000000.0, fixLeg4, floatLeg, NotionalExch::NO);
+
+    // define xccy swap
+    Leg *xccyFixLeg = new Leg(LegType::Fixed,Currency::EUR,4.0,0.0300,"EUR.XCCY");
+    Leg *xccyFltLeg = new Leg(LegType::Float,Currency::USD,4.0,0.0005,"USD.SOFR");
+    Swap *XccySwap = new Swap(5,TradeType::XccySwap,8.5, 1000000.0, xccyFixLeg, xccyFltLeg, NotionalExch::YES, 1.2418);
 
     // Step1b: define portfolio with 4 swaps 
     std::vector<Swap *> *trades = new std::vector<Swap *>;
     trades->push_back(VanillaSwap1);
     trades->push_back(VanillaSwap2);
     trades->push_back(VanillaSwap3);
-    trades->push_back(VanillaSwap4);
+    trades->push_back(VanillaSwap4);    
+    trades->push_back(XccySwap);
     NettingSet *netSet = new NettingSet(trades); 
     
-    // define xccy swap
-    Leg *xccyFixLeg = new Leg(LegType::Fixed,Currency::EUR,4.0,0.0300,"EUR.XCCY");
-    Leg *xccyFltLeg = new Leg(LegType::Float,Currency::USD,4.0,0.0030,"USD.SOFR");
-    Swap *XccySwap = new Swap(TradeType::XccySwap,8.5,-2000000.0, xccyFixLeg, xccyFltLeg, NotionalExch::YES, 1.2418);
-
     std::vector<Swap *> *tradesRet = new std::vector<Swap *>;
     tradesRet->push_back(VanillaSwap1);
     tradesRet->push_back(XccySwap);

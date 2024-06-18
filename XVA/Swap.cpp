@@ -4,7 +4,8 @@
 
 int Swap::counter = 0;
 
-Swap::Swap(TradeType type,double maturity, double notional, Leg* Leg1, Leg* Leg2, NotionalExch exch, double endFxFwd) {
+Swap::Swap(int tradeNo, TradeType type,double maturity, double notional, Leg* Leg1, Leg* Leg2, NotionalExch exch, double endFxFwd) {
+    xTradeNo=tradeNo;
     xType=type;
     xmaturity=maturity;
     xnotional=notional;
@@ -50,4 +51,8 @@ double Swap::getRiskHorizon(){
     // margin period is min(maturity,1Y) for non-CSA/uncollateralized counterparty
     double marginPeriod = (this->getMaturity()<1.0?this->getMaturity():1.0);  
     return sqrt(marginPeriod);
+}
+
+int Swap::getTradeNo(){
+    return xTradeNo;
 }

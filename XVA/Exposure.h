@@ -20,12 +20,13 @@ class ExposureCalc{
 private:
     NettingSet * xNetSet;
     std::vector<RateCurve *> * xSimCurves;
+    std::vector<double *>* xSimSpots;
     MarketData * xMktData;
-    std::vector<std::map<double,double>> calc();
 public:
     static int counter;
+    std::vector<std::map<double,double>> calc();
     ExposureCalc(NettingSet* netSet = new NettingSet, std::vector<RateCurve *>* simCurves = new std::vector<RateCurve *>,
-                 MarketData* mktData = new MarketData);
+                 std::vector<double *>* simSpots = new std::vector<double *>, MarketData* mktData = new MarketData);
     std::map<double,double> calcEEProfile(RiskType type); // for CVA/DVA calc
     double calcEAD(); // for RWA calc
     NettingSet* getNettingSet();

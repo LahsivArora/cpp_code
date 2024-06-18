@@ -13,6 +13,7 @@
 
 #include "MainData.h"
 
+void printDelta(MarketData* mktData,NettingSet* netSet,double FxSpot);
 void printCount(bool print, Leg* xLeg, Swap* xSwap, NettingSet* xNetSet, RateCurve* xCurve,CDSCurve* xCDS, SwapPricer* xPricer,  
                 SimulateRate* xEngine, RiskEngine* xSet,ExposureCalc* xExp, XVACalc* xXVA,MarketData* xMktData);
 std::vector<RateCurve*>* build_RateCurves();

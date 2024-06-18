@@ -24,7 +24,7 @@ SwapPricer::SwapPricer(Swap* swap, MarketData* mktData, double lag){
     ++counter;
 }
 
-double SwapPricer::calcLegNPV(int legNum){
+double SwapPricer::calcLegNPV(int legNum, double mat){
     double npv = 0.0;
     Leg* calcLeg = xSwap->getLeg(legNum);
     double periodAdj = 1.0/calcLeg->getLegFreq();
@@ -45,23 +45,21 @@ double SwapPricer::calcLegNPV(int legNum){
     if (calcLeg->getLegType() == LegType::Fixed){
         for (unsigned int i=0; i < xLegdisc.size(); i++){
             if (flow[i] > xLag){
-                npv += (notional * rate * periodAdj * xLegdisc[i]);
-                if(i==0 && xSwap->getNotionalExch() == NotionalExch::YES){
-                    npv += (-1.0*notional);}
-                if(i+1==xLegdisc.size() && xSwap->getNotionalExch() == NotionalExch::YES){
-                    npv += (notional * xLegdisc[i]);}
-            }
+                npv += (notional * rate * periodAdj * xLegdisc[i]);}
+            if(i==0 && xSwap->getNotionalExch() == NotionalExch::YES){
+                npv += (-1.0*notional);}
+            if(i==(mat/periodAdj) && xSwap->getNotionalExch() == NotionalExch::YES){
+                npv += (notional * xLegdisc[i]);}            
         }
     }
     else if (calcLeg->getLegType() == LegType::Float){
         for (unsigned int i=0; i < xLegdisc.size(); i++){
             if (flow[i] > xLag){
-                npv += (notional * (xLegfwd[i] + rate) * periodAdj * xLegdisc[i]);
-                if(i==0 && xSwap->getNotionalExch() == NotionalExch::YES){
-                    npv += (-1.0*notional);}
-                if(i+1==xLegdisc.size() && xSwap->getNotionalExch() == NotionalExch::YES){
-                    npv += (notional * xLegdisc[i]);}
-            }
+                npv += (notional * (xLegfwd[i] + rate) * periodAdj * xLegdisc[i]);}
+            if(i==0 && xSwap->getNotionalExch() == NotionalExch::YES){
+                npv += (-1.0*notional);}
+            if(i==(mat/periodAdj) && xSwap->getNotionalExch() == NotionalExch::YES){
+                npv += (notional * xLegdisc[i]);}
         }
     }
     else
@@ -77,10 +75,11 @@ double SwapPricer::calcTradeNPV(){
 
     for (auto it = (xNetSet->getTrades())->begin(); it != (xNetSet->getTrades())->end(); it++){
         xSwap = *it;
+        double maturity = xSwap->getMaturity() ;
         if (xSwap->getTradeType() == TradeType::IrSwap)
-            npv += this->calcLegNPV(1) + this->calcLegNPV(2);
+            npv += this->calcLegNPV(1,maturity) + this->calcLegNPV(2,maturity);
         else if (xSwap->getTradeType() == TradeType::XccySwap)
-            npv += this->calcLegNPV(1)*(*xFxSpot) + this->calcLegNPV(2); // converting to Leg2 ccy. USD in this case
+            npv += this->calcLegNPV(1,maturity)*(*xFxSpot) + this->calcLegNPV(2,maturity); // converting to Leg2 ccy. USD in this case
         else
             throw std::string("TradeType is not supported");
     }

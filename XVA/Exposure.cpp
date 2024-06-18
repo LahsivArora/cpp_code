@@ -8,8 +8,9 @@
 
 int ExposureCalc::counter = 0;
 
-ExposureCalc::ExposureCalc(NettingSet* netSet, std::vector<RateCurve *>* simCurves, MarketData* mktData){
+ExposureCalc::ExposureCalc(NettingSet* netSet, std::vector<RateCurve *>* simCurves, std::vector<double *>* simSpots, MarketData* mktData){
     xSimCurves=simCurves;
+    xSimSpots=simSpots;
     xNetSet=netSet;
     xMktData=mktData;
     ++counter;
@@ -37,9 +38,11 @@ std::vector<std::map<double,double>> ExposureCalc::calc(){
         double exposurePos = 0.0;
         double exposureNeg = 0.0;
         for (auto it1 = tradeObjs->begin(); it1 != tradeObjs->end(); it1++){
+            if (i > ((*it1)->getMaturity())){continue;}
+            auto it3 = xSimSpots->begin();
             for (auto it2 = xSimCurves->begin(); it2 != xSimCurves->end(); it2++){
                 MarketData* simMktData = new MarketData;
-                simMktData = xMktData->replaceRateCurve(*it2);
+                simMktData = xMktData->replaceRateCurve(*it2)->replaceFxSpot(*it3); it3++;
                 SwapPricer *priceLag = new SwapPricer(*it1,simMktData,i);
                 double positiveExposure = (priceLag->calcTradeNPV()>0?priceLag->calcTradeNPV():0);
                 double negativeExposure = (priceLag->calcTradeNPV()<0?priceLag->calcTradeNPV():0);

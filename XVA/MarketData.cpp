@@ -51,3 +51,10 @@ MarketData* MarketData::replaceRateCurve(RateCurve* changedCurve){
     MarketData* changedMktData = new MarketData(changedCurves,this->getCDSCurves(),this->getFxSpots());
     return changedMktData;
 }
+
+MarketData* MarketData::replaceFxSpot(double* changedSpot){
+    std::vector<double*>* changedSpots = new std::vector<double*>;
+    changedSpots->push_back(changedSpot);
+    MarketData* changedMktData = new MarketData(this->getRateCurves(),this->getCDSCurves(),changedSpots);
+    return changedMktData;
+}

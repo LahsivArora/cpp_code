@@ -22,6 +22,7 @@ public:
     std::vector<double*>* getFxSpots();
     ~MarketData(){--counter;}
     MarketData* replaceRateCurve(RateCurve* changedCurve);
+    MarketData* replaceFxSpot(double* changedFxSpot);
 };
   
 #endif

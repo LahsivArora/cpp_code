@@ -21,8 +21,19 @@ public:
     static int counter;
     SimulateRate(MarketData* mktData, double vol, double meanRev, double simPaths);
     std::vector<RateCurve *> getSimulatedCurves();
-    std::vector<double> getSimulatedBaseNPVs(Swap* swap, MarketData* mktData);
     ~SimulateRate(){--counter;}
+};
+
+
+class SimulateFxSpot{
+private:
+    MarketData * xMktData;
+    double xVol, xSimPaths;
+public:
+    static int counter;
+    SimulateFxSpot(MarketData* mktData, double vol, double simPaths);
+    std::vector<double *> getSimulatedFxSpots();
+    ~SimulateFxSpot(){--counter;}
 };
 
 #endif

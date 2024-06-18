@@ -3,6 +3,7 @@
 #include "Pricer.h"
 
 int SimulateRate::counter = 0;
+int SimulateFxSpot::counter = 0;
 
 SimulateRate::SimulateRate(MarketData* mktData, double vol, double meanRev, double simPaths){
     xMktData=mktData;
@@ -32,16 +33,28 @@ std::vector<RateCurve *> SimulateRate::getSimulatedCurves(){
     return curves;
 }
 
-std::vector<double> SimulateRate::getSimulatedBaseNPVs(Swap* swap1, MarketData* mktData){
+SimulateFxSpot::SimulateFxSpot(MarketData* mktData, double vol, double simPaths){
+    xMktData=mktData;
+    xVol=vol;
+    xSimPaths=simPaths;
+    ++counter;
+}
 
-    std::vector<RateCurve *> *curves = new std::vector<RateCurve *>;
-    *curves = this->getSimulatedCurves();
-    std::vector<double> simNPVs;
+std::vector<double *> SimulateFxSpot::getSimulatedFxSpots(){
 
-    for (unsigned int i=0; i < curves->size(); i++){
-        SwapPricer *price2 = new SwapPricer(swap1, mktData);
-        double simPrice = price2->calcTradeNPV();
-        simNPVs.push_back(simPrice);
-    }
-    return simNPVs;
+    std::vector<double *> spots;
+    double *sim01 = new double(1.06);
+    double *sim02 = new double(1.07);
+    double *sim03 = new double(1.08);
+    double *sim04 = new double(1.09);
+    double *sim05 = new double(1.10);
+
+    spots.push_back(xMktData->getFxSpots()->front());
+    spots.push_back(sim01);
+    spots.push_back(sim02);
+    spots.push_back(sim03);
+    spots.push_back(sim04);
+    spots.push_back(sim05);
+
+    return spots;
 }
