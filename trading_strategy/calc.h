@@ -13,6 +13,6 @@ public:
     double calc();
 };
 
-void printResult(std::pair<std::vector<trade>,std::map<std::string,double>> result, std::string xOutPath);
+void printResult(std::pair<std::vector<trade>,std::map<std::string,double[2]>> result, std::string xOutPath);
 
 #endif

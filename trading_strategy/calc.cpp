@@ -24,29 +24,31 @@ double ProfitLoss::calc(){
     return profit;
 }
 
-void printResult(std::pair<std::vector<trade>,std::map<std::string,double>> result, std::string xOutPath){
+void printResult(std::pair<std::vector<trade>,std::map<std::string,double[2]>> result, std::string xOutPath){
 
     std::ofstream outputFile(xOutPath); // Open log file  
 
     //std::pair<std::vector<trade>,std::map<std::string,double>> result;
     std::vector<trade> trades = result.first;
     outputFile << "Size of trades vector (i.e. NEW trades):" << trades.size() << std::endl;
-    std::map<std::string,double> PnL = result.second;
+    std::map<std::string,double[2]> PnL = result.second;
 
     outputFile << "++++++++++++++++++++++++++++++++++++++++++++++++" << std::endl;
-    outputFile << "Gap Down Strat: TakeProfit PnL: " << PnL["GapDn_TakeProfit"] << std::endl;
-    outputFile << "Gap Down Strat: StopLoss PnL: " << PnL["GapDn_StopLoss"] << std::endl;
-    outputFile << "Gap Down Strat: Kill PnL: " << PnL["GapDn_Kill"] << std::endl;
+    outputFile << "Gap Down Strat: TakeProfit PnL: " << PnL["GapDn_TakeProfit"][0] << " Trades: " << PnL["GapDn_TakeProfit"][1]<< std::endl;
+    outputFile << "Gap Down Strat: StopLoss PnL: " << PnL["GapDn_StopLoss"][0] << " Trades: " << PnL["GapDn_StopLoss"][1]<<  std::endl;
+    outputFile << "Gap Down Strat: Kill PnL: " << PnL["GapDn_Kill"][0] << " Trades: " << PnL["GapDn_Kill"][1] << std::endl;
     outputFile << "++++++++++++++++++++++++++++++++++++++++++++++++" << std::endl;
-    outputFile << "Total Gap Down Strat PnL: " << PnL["GapDn_TakeProfit"]+PnL["GapDn_StopLoss"]+PnL["GapDn_Kill"] << std::endl;
+    outputFile << "Total Gap Down Strat PnL: " << PnL["GapDn_TakeProfit"][0]+PnL["GapDn_StopLoss"][0]+PnL["GapDn_Kill"][0] << std::endl;
+    outputFile << "Total number of Trades  : " << PnL["GapDn_TakeProfit"][1]+PnL["GapDn_StopLoss"][1]+PnL["GapDn_Kill"][1] << std::endl;
     outputFile << "++++++++++++++++++++++++++++++++++++++++++++++++" << std::endl;
-    outputFile << "Gap Up Strat: TakeProfit PnL: " << PnL["GapUp_TakeProfit"] << std::endl;
-    outputFile << "Gap Up Strat: StopLoss PnL: " << PnL["GapUp_StopLoss"] << std::endl;
-    outputFile << "Gap Up Strat: Kill PnL: " << PnL["GapUp_Kill"] << std::endl;
+    outputFile << "Gap Up Strat: TakeProfit PnL: " << PnL["GapUp_TakeProfit"][0] << " Trades: " << PnL["GapUp_TakeProfit"][1] << std::endl;
+    outputFile << "Gap Up Strat: StopLoss PnL: " << PnL["GapUp_StopLoss"][0] << " Trades: " << PnL["GapUp_StopLoss"][1] << std::endl;
+    outputFile << "Gap Up Strat: Kill PnL: " << PnL["GapUp_Kill"][0] << " Trades: " << PnL["GapUp_Kill"][1] << std::endl;
     outputFile << "++++++++++++++++++++++++++++++++++++++++++++++++" << std::endl;
-    outputFile << "Total Gap Up Strat PnL: " << PnL["GapUp_TakeProfit"]+PnL["GapUp_StopLoss"]+PnL["GapUp_Kill"] << std::endl;
+    outputFile << "Total Gap Up Strat PnL  : " << PnL["GapUp_TakeProfit"][0]+PnL["GapUp_StopLoss"][0]+PnL["GapUp_Kill"][0] << std::endl;
+    outputFile << "Total number of Trades  : " << PnL["GapUp_TakeProfit"][1]+PnL["GapUp_StopLoss"][1]+PnL["GapUp_Kill"][1] << std::endl;
     outputFile << "++++++++++++++++++++++++++++++++++++++++++++++++" << std::endl;
-    outputFile << "Total PnL: " << PnL["GapDn_TakeProfit"]+PnL["GapDn_StopLoss"]+PnL["GapDn_Kill"]+PnL["GapUp_TakeProfit"]+PnL["GapUp_StopLoss"]+PnL["GapUp_Kill"] << std::endl;
+    outputFile << "Total PnL: " << PnL["GapDn_TakeProfit"][0]+PnL["GapDn_StopLoss"][0]+PnL["GapDn_Kill"][0]+PnL["GapUp_TakeProfit"][0]+PnL["GapUp_StopLoss"][0]+PnL["GapUp_Kill"][0] << std::endl;
     outputFile << "++++++++++++++++++++++++++++++++++++++++++++++++" << std::endl;
 
     outputFile.close(); // Close log file

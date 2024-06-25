@@ -1,13 +1,14 @@
 #include "backTestData.h"
 #include "calc.h"
 
-Rewind::Rewind(std::string filePath){
+Rewind::Rewind(ccyPairDef ccyPair, std::string filePath){
+    xCcyPair=ccyPair;    
     xInPath=filePath;
 }
 
 std::queue<tick> Rewind::load(){
-        std::queue<tick> mkt;
-
+        
+    std::queue<tick> mkt;
     std::ifstream inputFile(xInPath); // Open the file  
     std::string line; 
     
@@ -27,35 +28,36 @@ std::queue<tick> Rewind::load(){
         tick_tm.tm_year = std::stoi(dateTick.substr(0,4))-1900;
         time_t dateTime = mktime(&tick_tm);
 
-        std::string midPrice = line.substr(second+1,third-second-1);
-        tick newTick = {dateTime, std::stod(midPrice)};
+        double midPrice = std::stod(line.substr(second+1,third-second-1));
+        double spread = (xCcyPair.pipSize * xCcyPair.spread)/2.0; 
+        tick newTick = {dateTime, midPrice, midPrice-spread, midPrice+spread};
         mkt.push(newTick);
-    } 
-
+    }
     inputFile.close(); // Close the file
     return mkt;
 }
 
-Replay::Replay(std::queue<tick> mktData, std::string filePath){
+Replay::Replay(std::queue<tick> mktData, ccyPairDef ccyPair, std::string filePath){
     xData=mktData;
+    xCcyPair=ccyPair;
     xOutPath=filePath;
 }
 
-std::pair<std::vector<trade>,std::map<std::string,double>> Replay::use(){
+std::pair<std::vector<trade>,std::map<std::string,double[2]>> Replay::use(){
     
-    std::pair<std::vector<trade>,std::map<std::string,double>> result;
+    std::pair<std::vector<trade>,std::map<std::string,double[2]>> result;
     std::ofstream outputFile(xOutPath); // Open log file  
-    std::map<std::string,double> PnL;
+    std::map<std::string,double[2]> PnL;
 
-    PnL["GapDn_Kill"] = 0.0;
-    PnL["GapDn_StopLoss"] = 0.0;
-    PnL["GapDn_TakeProfit"] = 0.0;
-    PnL = gapDown(xData, &xTrades, outputFile, PnL);
+    PnL["GapDn_Kill"][0] = 0.0;
+    PnL["GapDn_StopLoss"][0] = 0.0;
+    PnL["GapDn_TakeProfit"][0] = 0.0;
+    PnL = gapDown(xCcyPair, xData, &xTrades, outputFile, PnL);
 
-    PnL["GapUp_Kill"] = 0.0;
-    PnL["GapUp_StopLoss"] = 0.0;
-    PnL["GapUp_TakeProfit"] = 0.0;
-    PnL = gapUp(xData, &xTrades, outputFile, PnL);
+    PnL["GapUp_Kill"][0] = 0.0;
+    PnL["GapUp_StopLoss"][0] = 0.0;
+    PnL["GapUp_TakeProfit"][0] = 0.0;
+    PnL = gapUp(xCcyPair, xData, &xTrades, outputFile, PnL);
 
     outputFile.close(); // Close log file
     result.first = xTrades;

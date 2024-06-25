@@ -11,8 +11,9 @@
 class Rewind{
 private:
     std::string xInPath;
+    ccyPairDef xCcyPair;
 public:
-    Rewind(std::string filePath);
+    Rewind(ccyPairDef ccyPair, std::string filePath);
     std::queue<tick> load();
 };
 
@@ -21,9 +22,10 @@ private:
     std::queue<tick> xData;
     std::vector<trade> xTrades;
     std::string xOutPath;
+    ccyPairDef xCcyPair;
 public:
-    Replay(std::queue<tick> mktData, std::string filePath);
-    std::pair<std::vector<trade>,std::map<std::string,double>> use();
+    Replay(std::queue<tick> mktData, ccyPairDef ccyPair, std::string filePath);
+    std::pair<std::vector<trade>,std::map<std::string,double[2]>> use();
 };
 
 #endif

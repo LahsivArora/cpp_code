@@ -6,12 +6,19 @@
 enum class buySell {BUY, SELL};
 enum class status {DEAD, ALIVE};
 enum class trigger {NEW, KILL, STOPLOSS, TAKEPROFIT};
+enum class ccyPairs {USDJPY, EURUSD, GBPUSD, EURJPY};
 
 struct tick{
     time_t timestamp;
     double price;
     double sellPrice = price - 0.20/100.0; // example for USDJPY; pipsize = 0.01; assuming spread = 0.4pip
     double buyPrice = price + 0.20/100.0;
+};
+
+struct ccyPairDef{
+    ccyPairs name;
+    double pipSize;
+    double spread = 0.4; // default spread of 0.4pip, if not specified
 };
 
 struct trade{
