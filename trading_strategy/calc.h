@@ -2,6 +2,8 @@
 #define CALC_H_
 
 #include "datamodel.h"
+#include <map>
+#include <vector>
 
 class ProfitLoss{
 private:
@@ -11,5 +13,6 @@ public:
     double calc();
 };
 
+void printResult(std::pair<std::vector<trade>,std::map<std::string,double>> result, std::string xOutPath);
 
 #endif

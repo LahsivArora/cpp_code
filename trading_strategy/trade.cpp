@@ -2,11 +2,14 @@
 
 int CreateTrade::id = 125; // trade id starts at 125; ideally max(tradeId) info should be fetched from a database
 
-CreateTrade::CreateTrade(tick tick, double notional, buySell dir, trigger trig){
+CreateTrade::CreateTrade(tick tick, double notional, buySell dir, trigger trig, double takeProfit, double stopLoss, double killTime){
     xTick=tick;
     xNotional=notional;
     xDir=dir;
     xTrig=trig;
+    xProfitLevel=takeProfit;
+    xLossLevel=stopLoss;
+    xKillTime=killTime;
 }
 
 trade CreateTrade::get(){
@@ -17,12 +20,12 @@ trade CreateTrade::get(){
     newTrade.buySell = xDir;
     newTrade.tradeId = ++id ;
     newTrade.price = (xDir==buySell::BUY?xTick.buyPrice:xTick.sellPrice);
+    newTrade.creationTime = xTick.timestamp;
 
     if (xTrig == trigger::NEW){
-        // need to add stopLoss, takeProfit, killTime
-    }
-    else {
-        // add parentID details
+        newTrade.takeProfit = xProfitLevel;
+        newTrade.stopLoss = xLossLevel;
+        newTrade.killTime = xKillTime;
     }
     return newTrade;
 }

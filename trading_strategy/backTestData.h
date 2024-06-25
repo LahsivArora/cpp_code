@@ -6,6 +6,7 @@
 #include <queue>
 #include "dataModel.h"
 #include "trade.h"
+#include "strategy.h"
 
 class Rewind{
 private:
@@ -22,7 +23,7 @@ private:
     std::string xOutPath;
 public:
     Replay(std::queue<tick> mktData, std::string filePath);
-    std::vector<trade> use();
+    std::pair<std::vector<trade>,std::map<std::string,double>> use();
 };
 
 #endif

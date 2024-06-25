@@ -5,13 +5,14 @@
 
 class CreateTrade{
 private:
-    double xNotional;
+    double xNotional, xProfitLevel, xLossLevel, xKillTime;
     buySell xDir;
     tick xTick;
     trigger xTrig;
     static int id;
 public:
-    CreateTrade(tick tick, double notional, buySell dir, trigger trig);
+    CreateTrade(tick tick, double notional, buySell dir, trigger trig,
+                double takeProfit = 0.0, double stopLoss = 0.0, double killTime = 0.0);
     trade get();
 };
 

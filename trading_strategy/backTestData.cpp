@@ -1,4 +1,5 @@
 #include "backTestData.h"
+#include "calc.h"
 
 Rewind::Rewind(std::string filePath){
     xInPath=filePath;
@@ -16,10 +17,19 @@ std::queue<tick> Rewind::load(){
         unsigned int third = (line.substr(second+1)).find(",") + second + 1;
         std::string dateTick = line.substr(0,first);
         std::string timeTick = (line.substr(first+1,second-first-1)).replace(5,1,"").replace(2,1,""); 
+
+        std::tm tick_tm; 
+        tick_tm.tm_sec = std::stoi(timeTick.substr(4,2));
+        tick_tm.tm_min = std::stoi(timeTick.substr(2,2));
+        tick_tm.tm_hour = std::stoi(timeTick.substr(0,2));
+        tick_tm.tm_mday = std::stoi(dateTick.substr(6,2));
+        tick_tm.tm_mon = std::stoi(dateTick.substr(4,2))-1;
+        tick_tm.tm_year = std::stoi(dateTick.substr(0,4))-1900;
+        time_t dateTime = mktime(&tick_tm);
+
         std::string midPrice = line.substr(second+1,third-second-1);
-        tick newTick = {std::stoi(dateTick), std::stod(timeTick), std::stod(midPrice)};
+        tick newTick = {dateTime, std::stod(midPrice)};
         mkt.push(newTick);
-        //testing// std::cout << dateTick << "|" << timeTick << "|" << midPrice << "|" << newTick.buyPrice << std::endl; // Print the current line 
     } 
 
     inputFile.close(); // Close the file
@@ -31,28 +41,24 @@ Replay::Replay(std::queue<tick> mktData, std::string filePath){
     xOutPath=filePath;
 }
 
-std::vector<trade> Replay::use(){
+std::pair<std::vector<trade>,std::map<std::string,double>> Replay::use(){
     
-    std::remove("tradeLog.txt");
+    std::pair<std::vector<trade>,std::map<std::string,double>> result;
     std::ofstream outputFile(xOutPath); // Open log file  
-    if(outputFile.is_open()){std::cout << xOutPath << std::endl;}
-    outputFile << "count" << ";" << "tradeId" << ";" << "timestamp" << std::endl;
+    std::map<std::string,double> PnL;
 
-    int count = 0;
-    while (!xData.empty()){
+    PnL["GapDn_Kill"] = 0.0;
+    PnL["GapDn_StopLoss"] = 0.0;
+    PnL["GapDn_TakeProfit"] = 0.0;
+    PnL = gapDown(xData, &xTrades, outputFile, PnL);
 
-        double currentPrice = xData.front().price;
-        xData.pop();
-        double newPrice = xData.front().price;
-
-        if (newPrice > (currentPrice + 0.004)){
-            CreateTrade Trade(xData.front(),100000.0,buySell::SELL,trigger::NEW);
-            trade newTrade = Trade.get();
-            xTrades.push_back(newTrade);
-            outputFile << count++ << ";" << newTrade.tradeId << ";" << xData.front().timestamp.time << std::endl;
-        }        
-    }
+    PnL["GapUp_Kill"] = 0.0;
+    PnL["GapUp_StopLoss"] = 0.0;
+    PnL["GapUp_TakeProfit"] = 0.0;
+    PnL = gapUp(xData, &xTrades, outputFile, PnL);
 
     outputFile.close(); // Close log file
-    return xTrades;
+    result.first = xTrades;
+    result.second = PnL;
+    return result;
 }
