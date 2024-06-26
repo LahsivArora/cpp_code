@@ -34,7 +34,7 @@ std::queue<tick> Rewind::load(){
         double millisec = std::stoi(timeTick.substr(7,3))/1000.0;
 
         double askPrice = std::stod(line.substr(second+1,third-second-1));
-        double bidPrice = std::stod(line.substr(third+1,sizeof(line)-third));
+        double bidPrice = std::stod(line.substr(third+1,line.size()-third));
         double midPrice = (askPrice+bidPrice)/2.0;
         double spread = (xCcyPair.pipSize * xCcyPair.spread)/2.0; 
         tick newTick = {xType, dateTime, millisec, midPrice, midPrice-spread, midPrice+spread};
@@ -42,11 +42,13 @@ std::queue<tick> Rewind::load(){
         // filtering out ticks with data issues
         if( std::abs(mkt.front().price - midPrice) < 1000.0*xCcyPair.pipSize || mkt.empty())
             mkt.push(newTick);
-        else
-            ++count;
+        else{
+            // filtering out in case of data issue
+            std::cout << "filtered out:" << midPrice << ":"<<askPrice << ":" << bidPrice << std::endl;
+            ++count;}
     }
     inputFile.close(); // Close the file
-    std::cout << ":" << "filtered out:" << count << " ticks" << std::endl;
+    std::cout << "for file:" << xInPath << ", filtered out:" << count << " ticks" << std::endl;
     return mkt;
 }
 

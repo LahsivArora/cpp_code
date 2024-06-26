@@ -1,0 +1,2 @@
+for 1s data: {BarBeginTime:yyyyMMdd},{BarBeginTime:HHmmss.fff},{Open},{Open}
+for tick data: {Timestamp:yyyyMMdd},{Timestamp:HHmmss.fff},{AskPrice},{BidPrice}
