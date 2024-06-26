@@ -1,9 +1,11 @@
 #include "backTestData.h"
 #include "calc.h"
+#include <cmath>
 
-Rewind::Rewind(ccyPairDef ccyPair, std::string filePath){
+Rewind::Rewind(ccyPairDef ccyPair, std::string filePath, dataType dataType){
     xCcyPair=ccyPair;    
     xInPath=filePath;
+    xType=dataType;
 }
 
 std::queue<tick> Rewind::load(){
@@ -11,13 +13,14 @@ std::queue<tick> Rewind::load(){
     std::queue<tick> mkt;
     std::ifstream inputFile(xInPath); // Open the file  
     std::string line; 
+    int count = 0;
     
     while (std::getline(inputFile, line)) { 
         unsigned int first = line.find(",");
         unsigned int second = (line.substr(first+1)).find(",") + first + 1;
         unsigned int third = (line.substr(second+1)).find(",") + second + 1;
-        std::string dateTick = line.substr(0,first);
-        std::string timeTick = (line.substr(first+1,second-first-1)).replace(5,1,"").replace(2,1,""); 
+        std::string dateTick = line.substr(0,first); // expected format is YYYYMMDD
+        std::string timeTick = (line.substr(first+1,second-first-1)); // expected format is HHMMSS.fff
 
         std::tm tick_tm; 
         tick_tm.tm_sec = std::stoi(timeTick.substr(4,2));
@@ -28,12 +31,22 @@ std::queue<tick> Rewind::load(){
         tick_tm.tm_year = std::stoi(dateTick.substr(0,4))-1900;
         time_t dateTime = mktime(&tick_tm);
 
-        double midPrice = std::stod(line.substr(second+1,third-second-1));
+        double millisec = std::stoi(timeTick.substr(7,3))/1000.0;
+
+        double askPrice = std::stod(line.substr(second+1,third-second-1));
+        double bidPrice = std::stod(line.substr(third+1,sizeof(line)-third));
+        double midPrice = (askPrice+bidPrice)/2.0;
         double spread = (xCcyPair.pipSize * xCcyPair.spread)/2.0; 
-        tick newTick = {dateTime, midPrice, midPrice-spread, midPrice+spread};
-        mkt.push(newTick);
+        tick newTick = {xType, dateTime, millisec, midPrice, midPrice-spread, midPrice+spread};
+
+        // filtering out ticks with data issues
+        if( std::abs(mkt.front().price - midPrice) < 1000.0*xCcyPair.pipSize || mkt.empty())
+            mkt.push(newTick);
+        else
+            ++count;
     }
     inputFile.close(); // Close the file
+    std::cout << ":" << "filtered out:" << count << " ticks" << std::endl;
     return mkt;
 }
 

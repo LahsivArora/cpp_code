@@ -10,10 +10,11 @@
 
 class Rewind{
 private:
-    std::string xInPath;
+    std::string xInPath; 
+    dataType xType;
     ccyPairDef xCcyPair;
 public:
-    Rewind(ccyPairDef ccyPair, std::string filePath);
+    Rewind(ccyPairDef ccyPair, std::string filePath, dataType dataType);
     std::queue<tick> load();
 };
 
