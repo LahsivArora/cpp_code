@@ -14,7 +14,6 @@ int main()
 try
 {
     std::vector<std::string> files = {"Jan2024","Feb2024","Mar2024","Apr2024","May2024"};
-    //std::vector<std::string> files = {"Apr2024","May2024"};
     std::vector<dataType> types = {dataType::SEC, dataType::TICK};
     std::vector<ccyPairs> ccies = {ccyPairs::USDJPY, ccyPairs::EURUSD};
 
