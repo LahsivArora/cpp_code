@@ -23,8 +23,7 @@ struct ccyPairDef{
     ccyPairs name;
     double pipSize;
     double spread = 0.4; // default spread of 0.4pip, if not specified
-    double coeff_Dn = 1.0; // coefficient of restitution for Down trending strategy (with fade up)
-    double coeff_Up = 1.0; // coefficient of restitution for Up trending strategy (with fade down)
+    double coeff = 1.0; // coefficient of restitution for Down trending strategy (with fade up)
     // For more volatile ccyPair higher tolerance and minGap should be used
     double maxTolerance = 0.0; // if tick change is within tolerance then continue trend. 
     double minGap = 10.0; // trade only if trend is >= minGap (in pips)

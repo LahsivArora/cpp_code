@@ -52,7 +52,7 @@ std::queue<tick> Rewind::load(){
     return mkt;
 }
 
-Replay::Replay(std::queue<tick> mktData, ccyPairDef ccyPair, std::string filePath){
+Replay::Replay(std::queue<tick> *mktData, ccyPairDef ccyPair, std::string filePath){
     xData=mktData;
     xCcyPair=ccyPair;
     xOutPath=filePath;
@@ -65,12 +65,13 @@ std::pair<std::vector<trade>,std::map<std::string,double[2]>> Replay::use(){
 
     std::map<std::string,double[2]> PnL;
     // strategy 1 with ccy details and backtesting market data
-    PnL = gapDown(xCcyPair, xData, &xTrades, outputFile, PnL);
+    PnL = gapDown(xCcyPair, *xData, &xTrades, outputFile, PnL);
 
     // strategy 2 with ccy details and backtesting market data
-    PnL = gapUp(xCcyPair, xData, &xTrades, outputFile, PnL);
+    PnL = gapUp(xCcyPair, *xData, &xTrades, outputFile, PnL);
 
     outputFile.close(); // Close log file
+    xData->empty();
     result.first = xTrades;
     result.second = PnL;
     return result;

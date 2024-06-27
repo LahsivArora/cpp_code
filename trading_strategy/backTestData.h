@@ -20,12 +20,12 @@ public:
 
 class Replay{
 private:
-    std::queue<tick> xData;
+    std::queue<tick> *xData;
     std::vector<trade> xTrades;
     std::string xOutPath;
     ccyPairDef xCcyPair;
 public:
-    Replay(std::queue<tick> mktData, ccyPairDef ccyPair, std::string filePath);
+    Replay(std::queue<tick> *mktData, ccyPairDef ccyPair, std::string filePath);
     std::pair<std::vector<trade>,std::map<std::string,double[2]>> use();
 };
 
