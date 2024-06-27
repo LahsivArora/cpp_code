@@ -6,102 +6,33 @@
 #include "backTestData.h"
 
 // setup ccyPair. definitions available in DataModel file
-ccyPairDef USDJPY = {ccyPairs::USDJPY, 0.01, 0.4, 0.75, 0.004, 10.0};
-ccyPairDef EURUSD = {ccyPairs::EURUSD, 0.0001, 0.4};
+ccyPairDef USDJPY = {ccyPairs::USDJPY, 0.01, 0.4, 0.70, 0.4, 10.0};
+ccyPairDef EURUSD = {ccyPairs::EURUSD, 0.0001, 0.4, 0.70, 0.4, 8.0};
 
 int main()
 {
 try
 {
-    {std::string name = "Jan2024_1s";
-    Rewind mktData(USDJPY,"./data/USDJPY_"+name+".csv",dataType::SEC);
-    std::queue<tick> usdjpy_d = mktData.load();
-    std::cout << "size of tick queue:" << usdjpy_d.size() << std::endl;
-    std::string launchTime = std::to_string(std::time(0));
-    Replay usdjpy(&usdjpy_d, USDJPY,"./data/tradeLog_"+launchTime+".txt");
-    std::pair<std::vector<trade>,std::map<std::string,double[2]>> result = usdjpy.use();    
-    printResult(result,"./data/pnl_"+name+"_"+launchTime+".txt");}
+    std::vector<std::string> files = {"Jan2024","Feb2024","Mar2024","Apr2024","May2024"};
+    //std::vector<std::string> files = {"Apr2024","May2024"};
+    std::vector<dataType> types = {dataType::SEC, dataType::TICK};
+    std::vector<ccyPairs> ccies = {ccyPairs::USDJPY, ccyPairs::EURUSD};
 
-    {std::string name = "Jan2024_t";
-    Rewind mktData(USDJPY,"./data/USDJPY_"+name+".csv",dataType::TICK);
-    std::queue<tick> usdjpy_d = mktData.load();
-    std::cout << "size of tick queue:" << usdjpy_d.size() << std::endl;
-    std::string launchTime = std::to_string(std::time(0));
-    Replay usdjpy(&usdjpy_d, USDJPY,"./data/tradeLog_"+launchTime+".txt");
-    std::pair<std::vector<trade>,std::map<std::string,double[2]>> result = usdjpy.use();    
-    printResult(result,"./data/pnl_"+name+"_"+launchTime+".txt");}
-
-    {std::string name = "Feb2024_1s";
-    Rewind mktData(USDJPY,"./data/USDJPY_"+name+".csv",dataType::SEC);
-    std::queue<tick> usdjpy_d = mktData.load();
-    std::cout << "size of tick queue:" << usdjpy_d.size() << std::endl;
-    std::string launchTime = std::to_string(std::time(0));
-    Replay usdjpy(&usdjpy_d, USDJPY,"./data/tradeLog_"+launchTime+".txt");
-    std::pair<std::vector<trade>,std::map<std::string,double[2]>> result = usdjpy.use();    
-    printResult(result,"./data/pnl_"+name+"_"+launchTime+".txt");}
-
-    {std::string name = "Feb2024_t";
-    Rewind mktData(USDJPY,"./data/USDJPY_"+name+".csv",dataType::TICK);
-    std::queue<tick> usdjpy_d = mktData.load();
-    std::cout << "size of tick queue:" << usdjpy_d.size() << std::endl;
-    std::string launchTime = std::to_string(std::time(0));
-    Replay usdjpy(&usdjpy_d, USDJPY,"./data/tradeLog_"+launchTime+".txt");
-    std::pair<std::vector<trade>,std::map<std::string,double[2]>> result = usdjpy.use();    
-    printResult(result,"./data/pnl_"+name+"_"+launchTime+".txt");}
-
-    {std::string name = "Mar2024_1s";
-    Rewind mktData(USDJPY,"./data/USDJPY_"+name+".csv",dataType::SEC);
-    std::queue<tick> usdjpy_d = mktData.load();
-    std::cout << "size of tick queue:" << usdjpy_d.size() << std::endl;
-    std::string launchTime = std::to_string(std::time(0));
-    Replay usdjpy(&usdjpy_d, USDJPY,"./data/tradeLog_"+launchTime+".txt");
-    std::pair<std::vector<trade>,std::map<std::string,double[2]>> result = usdjpy.use();    
-    printResult(result,"./data/pnl_"+name+"_"+launchTime+".txt");}
-
-    {std::string name = "Mar2024_t";
-    Rewind mktData(USDJPY,"./data/USDJPY_"+name+".csv",dataType::TICK);
-    std::queue<tick> usdjpy_d = mktData.load();
-    std::cout << "size of tick queue:" << usdjpy_d.size() << std::endl;
-    std::string launchTime = std::to_string(std::time(0));
-    Replay usdjpy(&usdjpy_d, USDJPY,"./data/tradeLog_"+launchTime+".txt");
-    std::pair<std::vector<trade>,std::map<std::string,double[2]>> result = usdjpy.use();    
-    printResult(result,"./data/pnl_"+name+"_"+launchTime+".txt");}
-
-    {std::string name = "Apr2024_1s";
-    Rewind mktData(USDJPY,"./data/USDJPY_"+name+".csv",dataType::SEC);
-    std::queue<tick> usdjpy_d = mktData.load();
-    std::cout << "size of tick queue:" << usdjpy_d.size() << std::endl;
-    std::string launchTime = std::to_string(std::time(0));
-    Replay usdjpy(&usdjpy_d, USDJPY,"./data/tradeLog_"+launchTime+".txt");
-    std::pair<std::vector<trade>,std::map<std::string,double[2]>> result = usdjpy.use();    
-    printResult(result,"./data/pnl_"+name+"_"+launchTime+".txt");}
-
-    {std::string name = "Apr2024_t";
-    Rewind mktData(USDJPY,"./data/USDJPY_"+name+".csv",dataType::TICK);
-    std::queue<tick> usdjpy_d = mktData.load();
-    std::cout << "size of tick queue:" << usdjpy_d.size() << std::endl;
-    std::string launchTime = std::to_string(std::time(0));
-    Replay usdjpy(&usdjpy_d, USDJPY,"./data/tradeLog_"+launchTime+".txt");
-    std::pair<std::vector<trade>,std::map<std::string,double[2]>> result = usdjpy.use();    
-    printResult(result,"./data/pnl_"+name+"_"+launchTime+".txt");}
-
-    {std::string name = "May2024_1s";
-    Rewind mktData(USDJPY,"./data/USDJPY_"+name+".csv",dataType::SEC);
-    std::queue<tick> usdjpy_d = mktData.load();
-    std::cout << "size of tick queue:" << usdjpy_d.size() << std::endl;
-    std::string launchTime = std::to_string(std::time(0));
-    Replay usdjpy(&usdjpy_d, USDJPY,"./data/tradeLog_"+launchTime+".txt");
-    std::pair<std::vector<trade>,std::map<std::string,double[2]>> result = usdjpy.use();    
-    printResult(result,"./data/pnl_"+name+"_"+launchTime+".txt");}
-
-    {std::string name = "May2024_t";
-    Rewind mktData(USDJPY,"./data/USDJPY_"+name+".csv",dataType::TICK);
-    std::queue<tick> usdjpy_d = mktData.load();
-    std::cout << "size of tick queue:" << usdjpy_d.size() << std::endl;
-    std::string launchTime = std::to_string(std::time(0));
-    Replay usdjpy(&usdjpy_d, USDJPY,"./data/tradeLog_"+launchTime+".txt");
-    std::pair<std::vector<trade>,std::map<std::string,double[2]>> result = usdjpy.use();    
-    printResult(result,"./data/pnl_"+name+"_"+launchTime+".txt");}/**/
+    for (unsigned int x=0; x < files.size(); x++){
+        for (unsigned int y=0; y < types.size(); y++){
+            for (unsigned int z=0; z < ccies.size(); z++){
+                std::string name = (ccies[z]==ccyPairs::USDJPY?"USDJPY":"EURUSD") ; 
+                name = name + "_" + files[x] + "_" + (types[y]==dataType::SEC?"1s":"t");
+                Rewind mktData((ccies[z]==ccyPairs::USDJPY?USDJPY:EURUSD),"./data/"+name+".csv",types[y]);
+                std::queue<tick> loadedMktData = mktData.load();
+                std::cout << "size of tick queue:" << loadedMktData.size() << std::endl;
+                std::string launchTime = std::to_string(std::time(0));
+                Replay replay(&loadedMktData, ccies[z]==ccyPairs::USDJPY?USDJPY:EURUSD,"./data/tradeLog_"+launchTime+".txt");
+                std::pair<std::vector<trade>,std::map<std::string,double[2]>> result = replay.use();    
+                printResult(result,"./data/pnl_"+name+"_"+launchTime+".txt");
+            }
+        }
+    }
 
 }   catch (std::string &err)
         {std::cout << "user defined exception caught:" << err << std::endl;}

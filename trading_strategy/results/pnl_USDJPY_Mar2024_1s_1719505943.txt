@@ -1,0 +1,18 @@
+Size of trades vector (i.e. NEW trades):73
+++++++++++++++++++++++++++++++++++++++++++++++++
+Gap Down Strat: TakeProfit PnL: 6386.67 Trades: 14
+Gap Down Strat: StopLoss PnL: -2996.27 Trades: 15
+Gap Down Strat: Kill PnL: 1106.04 Trades: 14
+++++++++++++++++++++++++++++++++++++++++++++++++
+Total Gap Down Strat PnL: 4496.44
+Total number of Trades  : 43
+++++++++++++++++++++++++++++++++++++++++++++++++
+Gap Up Strat: TakeProfit PnL: 2740.71 Trades: 7
+Gap Up Strat: StopLoss PnL: -2942.9 Trades: 13
+Gap Up Strat: Kill PnL: 77.7507 Trades: 10
+++++++++++++++++++++++++++++++++++++++++++++++++
+Total Gap Up Strat PnL  : -124.445
+Total number of Trades  : 30
+++++++++++++++++++++++++++++++++++++++++++++++++
+Total PnL: 4372
+++++++++++++++++++++++++++++++++++++++++++++++++

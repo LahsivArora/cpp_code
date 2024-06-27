@@ -11,8 +11,8 @@ std::map<std::string,double[2]> gapDown(ccyPairDef ccyPair, std::queue<tick> xDa
     // ccy Pair settings
     double coeff = ccyPair.coeff;
     double jumpCheck = 1.0 - sqrt(coeff);
-    double tolerance=ccyPair.maxTolerance; 
-    double minGap=ccyPair.minGap;
+    double tolerance= (ccyPair.maxTolerance * ccyPair.pipSize); 
+    double minGap= ccyPair.minGap;
 
     // strategy 1
     int count = 0;
@@ -60,10 +60,10 @@ std::map<std::string,double[2]> gapDown(ccyPairDef ccyPair, std::queue<tick> xDa
             t1 += difftime(newTime,currentTime) + (newTime_ms - currentTime_ms);
             if (!no_trade_alive){
                 trade *currentTrade = &(xTrades->back());
-                double changePrice = std::abs(newAvg - currentAvg) * 0.15; 
-                double changeTime = currentTrade->killTime * changePrice/std::abs(currentTrade->takeProfit - currentTrade->stopLoss);
                 
                 // update trigger levels based on trend till trigger is hit
+                double changePrice = std::abs(newAvg - currentAvg) * 0.20; 
+                double changeTime = currentTrade->killTime * changePrice/std::abs(currentTrade->takeProfit - currentTrade->stopLoss);
                 if (newAvg <= currentAvg - tolerance/2.0){ 
                     currentTrade->stopLoss += changePrice;
                     currentTrade->killTime -= changeTime;
@@ -96,25 +96,27 @@ std::map<std::string,double[2]> gapDown(ccyPairDef ccyPair, std::queue<tick> xDa
                     h_cur = h1 = t_cur = t1 = 0.0;
                 }
             }
-            else if (h1 >= (h_cur*jumpCheck*coeff*coeff) && no_trade_alive && h_cur*100.0 >= minGap){
+            else if (h1 >= (h_cur*jumpCheck*coeff*coeff) && no_trade_alive && (h_cur/ccyPair.pipSize) >= minGap){
                 double t_price = xData.front().buyPrice;
                 double t_loss = t_price - h1;
                 double t_profit = t_loss + h_cur*coeff*coeff;
-                if (t_profit <= t_price || h1/(h_cur*coeff*coeff) >= 0.75){
+                if (h1/(h_cur*coeff*coeff) >= 0.9){
+                    // do nothing since not much expected profit left; ratio>1 means takeProfit level is below trade price
+                    outputFile << "INFO: skipping trade as not much expected profit is left" << ";h_cur:" << h_cur << ";h1:" << h1 << std::endl;
                     h0 = t0 = 0.0;
-                    // skip since not much expected profit left in trade
-                    continue;
                 }
-                double t_kill_low = (coeff*t_cur<2.0?2.0:coeff*t_cur);
-                double t_kill = (t_kill_low>900.0?900:t_kill_low);
-                CreateTrade Trade(xData.front(),notional,buySell::BUY,trigger::NEW,t_profit,t_loss, t_kill,t_loss, t_kill);
-                trade newTrade = Trade.get();
-                xTrades->push_back(newTrade);
-                std::strftime(timeString, 26, "%Y-%m-%d %H:%M:%S", std::localtime(&xData.front().timestamp));
-                outputFile << "INFO: GapDown;new trade; tradeCount:" << count++ << ";tradeId:" << newTrade.tradeId << ";timeStamp:" << timeString <<";t_cur:" << t_cur;
-                outputFile << ";h_cur:" << h_cur << ";h1:" << h1 <<";price:" << xData.front().buyPrice << ":" << xData.front().sellPrice << ";takeProfit:" << t_profit << ";stopLoss:" << t_loss << ";killTime:" << t_kill << std::endl;
-                no_trade_alive = false;
-                h0 = t0 = 0.0;
+                else {
+                    double t_kill_low = (coeff*t_cur<2.0?2.0:coeff*t_cur);
+                    double t_kill = (t_kill_low>900.0?900:t_kill_low);
+                    CreateTrade Trade(xData.front(),notional,buySell::BUY,trigger::NEW,t_profit,t_loss, t_kill,t_loss, t_kill);
+                    trade newTrade = Trade.get();
+                    xTrades->push_back(newTrade);
+                    std::strftime(timeString, 26, "%Y-%m-%d %H:%M:%S", std::localtime(&xData.front().timestamp));
+                    outputFile << "INFO: GapDown;new trade; tradeCount:" << count++ << ";tradeId:" << newTrade.tradeId << ";timeStamp:" << timeString <<";t_cur:" << t_cur;
+                    outputFile << ";h_cur:" << h_cur << ";h1:" << h1 <<";price:" << newTrade.price << ";takeProfit:" << t_profit << ";stopLoss:" << t_loss << ";killTime:" << t_kill << std::endl;
+                    no_trade_alive = false;
+                    h0 = t0 = 0.0;
+                    }
                 }
         }
         prev2Price = prevPrice;
@@ -131,7 +133,7 @@ std::map<std::string,double[2]> gapUp(ccyPairDef ccyPair, std::queue<tick> xData
     // ccy Pair settings
     double coeff = ccyPair.coeff;
     double jumpCheck = 1.0 - sqrt(coeff);
-    double tolerance=ccyPair.maxTolerance; 
+    double tolerance=ccyPair.maxTolerance * ccyPair.pipSize; 
     double minGap=ccyPair.minGap;
 
     // strategy 2
@@ -179,11 +181,11 @@ std::map<std::string,double[2]> gapUp(ccyPairDef ccyPair, std::queue<tick> xData
             t1 += difftime(newTime,currentTime);
             if (!no_trade_alive){
                 trade *currentTrade = &(xTrades->back());
-                double changePrice = std::abs(newAvg - currentAvg) * 0.15; 
-                double changeTime = currentTrade->killTime * changePrice/std::abs(currentTrade->takeProfit - currentTrade->stopLoss);
-                
+
                 // update trigger levels based on trend till trigger is hit
-                if (newAvg >= currentAvg + tolerance/2.0){ 
+                double changePrice = std::abs(newAvg - currentAvg) * 0.20; 
+                double changeTime = currentTrade->killTime * changePrice/std::abs(currentTrade->takeProfit - currentTrade->stopLoss);
+                 if (newAvg >= currentAvg + tolerance/2.0){ 
                     currentTrade->stopLoss -= changePrice;
                 	currentTrade->killTime -= changeTime;
                     outputFile << "stopLoss change:" << changePrice << ";killTime change:" << -1.0*changeTime << std::endl;}
@@ -191,7 +193,7 @@ std::map<std::string,double[2]> gapUp(ccyPairDef ccyPair, std::queue<tick> xData
                     currentTrade->takeProfit -= changePrice;
                     currentTrade->killTime += changeTime;
                     outputFile << "takeProfit change:" << changePrice << ";killTime change:" << changeTime << std::endl;}
-
+                
                 // check trigger levels and process close out events
                 if (xData.front().buyPrice <= currentTrade->takeProfit){
                     PnL["GapUp_TakeProfit"][0] += processCloseOut("GapUp",currentTrade,xData.front(),buySell::BUY,trigger::TAKEPROFIT, outputFile);
@@ -215,25 +217,26 @@ std::map<std::string,double[2]> gapUp(ccyPairDef ccyPair, std::queue<tick> xData
                     h_cur = h1 = t_cur = t1 = 0.0;
                 }
             }
-            else if (h1 >= (h_cur*jumpCheck*coeff*coeff) && no_trade_alive && h_cur*100.0 > minGap){
+            else if (h1 >= (h_cur*jumpCheck*coeff*coeff) && no_trade_alive && h_cur/ccyPair.pipSize > minGap){
                 double t_price = xData.front().sellPrice;
                 double t_loss = t_price + h1;
                 double t_profit = t_loss - h_cur*coeff*coeff; 
-                if (t_profit >= t_price || h1/(h_cur*coeff*coeff) >= 0.75){
+                if (h1/(h_cur*coeff*coeff) >= 0.9){
+                    // do nothing since not much expected profit left; ratio>1 means takeProfit level is below trade price
+                    outputFile << "INFO: skipping trade as not much expected profit is left" << ";h_cur:" << h_cur << ";h1:" << h1 << std::endl;
                     h0 = t0 = 0.0;
-                    // skip since not much expected profit left in trade
-                    continue;
-                }
-                double t_kill_low = (coeff*t_cur<2.0?2.0:coeff*t_cur);
-                double t_kill = (t_kill_low>900.0?900:t_kill_low);
-                CreateTrade Trade(xData.front(),notional,buySell::SELL,trigger::NEW,t_profit,t_loss, t_kill,t_loss, t_kill);
-                trade newTrade = Trade.get();
-                xTrades->push_back(newTrade);
-                std::strftime(timeString, 26, "%Y-%m-%d %H:%M:%S", std::localtime(&xData.front().timestamp));
-                outputFile << "INFO: GapUp;new trade; tradeCount:" << count++ << ";tradeId:" << newTrade.tradeId << ";timeStamp:" << timeString;
-                outputFile << ";h_cur:" << h_cur << ";h1:" << h1 <<";price:" << newTrade.price << ";takeProfit:" << t_profit << ";stopLoss:" << t_price << ";killTime:" << t_kill << std::endl;
-                no_trade_alive = false;
-                h0 = t0 = 0.0;
+                } else {
+                    double t_kill_low = (coeff*t_cur<2.0?2.0:coeff*t_cur);
+                    double t_kill = (t_kill_low>900.0?900:t_kill_low);
+                    CreateTrade Trade(xData.front(),notional,buySell::SELL,trigger::NEW,t_profit,t_loss, t_kill,t_loss, t_kill);
+                    trade newTrade = Trade.get();
+                    xTrades->push_back(newTrade);
+                    std::strftime(timeString, 26, "%Y-%m-%d %H:%M:%S", std::localtime(&xData.front().timestamp));
+                    outputFile << "INFO: GapUp;new trade; tradeCount:" << count++ << ";tradeId:" << newTrade.tradeId << ";timeStamp:" << timeString;
+                    outputFile << ";h_cur:" << h_cur << ";h1:" << h1 <<";price:" << newTrade.price << ";takeProfit:" << t_profit << ";stopLoss:" << t_price << ";killTime:" << t_kill << std::endl;
+                    no_trade_alive = false;
+                    h0 = t0 = 0.0;
+                    }
                 }
         }
         prev2Price = prevPrice;

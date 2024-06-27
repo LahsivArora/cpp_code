@@ -7,7 +7,7 @@
 enum class buySell {BUY, SELL};
 enum class status {DEAD, ALIVE};
 enum class trigger {NEW, KILL, STOPLOSS, TAKEPROFIT};
-enum class ccyPairs {USDJPY, EURUSD, GBPUSD, EURJPY};
+enum class ccyPairs {USDJPY, EURUSD, GBPUSD, USDCHF, AUDUSD, USDCAD};
 enum class dataType {SEC, TICK, MIN, HOUR};
 
 struct tick{
@@ -25,7 +25,7 @@ struct ccyPairDef{
     double spread = 0.4; // default spread of 0.4pip, if not specified
     double coeff = 1.0; // coefficient of restitution for Down trending strategy (with fade up)
     // For more volatile ccyPair higher tolerance and minGap should be used
-    double maxTolerance = 0.0; // if tick change is within tolerance then continue trend. 
+    double maxTolerance = 0.4; // if tick change is within tolerance (in pips) then continue trend. 
     double minGap = 10.0; // trade only if trend is >= minGap (in pips)
 };
 

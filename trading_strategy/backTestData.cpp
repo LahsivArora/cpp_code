@@ -37,6 +37,7 @@ std::queue<tick> Rewind::load(){
         double bidPrice = std::stod(line.substr(third+1,line.size()-third));
         double midPrice = (askPrice+bidPrice)/2.0;
         double spread = (xCcyPair.pipSize * xCcyPair.spread)/2.0; 
+
         tick newTick = {xType, dateTime, millisec, midPrice, midPrice-spread, midPrice+spread};
 
         // filtering out ticks with data issues
