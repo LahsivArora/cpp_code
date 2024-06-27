@@ -1,0 +1,15 @@
+# [DONE] correct time in tick
+# [DONE] correct date move; then month move
+# [DONE] check if takeprofit < price 
+# [WIP] continue after stopLoss
+# [DONE] test with tick in comparison (upto spread 0.001 to 0.01)
+
+# update to use tick data
+# retest and recalibrate with tick data
+
+# generalize code to work for USDJPY and EURUSD
+# backtest for EURUSD
+# recalibrate for EURUSD and move params into CcyPairDef
+
+# create documentation for strategy 
+

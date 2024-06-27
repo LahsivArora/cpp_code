@@ -4,27 +4,24 @@
 #include <cmath>
 
 char timeString[26];
-double coeff_Dn = 0.80;
-double coeff_Up = 0.70;
-double maxGap = 1000.0;
-double jumpCheck_Dn = 1.0 - sqrt(coeff_Dn);
-double jumpCheck_Up = 1.0 - sqrt(coeff_Up);
 double notional = 1000000.0; // 1mln USD
 
 std::map<std::string,double[2]> gapDown(ccyPairDef ccyPair, std::queue<tick> xData, std::vector<trade> *xTrades, 
                                      std::ofstream &outputFile, std::map<std::string,double[2]> PnL){
-    
-    double tolerance=0.0, minGap=0.0;
+    // ccy Pair settings
+    double coeff_Dn = ccyPair.coeff_Dn;
+    double jumpCheck_Dn = 1.0 - sqrt(coeff_Dn);
+    double tolerance=ccyPair.maxTolerance; 
+    double minGap=ccyPair.minGap;
+
+    // strategy 1
     int count = 0;
-    double h0 = 0.0, h1 = 0.0, h_cur = 0.0;
-    double t0 = 0.0, t1 = 0.0, t_cur = 0.0; 
-    bool no_trend_live = true;
+    double h0 = 0.0, h1 = 0.0, h_cur = 0.0; // h0 is Gap move depth; h1 is Fade move depth
+    double t0 = 0.0, t1 = 0.0, t_cur = 0.0; // t0 is Gap move time ; t1 is Fade move time
+    bool no_trade_alive = true; // once NEW trade is alive stop checking for trend till trade is closed out
     double prev2Price = 0.0, prevPrice = 0.0, currentAvg = 0.0;
     dataType tickType = xData.front().datatype;
-    if (tickType == dataType::SEC){
-        tolerance = 0.003; minGap = 10.0;} 
-    else if (tickType == dataType::TICK){
-        tolerance = 0.004; minGap = 10.0;} 
+    if (tickType == dataType::SEC){tolerance *= 0.75;} // use smaller tolerance for 1s data 
 
     while (!xData.empty()){
 
@@ -46,7 +43,7 @@ std::map<std::string,double[2]> gapDown(ccyPairDef ccyPair, std::queue<tick> xDa
             t0 = t1 = h0 = h1 = 0.0;
             continue;}
 
-        if ((newAvg <= currentAvg + tolerance) && no_trend_live){
+        if ((newAvg <= currentAvg + tolerance) && no_trade_alive){
             if (h1 != 0.0){
                 h1 = t1 = 0.0;
                 h0 = (currentPrice - newPrice);
@@ -61,7 +58,7 @@ std::map<std::string,double[2]> gapDown(ccyPairDef ccyPair, std::queue<tick> xDa
             h_cur = h0; t_cur = t0;
             h1 += (newPrice - currentPrice);
             t1 += difftime(newTime,currentTime) + (newTime_ms - currentTime_ms);
-            if (!no_trend_live){
+            if (!no_trade_alive){
                 trade *currentTrade = &(xTrades->back());
                 double changePrice = std::abs(newAvg - currentAvg) * 0.15; 
                 double changeTime = currentTrade->killTime * changePrice/std::abs(currentTrade->takeProfit - currentTrade->stopLoss);
@@ -80,26 +77,26 @@ std::map<std::string,double[2]> gapDown(ccyPairDef ccyPair, std::queue<tick> xDa
                 if (xData.front().sellPrice >= currentTrade->takeProfit){
                     PnL["GapDn_TakeProfit"][0] += processCloseOut("GapDown",currentTrade,xData.front(),buySell::SELL,trigger::TAKEPROFIT, outputFile);
                     PnL["GapDn_TakeProfit"][1] += 1;
-                    no_trend_live = true;
+                    no_trade_alive = true;
                     h_cur = h1 = t_cur = t1 = 0.0;
                 }
                 else if (xData.front().sellPrice <= currentTrade->stopLoss){
                     PnL["GapDn_StopLoss"][0] += processCloseOut("GapDown",currentTrade,xData.front(),buySell::SELL,trigger::STOPLOSS, outputFile);
                     PnL["GapDn_StopLoss"][1] += 1;
-                    no_trend_live = true;
+                    no_trade_alive = true;
                     h_cur = h1 = t_cur = t1 = 0.0;
                     // Continue following trend after stopLoss trigger
-                    h0 = (currentTrade->price - currentTrade->origStopLoss)/(coeff_Up*coeff_Up);
-                    t0 = currentTrade->origKillTime/coeff_Up;
+                    h0 = (currentTrade->price - currentTrade->origStopLoss)/(coeff_Dn*coeff_Dn);
+                    t0 = currentTrade->origKillTime/coeff_Dn;
                 }
                 else if (difftime(xData.front().timestamp,currentTrade->creationTime)+(xData.front().millisec - currentTrade->creationMs) >= currentTrade->killTime){
                     PnL["GapDn_Kill"][0] += processCloseOut("GapDown",currentTrade,xData.front(),buySell::SELL,trigger::KILL, outputFile);
                     PnL["GapDn_Kill"][1] += 1;
-                    no_trend_live = true;
+                    no_trade_alive = true;
                     h_cur = h1 = t_cur = t1 = 0.0;
                 }
             }
-            else if (h1 >= (h_cur*jumpCheck_Dn*coeff_Dn*coeff_Dn) && no_trend_live && h_cur*100.0 >= minGap && h_cur*100.0 <= maxGap){
+            else if (h1 >= (h_cur*jumpCheck_Dn*coeff_Dn*coeff_Dn) && no_trade_alive && h_cur*100.0 >= minGap){
                 double t_price = xData.front().buyPrice;
                 double t_loss = t_price - h1;
                 double t_profit = t_loss + h_cur*coeff_Dn*coeff_Dn;
@@ -108,7 +105,7 @@ std::map<std::string,double[2]> gapDown(ccyPairDef ccyPair, std::queue<tick> xDa
                     // skip since not much expected profit left in trade
                     continue;
                 }
-                double t_kill_low = (coeff_Up*t_cur<2.0?2.0:coeff_Up*t_cur);
+                double t_kill_low = (coeff_Dn*t_cur<2.0?2.0:coeff_Dn*t_cur);
                 double t_kill = (t_kill_low>900.0?900:t_kill_low);
                 CreateTrade Trade(xData.front(),notional,buySell::BUY,trigger::NEW,t_profit,t_loss, t_kill,t_loss, t_kill);
                 trade newTrade = Trade.get();
@@ -116,7 +113,7 @@ std::map<std::string,double[2]> gapDown(ccyPairDef ccyPair, std::queue<tick> xDa
                 std::strftime(timeString, 26, "%Y-%m-%d %H:%M:%S", std::localtime(&xData.front().timestamp));
                 outputFile << "INFO: GapDown;new trade; tradeCount:" << count++ << ";tradeId:" << newTrade.tradeId << ";timeStamp:" << timeString <<";t_cur:" << t_cur;
                 outputFile << ";h_cur:" << h_cur << ";h1:" << h1 <<";price:" << xData.front().buyPrice << ":" << xData.front().sellPrice << ";takeProfit:" << t_profit << ";stopLoss:" << t_loss << ";killTime:" << t_kill << std::endl;
-                no_trend_live = false;
+                no_trade_alive = false;
                 h0 = t0 = 0.0;
                 }
         }
@@ -131,17 +128,20 @@ std::map<std::string,double[2]> gapDown(ccyPairDef ccyPair, std::queue<tick> xDa
 std::map<std::string,double[2]> gapUp(ccyPairDef ccyPair, std::queue<tick> xData, std::vector<trade> *xTrades, 
                                    std::ofstream &outputFile, std::map<std::string,double[2]> PnL){
     
-    double tolerance=0.0, minGap=0.0;
+    // ccy Pair settings
+    double coeff_Up = ccyPair.coeff_Up;
+    double jumpCheck_Up = 1.0 - sqrt(coeff_Up);
+    double tolerance=ccyPair.maxTolerance; 
+    double minGap=ccyPair.minGap;
+
+    // strategy 2
     int count = 0;
-    double h0 = 0.0, h1 = 0.0, h_cur = 0.0;
-    double t0 = 0.0, t1 = 0.0, t_cur = 0.0; 
-    bool no_trend_live = true;
+    double h0 = 0.0, h1 = 0.0, h_cur = 0.0; // h0 is Gap move depth; h1 is Fade move depth
+    double t0 = 0.0, t1 = 0.0, t_cur = 0.0; // t0 is Gap move time ; t1 is Fade move time
+    bool no_trade_alive = true; // once NEW trade is alive stop checking for trend till trade is closed out 
     double prev2Price = 0.0, prevPrice = 0.0, currentAvg = 0.0;
     dataType tickType = xData.front().datatype;
-    if (tickType == dataType::SEC){
-        tolerance = 0.003; minGap = 10.0;} 
-    else if (tickType == dataType::TICK){
-        tolerance = 0.004; minGap = 10.0;} 
+    if (tickType == dataType::SEC){tolerance *= 0.75;} // use smaller tolerance for 1s data 
 
     while (!xData.empty()){
 
@@ -162,7 +162,7 @@ std::map<std::string,double[2]> gapUp(ccyPairDef ccyPair, std::queue<tick> xData
             t0 = t1 = h0 = h1 = 0.0;
             continue;}
 
-        if ((newAvg >= currentAvg - tolerance) && no_trend_live){
+        if ((newAvg >= currentAvg - tolerance) && no_trade_alive){
             if (h1 != 0.0){
                 h1 = t1 = 0.0;
                 h0 = (newPrice - currentPrice);
@@ -177,7 +177,7 @@ std::map<std::string,double[2]> gapUp(ccyPairDef ccyPair, std::queue<tick> xData
             h_cur = h0; t_cur = t0;
             h1 += (currentPrice - newPrice);
             t1 += difftime(newTime,currentTime);
-            if (!no_trend_live){
+            if (!no_trade_alive){
                 trade *currentTrade = &(xTrades->back());
                 double changePrice = std::abs(newAvg - currentAvg) * 0.15; 
                 double changeTime = currentTrade->killTime * changePrice/std::abs(currentTrade->takeProfit - currentTrade->stopLoss);
@@ -196,13 +196,13 @@ std::map<std::string,double[2]> gapUp(ccyPairDef ccyPair, std::queue<tick> xData
                 if (xData.front().buyPrice <= currentTrade->takeProfit){
                     PnL["GapUp_TakeProfit"][0] += processCloseOut("GapUp",currentTrade,xData.front(),buySell::BUY,trigger::TAKEPROFIT, outputFile);
                     PnL["GapUp_TakeProfit"][1] += 1;
-                    no_trend_live = true;
+                    no_trade_alive = true;
                     h_cur = h1 = t_cur = t1 = 0.0;
                 }
                 else if (xData.front().buyPrice >= currentTrade->stopLoss){
                     PnL["GapUp_StopLoss"][0] += processCloseOut("GapUp",currentTrade,xData.front(),buySell::BUY,trigger::STOPLOSS, outputFile);
                     PnL["GapUp_StopLoss"][1] += 1;
-                    no_trend_live = true;
+                    no_trade_alive = true;
                     h_cur = h1 = t_cur = t1 = 0.0;
                     // Continue following trend after stopLoss trigger
                     h0 = (currentTrade->origStopLoss - currentTrade->price)/(coeff_Up*coeff_Up);
@@ -211,15 +211,15 @@ std::map<std::string,double[2]> gapUp(ccyPairDef ccyPair, std::queue<tick> xData
                 else if (difftime(xData.front().timestamp,currentTrade->creationTime)+(xData.front().millisec - currentTrade->creationMs) >= currentTrade->killTime){
                     PnL["GapUp_Kill"][0] += processCloseOut("GapUp",currentTrade,xData.front(),buySell::BUY,trigger::KILL, outputFile);
                     PnL["GapUp_Kill"][1] += 1;
-                    no_trend_live = true;
+                    no_trade_alive = true;
                     h_cur = h1 = t_cur = t1 = 0.0;
                 }
             }
-            else if (h1 >= (h_cur*jumpCheck_Up*coeff_Up*coeff_Up) && no_trend_live && h_cur*100.0 > minGap && h_cur*100.0 <= maxGap){
+            else if (h1 >= (h_cur*jumpCheck_Up*coeff_Up*coeff_Up) && no_trade_alive && h_cur*100.0 > minGap){
                 double t_price = xData.front().sellPrice;
                 double t_loss = t_price + h1;
                 double t_profit = t_loss - h_cur*coeff_Up*coeff_Up; 
-                if (t_profit >= t_price || h1/(h_cur*coeff_Dn*coeff_Dn) >= 0.75){
+                if (t_profit >= t_price || h1/(h_cur*coeff_Up*coeff_Up) >= 0.75){
                     h0 = t0 = 0.0;
                     // skip since not much expected profit left in trade
                     continue;
@@ -232,7 +232,7 @@ std::map<std::string,double[2]> gapUp(ccyPairDef ccyPair, std::queue<tick> xData
                 std::strftime(timeString, 26, "%Y-%m-%d %H:%M:%S", std::localtime(&xData.front().timestamp));
                 outputFile << "INFO: GapUp;new trade; tradeCount:" << count++ << ";tradeId:" << newTrade.tradeId << ";timeStamp:" << timeString;
                 outputFile << ";h_cur:" << h_cur << ";h1:" << h1 <<";price:" << newTrade.price << ";takeProfit:" << t_profit << ";stopLoss:" << t_price << ";killTime:" << t_kill << std::endl;
-                no_trend_live = false;
+                no_trade_alive = false;
                 h0 = t0 = 0.0;
                 }
         }

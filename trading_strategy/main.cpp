@@ -10,7 +10,7 @@ int main()
 {
 try
 {
-    ccyPairDef USDJPY = {ccyPairs::USDJPY, 0.01, 0.4};
+    ccyPairDef USDJPY = {ccyPairs::USDJPY, 0.01, 0.4, 0.8, 0.7, 0.004, 10.0};
     ccyPairDef EURUSD = {ccyPairs::EURUSD, 0.0001, 0.4};
 
     {std::string name = "Jan2024_1s";
