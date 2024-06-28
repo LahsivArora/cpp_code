@@ -1,0 +1,161 @@
+INFO: GapDown;new trade; tradeCount:0;tradeId:2384;timeStamp:2024-04-05 12:30:15;t_cur:3;h_cur:0.00092;h1:0.00019;price:1.08152;takeProfit:1.08178;stopLoss:1.08133;killTime:2.1
+stopLoss change:7e-005;killTime change:-0.326087
+INFO: GapDown;STOPLOSS;tradeId:2385;parenttradeId:2384;timeStamp:2024-04-05 12:30:16;price:1.08113;killTime:1.77391;profit loss for trades:-360.734
+INFO: GapDown;new trade; tradeCount:1;tradeId:2386;timeStamp:2024-04-10 12:36:40;t_cur:11;h_cur:0.00083;h1:0.0001;price:1.07859;takeProfit:1.0789;stopLoss:1.07849;killTime:7.7
+stopLoss change:8e-006;killTime change:-0.151463
+takeProfit change:2.2e-005;killTime change:0.416523
+stopLoss change:3.4e-005;killTime change:-0.643718
+INFO: GapDown;STOPLOSS;tradeId:2387;parenttradeId:2386;timeStamp:2024-04-10 12:36:43;price:1.07845;killTime:7.32134;profit loss for trades:-129.816
+INFO: GapDown;new trade; tradeCount:2;tradeId:2388;timeStamp:2024-04-11 12:15:46;t_cur:25;h_cur:0.00105;h1:0.00015;price:1.07205;takeProfit:1.07241;stopLoss:1.0719;killTime:17.5
+stopLoss change:1e-005;killTime change:-0.340136
+stopLoss change:1.8e-005;killTime change:-0.612245
+INFO: GapDown;STOPLOSS;tradeId:2389;parenttradeId:2388;timeStamp:2024-04-11 12:15:50;price:1.07185;killTime:16.5476;profit loss for trades:-186.593
+INFO: GapDown;new trade; tradeCount:3;tradeId:2390;timeStamp:2024-04-11 12:30:03;t_cur:1;h_cur:0.00093;h1:0.00018;price:1.07194;takeProfit:1.07222;stopLoss:1.07176;killTime:2
+takeProfit change:0.000294;killTime change:1.29032
+INFO: GapDown;TAKEPROFIT;tradeId:2391;parenttradeId:2390;timeStamp:2024-04-11 12:30:04;price:1.07337;killTime:3.29032;profit loss for trades:1332.25
+INFO: GapDown;new trade; tradeCount:4;tradeId:2392;timeStamp:2024-04-15 12:30:04;t_cur:44;h_cur:0.00086;h1:9e-005;price:1.06459;takeProfit:1.06492;stopLoss:1.0645;killTime:30.8
+stopLoss change:1.4e-005;killTime change:-1.02326
+INFO: GapDown;STOPLOSS;tradeId:2393;parenttradeId:2392;timeStamp:2024-04-15 12:30:05;price:1.06448;killTime:29.7767;profit loss for trades:-103.337
+INFO: GapDown;new trade; tradeCount:5;tradeId:2394;timeStamp:2024-04-23 13:46:40;t_cur:15;h_cur:0.00086;h1:0.00016;price:1.06968;takeProfit:1.06994;stopLoss:1.06952;killTime:10.5
+stopLoss change:1.2e-005;killTime change:-0.299003
+takeProfit change:1e-005;killTime change:0.249169
+stopLoss change:8e-006;killTime change:-0.199336
+takeProfit change:3.6e-005;killTime change:0.89701
+stopLoss change:6e-006;killTime change:-0.149502
+stopLoss change:6e-006;killTime change:-0.149502
+stopLoss change:6e-006;killTime change:-0.149502
+takeProfit change:3.2e-005;killTime change:0.797342
+takeProfit change:8e-006;killTime change:0.199336
+INFO: GapDown;KILL;tradeId:2395;parenttradeId:2394;timeStamp:2024-04-23 13:46:52;price:1.06988;killTime:11.696;profit loss for trades:186.937
+INFO: GapDown;new trade; tradeCount:6;tradeId:2396;timeStamp:2024-04-25 12:30:30;t_cur:7;h_cur:0.00154;h1:0.00044;price:1.07252;takeProfit:1.07283;stopLoss:1.07208;killTime:4.9
+stopLoss change:1e-005;killTime change:-0.0649351
+stopLoss change:1.2e-005;killTime change:-0.0779221
+takeProfit change:1.8e-005;killTime change:0.116883
+stopLoss change:2e-005;killTime change:-0.12987
+INFO: GapDown;KILL;tradeId:2397;parenttradeId:2396;timeStamp:2024-04-25 12:30:35;price:1.07237;killTime:4.74416;profit loss for trades:-139.877
+INFO: GapDown;new trade; tradeCount:7;tradeId:2398;timeStamp:2024-04-25 12:31:09;t_cur:10;h_cur:0.00123;h1:0.00017;price:1.07145;takeProfit:1.07188;stopLoss:1.07128;killTime:7
+takeProfit change:1.6e-005;killTime change:0.18583
+stopLoss change:6e-006;killTime change:-0.0696864
+stopLoss change:3.8e-005;killTime change:-0.441347
+INFO: GapDown;STOPLOSS;tradeId:2399;parenttradeId:2398;timeStamp:2024-04-25 12:31:12;price:1.07127;killTime:6.6748;profit loss for trades:-168.025
+INFO: GapDown;new trade; tradeCount:8;tradeId:2400;timeStamp:2024-04-26 12:30:19;t_cur:5;h_cur:0.00114;h1:0.00016;price:1.07303;takeProfit:1.07343;stopLoss:1.07287;killTime:3.5
+stopLoss change:4.2e-005;killTime change:-0.263158
+INFO: GapDown;STOPLOSS;tradeId:2401;parenttradeId:2400;timeStamp:2024-04-26 12:30:20;price:1.07278;killTime:3.23684;profit loss for trades:-233.039
+INFO: GapDown;new trade; tradeCount:9;tradeId:2402;timeStamp:2024-04-26 12:30:26;t_cur:10;h_cur:0.000866531;h1:0.00018;price:1.07246;takeProfit:1.0727;stopLoss:1.07228;killTime:7
+takeProfit change:5.4e-005;killTime change:0.89025
+takeProfit change:3.2e-005;killTime change:0.527555
+INFO: GapDown;TAKEPROFIT;tradeId:2403;parenttradeId:2402;timeStamp:2024-04-26 12:30:28;price:1.07285;killTime:8.4178;profit loss for trades:363.518
+INFO: GapDown;new trade; tradeCount:10;tradeId:2404;timeStamp:2024-04-26 12:30:55;t_cur:10;h_cur:0.00089;h1:0.00012;price:1.07227;takeProfit:1.07259;stopLoss:1.07215;killTime:7
+takeProfit change:1.6e-005;killTime change:0.256822
+takeProfit change:4e-006;killTime change:0.0642055
+takeProfit change:5e-005;killTime change:0.802568
+takeProfit change:1.2e-005;killTime change:0.192616
+stopLoss change:6e-006;killTime change:-0.0963082
+takeProfit change:2.6e-005;killTime change:0.417335
+INFO: GapDown;TAKEPROFIT;tradeId:2405;parenttradeId:2404;timeStamp:2024-04-26 12:31:01;price:1.07274;killTime:8.63724;profit loss for trades:438.13
+INFO: GapDown;new trade; tradeCount:11;tradeId:2406;timeStamp:2024-04-30 14:53:14;t_cur:64;h_cur:0.00087;h1:8e-005;price:1.0693;takeProfit:1.06965;stopLoss:1.06922;killTime:44.8
+stopLoss change:1e-005;killTime change:-1.0509
+INFO: GapDown;STOPLOSS;tradeId:2407;parenttradeId:2406;timeStamp:2024-04-30 14:53:15;price:1.06921;killTime:43.7491;profit loss for trades:-84.1743
+INFO: GapUp;new trade; tradeCount:0;tradeId:2408;timeStamp:2024-04-03 14:00:02;h_cur:0.00148;h1:0.00022;price:1.0801;takeProfit:1.07959;stopLoss:1.0801;killTime:18.2
+takeProfit change:3.2e-005;killTime change:0.803089
+stopLoss change:1.2e-005;killTime change:-0.301158
+stopLoss change:8e-006;killTime change:-0.200772
+takeProfit change:4e-006;killTime change:0.100386
+takeProfit change:2.4e-005;killTime change:0.602317
+stopLoss change:5.2e-005;killTime change:-1.30502
+takeProfit change:4.6e-005;killTime change:1.15444
+takeProfit change:4e-006;killTime change:0.100386
+takeProfit change:4e-006;killTime change:0.100386
+stopLoss change:8e-006;killTime change:-0.200772
+takeProfit change:1.2e-005;killTime change:0.301158
+takeProfit change:1e-005;killTime change:0.250965
+takeProfit change:1e-005;killTime change:0.250965
+stopLoss change:3.4e-005;killTime change:-0.853282
+stopLoss change:3.6e-005;killTime change:-0.903475
+takeProfit change:8e-006;killTime change:0.200772
+stopLoss change:4e-006;killTime change:-0.100386
+stopLoss change:2.2e-005;killTime change:-0.552124
+INFO: GapUp;STOPLOSS;tradeId:2409;parenttradeId:2408;timeStamp:2024-04-03 14:00:21;price:1.08025;killTime:17.6479;profit loss for trades:-138.857
+INFO: GapUp;new trade; tradeCount:1;tradeId:2410;timeStamp:2024-04-03 14:00:38;h_cur:0.00094;h1:0.00015;price:1.08109;takeProfit:1.08078;stopLoss:1.08109;killTime:7.7
+takeProfit change:3e-005;killTime change:0.50152
+stopLoss change:4.2e-005;killTime change:-0.702128
+stopLoss change:1.4e-005;killTime change:-0.234043
+INFO: GapUp;STOPLOSS;tradeId:2411;parenttradeId:2410;timeStamp:2024-04-03 14:00:42;price:1.08126;killTime:7.26535;profit loss for trades:-157.224
+INFO: skipping trade as not much expected profit is left;h_cur:0.00105;h1:0.00071
+INFO: GapUp;new trade; tradeCount:2;tradeId:2412;timeStamp:2024-04-16 13:38:55;h_cur:0.00082;h1:0.00014;price:1.06377;takeProfit:1.06351;stopLoss:1.06377;killTime:21.7
+takeProfit change:2.2e-005;killTime change:1.18815
+stopLoss change:4e-006;killTime change:-0.216028
+takeProfit change:1.4e-005;killTime change:0.756098
+takeProfit change:1.2e-005;killTime change:0.648084
+takeProfit change:4e-006;killTime change:0.216028
+stopLoss change:8e-006;killTime change:-0.432056
+stopLoss change:4e-006;killTime change:-0.216028
+stopLoss change:8e-006;killTime change:-0.432056
+stopLoss change:4e-006;killTime change:-0.216028
+stopLoss change:2e-005;killTime change:-1.08014
+stopLoss change:8e-006;killTime change:-0.432056
+stopLoss change:3.6e-005;killTime change:-1.94425
+INFO: GapUp;STOPLOSS;tradeId:2413;parenttradeId:2412;timeStamp:2024-04-16 13:39:11;price:1.06399;killTime:19.5397;profit loss for trades:-206.769
+INFO: GapUp;new trade; tradeCount:3;tradeId:2414;timeStamp:2024-04-18 13:21:40;h_cur:0.00086;h1:7e-005;price:1.06652;takeProfit:1.06617;stopLoss:1.06652;killTime:77
+takeProfit change:8e-006;killTime change:1.46179
+takeProfit change:8e-006;killTime change:1.46179
+stopLoss change:8e-006;killTime change:-1.46179
+stopLoss change:8e-006;killTime change:-1.46179
+takeProfit change:6e-006;killTime change:1.09635
+takeProfit change:4e-006;killTime change:0.730897
+stopLoss change:4e-006;killTime change:-0.730897
+takeProfit change:8e-006;killTime change:1.46179
+takeProfit change:4e-006;killTime change:0.730897
+stopLoss change:4e-006;killTime change:-0.730897
+takeProfit change:1e-005;killTime change:1.82724
+stopLoss change:6e-006;killTime change:-1.09635
+stopLoss change:8e-006;killTime change:-1.46179
+takeProfit change:6e-006;killTime change:1.09635
+stopLoss change:4e-006;killTime change:-0.730897
+takeProfit change:6e-006;killTime change:1.09635
+takeProfit change:4e-006;killTime change:0.730897
+takeProfit change:6e-006;killTime change:1.09635
+takeProfit change:4e-006;killTime change:0.730897
+takeProfit change:8e-006;killTime change:1.46179
+takeProfit change:8e-006;killTime change:1.46179
+stopLoss change:6e-006;killTime change:-1.09635
+stopLoss change:6e-006;killTime change:-1.09635
+takeProfit change:4e-006;killTime change:0.730897
+takeProfit change:8e-006;killTime change:1.46179
+stopLoss change:4e-006;killTime change:-0.730897
+INFO: GapUp;KILL;tradeId:2415;parenttradeId:2414;timeStamp:2024-04-18 13:23:06;price:1.06631;killTime:85.0399;profit loss for trades:196.941
+INFO: GapUp;new trade; tradeCount:4;tradeId:2416;timeStamp:2024-04-19 06:12:17;h_cur:0.00102;h1:9e-005;price:1.06387;takeProfit:1.06346;stopLoss:1.06387;killTime:78.4
+takeProfit change:4e-006;killTime change:0.627451
+stopLoss change:6e-006;killTime change:-0.941176
+stopLoss change:6e-006;killTime change:-0.941176
+INFO: GapUp;STOPLOSS;tradeId:2417;parenttradeId:2416;timeStamp:2024-04-19 06:12:21;price:1.06395;killTime:77.1451;profit loss for trades:-75.1915
+INFO: GapUp;new trade; tradeCount:5;tradeId:2418;timeStamp:2024-04-22 01:11:38;h_cur:0.00084;h1:0.0001;price:1.06612;takeProfit:1.06581;stopLoss:1.06612;killTime:234.5
+takeProfit change:8e-006;killTime change:4.55782
+stopLoss change:6e-006;killTime change:-3.41837
+stopLoss change:4e-006;killTime change:-2.27891
+stopLoss change:4e-006;killTime change:-2.27891
+stopLoss change:6e-006;killTime change:-3.41837
+INFO: GapUp;STOPLOSS;tradeId:2419;parenttradeId:2418;timeStamp:2024-04-22 01:12:34;price:1.06622;killTime:227.663;profit loss for trades:-93.7893
+INFO: GapUp;new trade; tradeCount:6;tradeId:2420;timeStamp:2024-04-23 07:15:02;h_cur:0.00096;h1:0.00012;price:1.06542;takeProfit:1.06507;stopLoss:1.06542;killTime:2.1
+takeProfit change:3e-005;killTime change:0.133929
+stopLoss change:1e-005;killTime change:-0.0446429
+takeProfit change:4e-006;killTime change:0.0178571
+INFO: GapUp;KILL;tradeId:2421;parenttradeId:2420;timeStamp:2024-04-23 07:15:05;price:1.06534;killTime:2.20714;profit loss for trades:75.0934
+INFO: GapUp;new trade; tradeCount:7;tradeId:2422;timeStamp:2024-04-23 13:45:06;h_cur:0.00199;h1:0.00019;price:1.06801;takeProfit:1.06722;stopLoss:1.06801;killTime:20.3
+takeProfit change:2e-005;killTime change:0.416368
+stopLoss change:5e-005;killTime change:-1.04092
+INFO: GapUp;STOPLOSS;tradeId:2423;parenttradeId:2422;timeStamp:2024-04-23 13:45:08;price:1.0682;killTime:19.6754;profit loss for trades:-177.869
+INFO: GapUp;new trade; tradeCount:8;tradeId:2424;timeStamp:2024-04-23 13:52:48;h_cur:0.00087;h1:9e-005;price:1.06972;takeProfit:1.06938;stopLoss:1.06972;killTime:31.5
+stopLoss change:2.6e-005;killTime change:-1.92118
+INFO: GapUp;STOPLOSS;tradeId:2425;parenttradeId:2424;timeStamp:2024-04-23 13:52:52;price:1.06991;killTime:29.5788;profit loss for trades:-177.585
+INFO: GapUp;new trade; tradeCount:9;tradeId:2426;timeStamp:2024-04-25 01:30:40;h_cur:0.00091;h1:0.00013;price:1.07072;takeProfit:1.0704;stopLoss:1.07072;killTime:375.9
+stopLoss change:6e-006;killTime change:-5.05808
+stopLoss change:4e-006;killTime change:-3.37206
+takeProfit change:4e-006;killTime change:3.37206
+takeProfit change:4e-006;killTime change:3.37206
+stopLoss change:8e-006;killTime change:-6.74411
+takeProfit change:4e-006;killTime change:3.37206
+stopLoss change:1e-005;killTime change:-8.43014
+stopLoss change:4e-006;killTime change:-3.37206
+stopLoss change:6e-006;killTime change:-5.05808
+INFO: GapUp;STOPLOSS;tradeId:2427;parenttradeId:2426;timeStamp:2024-04-25 01:31:53;price:1.07084;killTime:353.982;profit loss for trades:-112.062

@@ -112,7 +112,7 @@ std::map<std::string,double[2]> gapDown(ccyPairDef ccyPair, std::queue<tick> xDa
                     trade newTrade = Trade.get();
                     xTrades->push_back(newTrade);
                     std::strftime(timeString, 26, "%Y-%m-%d %H:%M:%S", std::localtime(&xData.front().timestamp));
-                    outputFile << "INFO: GapDown;new trade; tradeCount:" << count++ << ";tradeId:" << newTrade.tradeId << ";timeStamp:" << timeString <<";t_cur:" << t_cur;
+                    outputFile << "INFO: GapDown;new trade; tradeCount:" << count++ << ";tradeId:" << newTrade.tradeId << ";timeStamp:" << timeString <<"." <<xData.front().millisec <<";t_cur:" << t_cur;
                     outputFile << ";h_cur:" << h_cur << ";h1:" << h1 <<";price:" << newTrade.price << ";takeProfit:" << t_profit << ";stopLoss:" << t_loss << ";killTime:" << t_kill << std::endl;
                     no_trade_alive = false;
                     h0 = t0 = 0.0;
@@ -232,7 +232,7 @@ std::map<std::string,double[2]> gapUp(ccyPairDef ccyPair, std::queue<tick> xData
                     trade newTrade = Trade.get();
                     xTrades->push_back(newTrade);
                     std::strftime(timeString, 26, "%Y-%m-%d %H:%M:%S", std::localtime(&xData.front().timestamp));
-                    outputFile << "INFO: GapUp;new trade; tradeCount:" << count++ << ";tradeId:" << newTrade.tradeId << ";timeStamp:" << timeString;
+                    outputFile << "INFO: GapUp;new trade; tradeCount:" << count++ << ";tradeId:" << newTrade.tradeId << ";timeStamp:" << timeString <<"." <<xData.front().millisec<<";t_cur:" << t_cur;
                     outputFile << ";h_cur:" << h_cur << ";h1:" << h1 <<";price:" << newTrade.price << ";takeProfit:" << t_profit << ";stopLoss:" << t_price << ";killTime:" << t_kill << std::endl;
                     no_trade_alive = false;
                     h0 = t0 = 0.0;
@@ -254,7 +254,7 @@ double processCloseOut(std::string strat, trade *curr, tick tick, buySell dir, t
     closeoutTrade.parentId = curr->tradeId;
     std::vector<std::string> trigger = {"NEW", "KILL", "STOPLOSS", "TAKEPROFIT"};
     std::strftime(timeString, 26, "%Y-%m-%d %H:%M:%S", std::localtime(&tick.timestamp));
-    outputFile << "INFO: " << strat << ";" << trigger[unsigned(trig)] << ";tradeId:" << closeoutTrade.tradeId << ";parenttradeId:" << closeoutTrade.parentId  << ";timeStamp:" << timeString;
+    outputFile << "INFO: " << strat << ";" << trigger[unsigned(trig)] << ";tradeId:" << closeoutTrade.tradeId << ";parenttradeId:" << closeoutTrade.parentId  << ";timeStamp:" << timeString <<"." <<tick.millisec;
     ProfitLoss realize(curr, &closeoutTrade);
     outputFile << ";price:" << closeoutTrade.price << ";killTime:" << curr->killTime << ";profit loss for trades:" << realize.calc() << std::endl;
     return realize.calc();
