@@ -66,10 +66,10 @@ std::pair<std::vector<trade>,std::map<std::string,double[2]>> Replay::use(){
 
     std::map<std::string,double[2]> PnL;
     // strategy 1 with ccy details and backtesting market data
-    PnL = gapDown(xCcyPair, *xData, &xTrades, outputFile, PnL);
+    PnL = gapDownFadeUp(xCcyPair, *xData, &xTrades, outputFile, PnL);
 
     // strategy 2 with ccy details and backtesting market data
-    PnL = gapUp(xCcyPair, *xData, &xTrades, outputFile, PnL);
+    PnL = gapUpFadeDown(xCcyPair, *xData, &xTrades, outputFile, PnL);
 
     outputFile.close(); // Close log file
     xData->empty();

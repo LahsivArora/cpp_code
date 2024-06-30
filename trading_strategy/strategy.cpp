@@ -6,7 +6,7 @@
 char timeString[26];
 double notional = 1000000.0; // 1mln USD
 
-std::map<std::string,double[2]> gapDown(ccyPairDef ccyPair, std::queue<tick> xData, std::vector<trade> *xTrades, 
+std::map<std::string,double[2]> gapDownFadeUp(ccyPairDef ccyPair, std::queue<tick> xData, std::vector<trade> *xTrades, 
                                      std::ofstream &outputFile, std::map<std::string,double[2]> PnL){
     // ccy Pair settings
     double coeff = ccyPair.coeff;
@@ -126,8 +126,7 @@ std::map<std::string,double[2]> gapDown(ccyPairDef ccyPair, std::queue<tick> xDa
     return PnL;
 }
 
-
-std::map<std::string,double[2]> gapUp(ccyPairDef ccyPair, std::queue<tick> xData, std::vector<trade> *xTrades, 
+std::map<std::string,double[2]> gapUpFadeDown(ccyPairDef ccyPair, std::queue<tick> xData, std::vector<trade> *xTrades, 
                                    std::ofstream &outputFile, std::map<std::string,double[2]> PnL){
     
     // ccy Pair settings
