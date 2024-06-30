@@ -6,7 +6,7 @@
 		# Log file will be written in "logs" folder
 		# High-level P&L results will be written in "results" folder
 	c. Functionality: 
-		# There are 2 strategies (GapDown and GapUp) implemented which use same backtesting data. Details in "StrategyDetails.pdf"
+		# There are 2 strategies (GapDownFadeUp and GapUpFadeDown) implemented which use same backtesting data. Details in "StrategyDetails.pdf"
 		# The strategy is executable and can be backtested with historical market data
 
 2. Download Backtesting data:
@@ -32,7 +32,7 @@
 	a. Trade log results will available in "logs" folder:
 		# Log filename format is: tradeLog_XXXXXX_MMMYYYY_type_timestamp.txt (e.g. tradeLog_EURUSD_Apr2024_1s_1719630601.txt)
 	b. Each chunk in the log file contains:
-		# which strategy is being executed (i.e. GapDown or GapUp)
+		# which strategy is being executed (i.e. GapDownFadeUp or GapUpFadeDown)
 		# details of a NEW trade (after strategy has followed GapUp/GapDown trend and identifes the "Fade") 
 		# details of market data moves after NEW trade is initiated and before a close-out event is triggered
 		# details of the Close-out (TAKEPROFIT, STOPLOSS and KILL) event and trade
